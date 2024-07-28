@@ -2,7 +2,7 @@ import React from "react";
 
 const Sidebar = () => {
     return (
-        <aside id="leftsidebar" className="sidebar bg-light">
+        <aside id="leftsidebar" className="sidebar bg-light w-100">
             <div className="d-flex flex-column align-items-start p-3">
                 {/* User Info */}
                 <div className="d-flex align-items-center mb-4">

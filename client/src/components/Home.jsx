@@ -17,7 +17,9 @@ const Home = () => {
     return (
         <>
             <Header />
-            <Sidebar/>
+            <div className="d-none d-lg-flex w-25 bg-danger">
+                <Sidebar />
+            </div>
         </>
     );
 };
