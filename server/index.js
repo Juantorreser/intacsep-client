@@ -4,8 +4,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import User from "./models/User.js";
-import Menu_Item from "./models/MenuItem.js";
-import Order from "./models/Order.js";
 import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 
@@ -81,14 +79,7 @@ app.post("/login", async (req, res) => {
 
         //Remove Password from return object
         const publicUser = {
-            id: user.id,
-            name: user.name,
-            username: user.username,
             email: user.email,
-            phone: user.phone,
-            address: user.address,
-            image: user.image,
-            admin: user.admin,
         };
         const JWT_SECRET = process.env.JWT_SECRET;
         const JWT_SECRET_REFRESH = process.env.JWT_SECRET_REFRESH;
@@ -99,7 +90,7 @@ app.post("/login", async (req, res) => {
         });
 
         //create refresh Token
-        const refreshToken = jwt.sign({id: user.id, username: user.username}, JWT_SECRET_REFRESH, {
+        const refreshToken = jwt.sign({id: user.id, email: user.email}, JWT_SECRET_REFRESH, {
             expiresIn: "5d",
         });
 
@@ -129,7 +120,7 @@ app.post("/login", async (req, res) => {
 
 app.post("/register", async (req, res) => {
     try {
-        const {name, email, password} = req.body;
+        const {email, password} = req.body;
 
         //   Check if user already exists
         const userExists = await User.findOne({email: email});
@@ -142,7 +133,7 @@ app.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         //newUser
-        const newUser = new User({name, email, password: hashedPassword});
+        const newUser = new User({email, password: hashedPassword});
         await newUser.save();
         res.status(200).json({id: newUser.id});
     } catch (e) {

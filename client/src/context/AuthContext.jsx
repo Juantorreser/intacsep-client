@@ -82,6 +82,7 @@ const AuthProvider = ({children}) => {
         } catch (e) {
             console.log(e);
         }
+        console.log('Logged');
     };
 
     const logout = async () => {
