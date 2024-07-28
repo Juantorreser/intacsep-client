@@ -15,7 +15,7 @@ $gray: #30373e;
         background-color: $bg !important;
     }
 
-    .text-white{
+    .text-white {
         color: rgba(255, 255, 255, 0.829);
     }
 
@@ -31,6 +31,19 @@ $gray: #30373e;
     .row {
         display: flex;
         flex-direction: row;
+    }
+
+    /* Add this to your CSS file */
+    .letter-spacing-sm {
+        letter-spacing: 0.05em; /* Adjust value as needed */
+    }
+
+    .letter-spacing-md {
+        letter-spacing: 0.1em; /* Adjust value as needed */
+    }
+
+    .letter-spacing-lg {
+        letter-spacing: 0.3em; /* Adjust value as needed */
     }
 
     #login {
@@ -74,5 +87,6 @@ $gray: #30373e;
             cursor: pointer;
         }
     }
+
 
 }
