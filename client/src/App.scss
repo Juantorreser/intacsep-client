@@ -7,11 +7,20 @@ $secondary: #105fa5;
 $alternative: #b8ddff;
 $white: #e5e6e7;
 $bg: #181920;
+$gray: #30373e;
 
 #root {
     font-family: $fontFamily;
     .bg-body {
-        background-color: $bg;
+        background-color: $bg !important;
+    }
+
+    .text-white{
+        color: rgba(255, 255, 255, 0.829);
+    }
+
+    .bg-body-tertiary {
+        background-color: $gray !important;
     }
 
     .col {
@@ -61,8 +70,9 @@ $bg: #181920;
             opacity: 75%;
         }
 
-        .registerSwitch{
-          cursor: pointer;
+        .registerSwitch {
+            cursor: pointer;
         }
     }
+
 }

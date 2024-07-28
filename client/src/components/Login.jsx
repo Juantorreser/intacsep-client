@@ -38,10 +38,7 @@ const Login = () => {
         const data = await response.json();
 
         if (response.status === 200) {
-            console.log("Registered");
-            console.log(data.id);
             setIsRegistered(true);
-            // login(formData.email, formData.password);
         }
     };
 
