@@ -18,9 +18,10 @@ const PastBits = () => {
     return (
         <section id="homeScreen">
             <Header />
-            <div className="d-none d-lg-flex w-25 ">
-                <Sidebar />
-                PAsADAS
+            <div className="w-100 d-flex">
+                <div className="d-none d-lg-flex w-25 ">
+                    <Sidebar />
+                </div>
             </div>
             <Footer />
         </section>
