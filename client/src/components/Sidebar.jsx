@@ -20,7 +20,7 @@ const Sidebar = () => {
                         <span className="d-block" style={{fontSize: "0.8rem"}}>
                             Bienvenido
                         </span>
-                        <h5 style={{fontSize: "1.2rem"}}>John Smith</h5>
+                        <h5 style={{fontSize: "1.2rem"}}>{`${user.firstName} ${user.lastName}`}</h5>
                     </div>
                 </div>
                 {/* #User Info */}
