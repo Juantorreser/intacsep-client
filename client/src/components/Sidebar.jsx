@@ -67,14 +67,14 @@ const Sidebar = () => {
                                 role="button"
                                 aria-expanded="false"
                                 aria-controls="bitacorasCollapse">
-                                Bitacoras
+                                Bitácoras
                                 <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
                             </a>
                         </p>
                         <div className="collapse" id="bitacorasCollapse">
                             <ul className="nav flex-column w-75 ms-4 gap-2">
-                                <li className="text-white-50 cursor-pointer">bitacora 1</li>
-                                <li className="text-white-50 cursor-pointer">bitacora 2</li>
+                                <li className="text-white-50 cursor-pointer">Bitácoras Activas</li>
+                                <li className="text-white-50 cursor-pointer">Bitácoras Pasadas</li>
                             </ul>
                         </div>
                     </li>
@@ -89,14 +89,17 @@ const Sidebar = () => {
                                 role="button"
                                 aria-expanded="false"
                                 aria-controls="settingsCollapse">
-                                Settings
+                                Configuración
                                 <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
                             </a>
                         </p>
                         <div className="collapse" id="settingsCollapse">
                             <ul className="nav flex-column w-75 ms-4 gap-2">
-                                <li className="text-white-50 cursor-pointer">setting 1</li>
-                                <li className="text-white-50 cursor-pointer">setting 2</li>
+                                <li className="text-white-50 cursor-pointer">Tipos de monitoreo</li>
+                                <li className="text-white-50 cursor-pointer">Eventos</li>
+                                <li className="text-white-50 cursor-pointer">Clientes</li>
+                                <li className="text-white-50 cursor-pointer">Usuarios</li>
+                                <li className="text-white-50 cursor-pointer">Roles</li>
                             </ul>
                         </div>
                     </li>
@@ -107,15 +110,15 @@ const Sidebar = () => {
                             <a
                                 className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
                                 data-bs-toggle="collapse"
-                                href="#settingsCollapse"
+                                href="#integrationsCollapse"
                                 role="button"
                                 aria-expanded="false"
-                                aria-controls="settingsCollapse">
+                                aria-controls="integrationsCollapse">
                                 Integraciones
                                 <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
                             </a>
                         </p>
-                        <div className="collapse" id="settingsCollapse">
+                        <div className="collapse" id="integrationsCollapse">
                             <ul className="nav flex-column w-75 ms-4 gap-2">
                                 <li className="text-white-50 cursor-pointer">Integraciones 1</li>
                                 <li className="text-white-50 cursor-pointer">Integraciones 2</li>
