@@ -14,11 +14,11 @@ const Home = () => {
         } catch (e) {
             navigate("/login");
         }
-    }, []);
+    }, [user]);
     return (
-        <section id="homeScreen">
+        <section id="homeScreen" className="vh-100">
             <Header />
-            <div className="d-none d-lg-flex w-25 ">
+            <div className="d-none d-lg-flex w-25 h-100">
                 <Sidebar />
             </div>
             <Footer/>

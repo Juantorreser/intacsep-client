@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import User from "./models/User.js";
+import Bitacora from "./models/Bitacora.js";
 import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 
@@ -82,7 +83,7 @@ app.post("/login", async (req, res) => {
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-            phone: user.phone
+            phone: user.phone,
         };
         const JWT_SECRET = process.env.JWT_SECRET;
         const JWT_SECRET_REFRESH = process.env.JWT_SECRET_REFRESH;
@@ -283,24 +284,33 @@ app.get("/menu_item", async (req, res) => {
     }
 });
 
-app.post("/menu_item", async (req, res) => {
+app.post("/bitacora", async (req, res) => {
     const data = req.body;
 
-    //check if item exists
-    const itemExists = await Menu_Item.findOne({name: data.name});
-    if (itemExists) {
-        await Menu_Item.updateOne(
-            {name: itemExists.name},
-            {
-                price: data.price,
-                category: data.category,
-                image: data.image,
-            }
-        );
-    } else {
-        const newItem = new Menu_Item(data);
-        await newItem.save();
-    }
+    console.log(data);
+
+    //get id_enlace
+    const id_enlace = data.enlaceRastreo;
+
+    //get id_remolque
+    const id_remolque = data.placaRemolque;
+
+    //get id_tracto
+    const id_tracto = data.placaTracto;
+
+    const newItem = new Bitacora({
+        destino: data.destino,
+        origen: data.origen,
+        monitoreo: data.monitoreo,
+        cliente: data.cliente,
+        operador: data.operador,
+        telefono: data.telefono,
+        id_enlace: id_enlace,
+        id_remolque: id_remolque,
+        id_tracto: id_tracto,
+    });
+
+    await newItem.save();
 });
 
 app.delete("/menu_item", async (req, res) => {

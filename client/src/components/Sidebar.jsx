@@ -3,13 +3,23 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import {useAuth} from "../context/AuthContext";
 import {useNavigate} from "react-router-dom";
+import { useEffect } from "react";
 
 const Sidebar = () => {
+    const baseUrl = import.meta.env.VITE_BASE_URL;
     const {user} = useAuth();
     const navigate = useNavigate();
+    // useEffect(() => {
+    //     try {
+    //         verifyToken();
+    //     } catch (e) {
+    //         navigate("/login");
+            
+    //     }
+    // }, []);
 
     return (
-        <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 vh-100">
+        <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 h-100">
             <div className="d-flex flex-column align-items-start p-3">
                 {/* User Info */}
                 <div

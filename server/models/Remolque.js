@@ -1,6 +1,6 @@
 import mongoose, {mongo} from "mongoose";
 
-const BitSchema = new mongoose.Schema(
+const RemolqueSchema = new mongoose.Schema(
     {
         destino: {type: String, required: true},
         origen: {type: String, required: true},
@@ -17,5 +17,5 @@ const BitSchema = new mongoose.Schema(
     {timestamps: true}
 );
 
-const Bitacora = mongoose.model("Bitacora", BitSchema);
-export default Bitacora;
+const Remolque = mongoose.model("Remolque", RemolqueSchema);
+export default Remolque;
