@@ -198,89 +198,100 @@ app.post("/refresh_token", async (req, res) => {
     }
 });
 
-app.get("/user", async (req, res) => {
+// app.get("/user", async (req, res) => {
+//     try {
+//         const users = await User.find();
+//         res.status(200).json(users);
+//     } catch (e) {
+//         console.log(e);
+//     }
+// });
+
+// app.post("/user/:id", async (req, res) => {
+//     const {id} = req.params;
+//     const data = req.body;
+
+//     if (data.password) {
+//         const saltRounds = 10;
+//         const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+//         await User.updateOne({email: id}, {password: hashedPassword});
+//     }
+
+//     try {
+//         const userToUpdate = await User.updateOne(
+//             {email: id},
+//             {
+//                 name: data.name,
+//                 username: data.username,
+//                 phone: data.phone,
+//                 address: {
+//                     city: data.city,
+//                     street: data.street,
+//                     unit: data.unit,
+//                     zip: data.zipCode,
+//                 },
+//             }
+//         );
+
+//         console.log(userToUpdate);
+//         res.status(200).json({message: "User Updated"});
+//     } catch (e) {
+//         console.log(e);
+//         res.json({message: "User NOT Updated"});
+//     }
+// });
+
+// app.patch("/user/:id", async (req, res) => {
+//     const {id} = req.params;
+//     const updates = req.body;
+
+//     try {
+//         const user = await User.updateOne(
+//             {email: id},
+//             {
+//                 admin: updates.admin,
+//             }
+//         );
+//         if (!user) {
+//             return res.status(404).send({error: "User not found"});
+//         }
+//         res.send(user);
+//     } catch (error) {
+//         res.status(400).send({error: error.message});
+//     }
+// });
+
+// app.delete("/user/:id", async (req, res) => {
+//     const {id} = req.params;
+
+//     try {
+//         const user = await User.deleteOne({email: id});
+//         if (!user) {
+//             return res.status(404).send({error: "User not found"});
+//         }
+//         res.send(user);
+//     } catch (error) {
+//         res.status(400).send({error: error.message});
+//     }
+// });
+
+app.get("/bitacora_active", async (req, res) => {
     try {
-        const users = await User.find();
-        res.status(200).json(users);
+        const activeBits = await Bitacora.find({active: true});
+        res.status(200).json(activeBits);
     } catch (e) {
-        console.log(e);
+        console.error("Error fetching active bitácoras:", e);
+        res.status(500).json({error: "An error occurred while fetching active bitácoras."});
     }
 });
 
-app.post("/user/:id", async (req, res) => {
-    const {id} = req.params;
-    const data = req.body;
-
-    if (data.password) {
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-        await User.updateOne({email: id}, {password: hashedPassword});
-    }
-
+app.get("/bitacora_past", async (req, res) => {
     try {
-        const userToUpdate = await User.updateOne(
-            {email: id},
-            {
-                name: data.name,
-                username: data.username,
-                phone: data.phone,
-                address: {
-                    city: data.city,
-                    street: data.street,
-                    unit: data.unit,
-                    zip: data.zipCode,
-                },
-            }
-        );
-
-        console.log(userToUpdate);
-        res.status(200).json({message: "User Updated"});
+        const pastBits = await Bitacora.find({active: false});
+        res.status(200).json(pastBits);
     } catch (e) {
-        console.log(e);
-        res.json({message: "User NOT Updated"});
-    }
-});
-
-app.patch("/user/:id", async (req, res) => {
-    const {id} = req.params;
-    const updates = req.body;
-
-    try {
-        const user = await User.updateOne(
-            {email: id},
-            {
-                admin: updates.admin,
-            }
-        );
-        if (!user) {
-            return res.status(404).send({error: "User not found"});
-        }
-        res.send(user);
-    } catch (error) {
-        res.status(400).send({error: error.message});
-    }
-});
-
-app.delete("/user/:id", async (req, res) => {
-    const {id} = req.params;
-
-    try {
-        const user = await User.deleteOne({email: id});
-        if (!user) {
-            return res.status(404).send({error: "User not found"});
-        }
-        res.send(user);
-    } catch (error) {
-        res.status(400).send({error: error.message});
-    }
-});
-
-app.get("/menu_item", async (req, res) => {
-    try {
-        const menuItems = await Menu_Item.find();
-        res.status(200).json(menuItems);
-    } catch (e) {
-        console.log(e);
+        console.error("Error fetching past bitácoras:", e);
+        res.status(500).json({error: "An error occurred while fetching past bitácoras."});
     }
 });
 
@@ -313,19 +324,6 @@ app.post("/bitacora", async (req, res) => {
     await newItem.save();
 });
 
-app.delete("/menu_item", async (req, res) => {
-    const data = req.body;
-
-    const itemToDelete = await Menu_Item.deleteOne({name: data.name});
-
-    res.status(200).json({message: "Item Deleted", itemDeleted: itemToDelete});
-});
-
-app.get("/order", (req, res) => {});
-
-app.get("/order/:id", (req, res) => {});
-
-app.post("/order", (req, res) => {});
 
 //start the server
 app.listen(PORT, () => {

@@ -13,6 +13,8 @@ const BitSchema = new mongoose.Schema(
         telefono: {type: String, required: true},
         inicioMonitoreo: {type: Date},
         finalMonitoreo: {type: Date},
+        activa: {type: Boolean, default: true},
+        iniciada: {type: Boolean, default: false},
     },
     {timestamps: true}
 );
