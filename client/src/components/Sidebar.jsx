@@ -1,8 +1,11 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import {useAuth} from "../context/AuthContext";
 
 const Sidebar = () => {
+    const {user} = useAuth();
+    console.log(user);
     return (
         <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 vh-100">
             <div className="d-flex flex-column align-items-start p-3">

@@ -80,6 +80,9 @@ app.post("/login", async (req, res) => {
         //Remove Password from return object
         const publicUser = {
             email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            phone: user.phone
         };
         const JWT_SECRET = process.env.JWT_SECRET;
         const JWT_SECRET_REFRESH = process.env.JWT_SECRET_REFRESH;
