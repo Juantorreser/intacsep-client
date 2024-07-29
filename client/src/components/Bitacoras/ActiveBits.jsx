@@ -13,6 +13,7 @@ const ActiveBits = () => {
     const {user, logout, verifyToken} = useAuth();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
+    const [bitacoras, setBitacoras] = useState([]);
 
     // Form state
     const operador = `${user.firstName} ${user.lastName}`;
@@ -36,12 +37,30 @@ const ActiveBits = () => {
     });
 
     useEffect(() => {
+        // Fetch bitacoras when the component mounts
+        const fetchBitacoras = async () => {
+            try {
+                const response = await fetch(`${baseUrl}/bitacora_active`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setBitacoras(data);
+                    console.log("Fetched bitácoras:", data);
+                } else {
+                    console.error("Failed to fetch bitácoras:", response.statusText);
+                }
+            } catch (e) {
+                console.error("Error fetching bitácoras:", e);
+            }
+        };
+
+        fetchBitacoras();
+
         try {
             verifyToken();
         } catch (e) {
             navigate("/login");
         }
-    }, [user]);
+    }, []);
 
     const handleModalToggle = () => {
         setShowModal(!showModal);
@@ -105,8 +124,28 @@ const ActiveBits = () => {
 
                     {/* LIST */}
                     <div className="mx-3 my-4">
-                        <BitacoraCard />
-                        <BitacoraCard />
+                        <ul className="list-unstyled">
+                            {bitacoras.map((bitacora) => (
+                                <li key={bitacora._id} className="mb-3">
+                                    <BitacoraCard
+                                        id={bitacora._id}
+                                        destino={bitacora.destino}
+                                        origen={bitacora.origen}
+                                        monitoreo={bitacora.monitoreo}
+                                        cliente={bitacora.cliente}
+                                        id_enlace={bitacora.id_enlace}
+                                        id_remolque={bitacora.id_remolque}
+                                        id_tracto={bitacora.id_tracto}
+                                        operador={bitacora.operador}
+                                        telefono={bitacora.telefono}
+                                        inicioMonitoreo={bitacora.inicioMonitoreo}
+                                        finalMonitoreo={bitacora.finalMonitoreo}
+                                        activa={bitacora.activa}
+                                        iniciada={bitacora.iniciada}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
             </div>

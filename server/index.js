@@ -277,7 +277,7 @@ app.post("/refresh_token", async (req, res) => {
 
 app.get("/bitacora_active", async (req, res) => {
     try {
-        const activeBits = await Bitacora.find({active: true});
+        const activeBits = await Bitacora.find({activa: true});
         res.status(200).json(activeBits);
     } catch (e) {
         console.error("Error fetching active bitácoras:", e);
@@ -287,7 +287,7 @@ app.get("/bitacora_active", async (req, res) => {
 
 app.get("/bitacora_past", async (req, res) => {
     try {
-        const pastBits = await Bitacora.find({active: false});
+        const pastBits = await Bitacora.find({activa: false});
         res.status(200).json(pastBits);
     } catch (e) {
         console.error("Error fetching past bitácoras:", e);
