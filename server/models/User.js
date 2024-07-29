@@ -8,15 +8,8 @@ const UserSchema = new mongoose.Schema(
         lastName: {type: String, required: true},
         phone: {type: String, default: ""},
         countryKey: {type: String, default: ""},
-        // address: {
-        //     city: {type: String, default: ""},
-        //     street: {type: String, default: ""},
-        //     unit: {type: String, default: ""},
-        //     zip: {type: String, default: ""},
-        // },
         administrator: {type: Boolean, required: true, default: false},
         operator: {type: Boolean, required: true, default: false},
-        // username: {type: String, default: ""},
         refesh_token: String,
     },
     {timestamps: true}

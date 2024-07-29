@@ -14,13 +14,8 @@ const ActiveBits = () => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [bitacoras, setBitacoras] = useState([]);
+    const [monitoreos, setMonitoreos] = useState([]); // New state for monitoreos
 
-    // useEffect(() => {
-    //     console.log(user);
-    //     if (!user) {
-    //         navigate("/login");
-    //     }
-    // }, []);
     // Form state
     const operador = user ? `${user.firstName} ${user.lastName}` : "";
 
@@ -59,14 +54,31 @@ const ActiveBits = () => {
             }
         };
 
+        // Fetch monitoreos when the component mounts
+        const fetchMonitoreos = async () => {
+            try {
+                const response = await fetch(`${baseUrl}/monitoreos`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setMonitoreos(data);
+                    console.log("Fetched monitoreos:", data);
+                } else {
+                    console.error("Failed to fetch monitoreos:", response.statusText);
+                }
+            } catch (e) {
+                console.error("Error fetching monitoreos:", e);
+            }
+        };
+
         fetchBitacoras();
+        fetchMonitoreos();
 
         try {
             verifyToken();
         } catch (e) {
             navigate("/login");
         }
-    }, []);
+    }, [baseUrl, navigate, verifyToken]);
 
     const handleModalToggle = () => {
         setShowModal(!showModal);
@@ -202,7 +214,13 @@ const ActiveBits = () => {
                                                 onChange={handleChange}
                                                 required>
                                                 <option value="">Selecciona una opción</option>
-                                                <option value="Cuenta espejo">Cuenta espejo</option>
+                                                {monitoreos.map((monitoreo) => (
+                                                    <option
+                                                        key={monitoreo._id}
+                                                        value={monitoreo.tipoMonitoreo}>
+                                                        {monitoreo.tipoMonitoreo}
+                                                    </option>
+                                                ))}
                                             </select>
                                         </div>
 

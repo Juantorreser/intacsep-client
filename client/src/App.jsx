@@ -10,6 +10,7 @@ import ActiveBits from "./components/Bitacoras/ActiveBits";
 import PastBits from "./components/Bitacoras/PastBits";
 import BitacoraDetail from "./components/Bitacoras/BitacoraDetail";
 import TiposMonitoreo from "./components/Settings/TiposMonitoreo";
+import UsersPage from "./components/Settings/UsersPage";
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/bitacoras_pasadas" element={<PastBits />}></Route>
                 <Route path="/bitacora/:id" element={<BitacoraDetail />} />
                 <Route path="/tipos_monitoreo" element={<TiposMonitoreo />}></Route>
+                <Route path="/usuarios" element={<UsersPage />}></Route>
             </Routes>
         </>
     );

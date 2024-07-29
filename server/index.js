@@ -426,6 +426,67 @@ app.post("/monitoreos", async (req, res) => {
     }
 });
 
+//USERS
+// GET users
+app.get("/users", async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+});
+
+//CREATE users
+app.post("/users", async (req, res) => {
+    const {email, password, firstName, lastName, phone, countryKey, administrator, operator} =
+        req.body;
+
+    try {
+        // Check if user already exists
+        const userExists = await User.findOne({email});
+        if (userExists) {
+            return res.status(400).json({message: "Email Already Registered"});
+        }
+
+        // Hash Password
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Create and save the new user
+        const newUser = new User({
+            email,
+            password: hashedPassword, // Ensure this matches your schema
+            firstName,
+            lastName,
+            phone,
+            countryKey,
+            administrator,
+            operator,
+        });
+
+        await newUser.save();
+        res.status(201).json(newUser);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+});
+
+// DELETE /users/:id
+app.delete("/users/:id", async (req, res) => {
+    const {id} = req.params;
+
+    try {
+        const deletedUser = await User.findByIdAndDelete(id);
+        if (!deletedUser) {
+            return res.status(404).json({message: "User not found"});
+        }
+        res.status(200).json(deletedUser);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+});
+
 //start the server
 app.listen(PORT, () => {
     console.log(`Server Running at http://localhost:${PORT}`);

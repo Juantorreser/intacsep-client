@@ -125,7 +125,11 @@ const Sidebar = () => {
                                 </li>
                                 <li className="text-white-50 cursor-pointer">Eventos</li>
                                 <li className="text-white-50 cursor-pointer">Clientes</li>
-                                <li className="text-white-50 cursor-pointer">Usuarios</li>
+                                <li
+                                    className="text-white-50 cursor-pointer"
+                                    onClick={() => navigate("/usuarios")}>
+                                    Usuarios
+                                </li>
                                 <li className="text-white-50 cursor-pointer">Roles</li>
                             </ul>
                         </div>
