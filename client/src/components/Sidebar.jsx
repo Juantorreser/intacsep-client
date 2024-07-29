@@ -118,7 +118,11 @@ const Sidebar = () => {
                         </p>
                         <div className="collapse" id="settingsCollapse">
                             <ul className="nav flex-column w-75 ms-4 gap-2">
-                                <li className="text-white-50 cursor-pointer">Tipos de monitoreo</li>
+                                <li
+                                    className="text-white-50 cursor-pointer"
+                                    onClick={() => navigate("/tipos_monitoreo")}>
+                                    Tipos de monitoreo
+                                </li>
                                 <li className="text-white-50 cursor-pointer">Eventos</li>
                                 <li className="text-white-50 cursor-pointer">Clientes</li>
                                 <li className="text-white-50 cursor-pointer">Usuarios</li>

@@ -9,6 +9,7 @@ import Home from "./components/Home";
 import ActiveBits from "./components/Bitacoras/ActiveBits";
 import PastBits from "./components/Bitacoras/PastBits";
 import BitacoraDetail from "./components/Bitacoras/BitacoraDetail";
+import TiposMonitoreo from "./components/Settings/TiposMonitoreo";
 
 function App() {
     return (
@@ -19,7 +20,8 @@ function App() {
                 <Route path="/inicio" element={<Home />}></Route>
                 <Route path="/bitacoras_activas" element={<ActiveBits />}></Route>
                 <Route path="/bitacoras_pasadas" element={<PastBits />}></Route>
-                <Route path="/bitacora/:id" element={<BitacoraDetail />} /> {/* New route */}
+                <Route path="/bitacora/:id" element={<BitacoraDetail />} />
+                <Route path="/tipos_monitoreo" element={<TiposMonitoreo />}></Route>
             </Routes>
         </>
     );

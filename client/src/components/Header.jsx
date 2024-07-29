@@ -1,11 +1,15 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { useAuth } from "../context/AuthContext";
+import {useAuth} from "../context/AuthContext";
 import Sidebar from "./Sidebar";
 
 const Header = () => {
-    const {logout} = useAuth();
+    const {logout, verifyToken} = useAuth();
+    useEffect(() => {
+        verifyToken();
+    }, []);
+
     return (
         <>
             <nav className="navbar navbar-expand-lg bg-body-tertiary ps-3 pe-3 pt-2 pb-2">
@@ -72,7 +76,7 @@ const Header = () => {
                 data-bs-scroll="true"
                 id="offcanvasWithBothOptions"
                 aria-labelledby="offcanvasWithBothOptionsLabel">
-                <Sidebar/>
+                <Sidebar />
             </div>
         </>
     );

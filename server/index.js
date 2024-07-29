@@ -8,6 +8,7 @@ import Bitacora from "./models/Bitacora.js";
 import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import Sequence from "./models/Sequence.js";
+import Monitoreo from "./models/TipoMonitoreo.js";
 
 dotenv.config();
 
@@ -380,6 +381,48 @@ app.patch("/bitacora/:id/finish", async (req, res) => {
         res.json(bitacora);
     } catch (error) {
         res.status(500).json({message: "Server error"});
+    }
+});
+
+//Monitoreos
+app.get("/monitoreos", async (req, res) => {
+    try {
+        const monitoreos = await Monitoreo.find();
+        res.status(200).json(monitoreos);
+    } catch (error) {
+        console.error("Error fetching monitoreos:", error);
+        res.status(500).json({message: "Internal server error"});
+    }
+});
+
+app.delete("/monitoreos/:id", async (req, res) => {
+    const {id} = req.params;
+    try {
+        const result = await Monitoreo.findByIdAndDelete(id);
+        if (result) {
+            res.status(200).json({message: "Monitoreo deleted successfully"});
+        } else {
+            res.status(404).json({message: "Monitoreo not found"});
+        }
+    } catch (error) {
+        console.error("Error deleting monitoreo:", error);
+        res.status(500).json({message: "Internal server error"});
+    }
+});
+
+app.post("/monitoreos", async (req, res) => {
+    const {tipoMonitoreo} = req.body;
+    if (!tipoMonitoreo) {
+        return res.status(400).json({message: "Tipo de monitoreo is required"});
+    }
+
+    try {
+        const newMonitoreo = new Monitoreo({tipoMonitoreo});
+        const savedMonitoreo = await newMonitoreo.save();
+        res.status(201).json(savedMonitoreo);
+    } catch (error) {
+        console.error("Error creating monitoreo:", error);
+        res.status(500).json({message: "Internal server error"});
     }
 });
 

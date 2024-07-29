@@ -18,7 +18,7 @@ $gray: #30373e;
         background-color: $bg !important;
     }
 
-    .text-black{
+    .text-black {
         color: $gray !important;
     }
 
@@ -113,5 +113,17 @@ $gray: #30373e;
         .collapse.show .icon-toggle::before {
             content: "\f068"; /* Font Awesome minus icon */
         }
+    }
+
+    .btn-disabled {
+        background-color: #6c757d; /* Bootstrap's grey color */
+        border-color: #6c757d; /* Match the border color */
+        cursor: not-allowed; /* Change cursor to indicate disabled state */
+    }
+
+    .btn-disabled:focus,
+    .btn-disabled:hover {
+        background-color: #6c757d; /* Ensure the button remains grey when focused or hovered */
+        border-color: #6c757d; /* Ensure the border remains grey */
     }
 }
