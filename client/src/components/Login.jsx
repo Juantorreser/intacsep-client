@@ -69,26 +69,66 @@ const Login = () => {
                                     type="email"
                                     name="email"
                                     className="form-control"
-                                    id="floatingInput"
+                                    id="email"
                                     placeholder="name@example.com"
                                     required
                                     onChange={handleForm}
                                     value={formData.email}
                                 />
-                                <label htmlFor="floatingInput">Email</label>
+                                <label htmlFor="email">Email</label>
                             </div>
+                            <div className="form-floating mb-3">
+                                <input
+                                    type="text"
+                                    name="firstName"
+                                    className="form-control"
+                                    id="firstName"
+                                    placeholder="nombre"
+                                    required
+                                    onChange={handleForm}
+                                    value={formData.firstName}
+                                />
+                                <label htmlFor="firstName">Nombre</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                                <input
+                                    type="text"
+                                    name="lastName"
+                                    className="form-control"
+                                    id="lastName"
+                                    placeholder="Apellido"
+                                    required
+                                    onChange={handleForm}
+                                    value={formData.lastName}
+                                />
+                                <label htmlFor="lastName">Apellidos</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    className="form-control"
+                                    id="phone"
+                                    placeholder="Teléfono"
+                                    required
+                                    onChange={handleForm}
+                                    value={formData.phone}
+                                />
+                                <label htmlFor="phone">Teléfono</label>
+                            </div>
+
                             <div className="form-floating">
                                 <input
                                     type="password"
                                     name="password"
                                     className="form-control"
-                                    id="floatingPassword"
+                                    id="password"
                                     placeholder="Password"
                                     required
                                     onChange={handleForm}
                                     value={formData.password}
                                 />
-                                <label htmlFor="floatingPassword">Contraseña</label>
+                                <label htmlFor="password">Contraseña</label>
                             </div>
                             <button type="submit" className="btn btn-primary mt-3">
                                 Registrarse
@@ -98,7 +138,7 @@ const Login = () => {
                         <p className=" mt-3 registerSwitch" onClick={() => setIsRegistered(true)}>
                             Iniciar sesión
                         </p>
-                        <p className=" opacity-25 mt-5">© Spotynet 2024</p>
+                        <p className=" opacity-25 mt-3">© Spotynet 2024</p>
                     </div>
                 </section>
             );

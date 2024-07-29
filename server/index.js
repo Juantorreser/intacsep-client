@@ -120,7 +120,7 @@ app.post("/login", async (req, res) => {
 
 app.post("/register", async (req, res) => {
     try {
-        const {email, password} = req.body;
+        const {email, password, phone, firstName, lastName} = req.body;
 
         //   Check if user already exists
         const userExists = await User.findOne({email: email});
@@ -133,7 +133,7 @@ app.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         //newUser
-        const newUser = new User({email, password: hashedPassword});
+        const newUser = new User({email, password: hashedPassword, firstName, lastName, phone});
         await newUser.save();
         res.status(200).json({id: newUser.id});
     } catch (e) {

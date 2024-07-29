@@ -70,7 +70,6 @@ const Header = () => {
             <div
                 className="offcanvas offcanvas-start d-md-none"
                 data-bs-scroll="true"
-                tabindex="-1"
                 id="offcanvasWithBothOptions"
                 aria-labelledby="offcanvasWithBothOptionsLabel">
                 <Sidebar/>
