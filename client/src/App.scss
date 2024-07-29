@@ -11,6 +11,9 @@ $gray: #30373e;
 
 #root {
     font-family: $fontFamily;
+    .cursor-pointer {
+        cursor: pointer;
+    }
     .bg-body {
         background-color: $bg !important;
     }
@@ -88,5 +91,23 @@ $gray: #30373e;
         }
     }
 
+    #leftsidebar {
+        /* CSS to handle icon change based on collapse state */
+        .icon-toggle {
+            transition: transform 0.3s ease;
+        }
 
+        .collapse.show + p a .icon-toggle {
+            transform: rotate(45deg); /* Change icon on expand */
+        }
+
+        /* For plus to minus icon rotation */
+        .icon-toggle::before {
+            content: "\f067"; /* Font Awesome plus icon */
+        }
+
+        .collapse.show .icon-toggle::before {
+            content: "\f068"; /* Font Awesome minus icon */
+        }
+    }
 }

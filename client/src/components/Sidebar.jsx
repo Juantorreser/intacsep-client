@@ -1,4 +1,6 @@
 import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 const Sidebar = () => {
     return (
@@ -16,23 +18,6 @@ const Sidebar = () => {
                             Bienvenido
                         </span>
                         <h5 style={{fontSize: "1.2rem"}}>John Smith</h5>
-                        {/* <ul className="list-unstyled d-flex">
-                            <li className="me-2">
-                                <a title="Go to Inbox" href="mail-inbox.html">
-                                    <i className="fa fa-envelope"></i>
-                                </a>
-                            </li>
-                            <li className="me-2">
-                                <a title="Go to Profile" href="profile.html">
-                                    <i className="bi bi-person"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a title="Full Screen" href="sign-in.html">
-                                    <i className="bi bi-box-arrow-in-right"></i>
-                                </a>
-                            </li>
-                        </ul> */}
                     </div>
                 </div>
                 {/* #User Info */}
@@ -41,67 +26,99 @@ const Sidebar = () => {
                 <ul className="nav flex-column w-100">
                     <li className="nav-item mb-2">
                         <hr className="my-1 text-white" />
-                        <span className="nav-link text-white-50 fw-bold letter-spacing-lg">MENÚ</span>
+                        <span className="nav-link text-white-50 fw-bold letter-spacing-lg">
+                            MENÚ
+                        </span>
                         <hr className="my-1 text-white" />
                     </li>
 
-                    {/* Bitacora Menu */}
-                    <li className="nav-item">
-                        <a
-                            className="nav-link collapsed"
-                            data-bs-toggle="collapse"
-                            href="#adminXMenu"
-                            role="button"
-                            aria-expanded="false"
-                            aria-controls="adminXMenu">
-                            <i className="bi bi-house-door"></i>
-                            <span className="ms-2">adminX</span>
-                        </a>
-                        <ul className="collapse nav flex-column ms-3" id="adminXMenu">
-                            <li className="nav-item">
-                                <a className="nav-link" href="index.html">
-                                    Dashboard 1
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="dashboard.html">
-                                    Dashboard 2
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="dashboard3.html">
-                                    Dashboard 3
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="dashboard-rtl.html">
-                                    Dashboard 3 RTL
-                                </a>
-                            </li>
-                        </ul>
+                    {/* Dashboard Menu */}
+                    <li className="nav-item ms-3">
+                        <p className="">
+                            <a
+                                className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
+                                data-bs-toggle="collapse"
+                                href="#dashboardCollapse"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="dashboardCollapse">
+                                Dashboard
+                                <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
+                            </a>
+                        </p>
+                        <div className="collapse" id="dashboardCollapse">
+                            <ul className="nav flex-column w-75 ms-4 gap-2">
+                                <li className="text-white-50 cursor-pointer">dashboard 1</li>
+                                <li className="text-white-50 cursor-pointer">dashboard 2</li>
+                            </ul>
+                        </div>
                     </li>
 
-                    {/* Configuracion Menu */}
-                    <li className="nav-item">
-                        <a
-                            className="nav-link collapsed"
-                            data-bs-toggle="collapse"
-                            href="#settingsMenu"
-                            role="button"
-                            aria-expanded="false"
-                            aria-controls="settingsMenu">
-                            <i className="bi bi-gear"></i>
-                            <span className="ms-2">Settings</span>
-                        </a>
-                        <ul className="collapse nav flex-column ms-3" id="settingsMenu">
-                            <li className="nav-item">
-                                <a className="nav-link" href="settings.html">
-                                    Settings
-                                </a>
-                            </li>
-                        </ul>
+                    {/* Bitacoras Menu */}
+                    <li className="nav-item ms-3">
+                        <p className="">
+                            <a
+                                className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
+                                data-bs-toggle="collapse"
+                                href="#bitacorasCollapse"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="bitacorasCollapse">
+                                Bitacoras
+                                <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
+                            </a>
+                        </p>
+                        <div className="collapse" id="bitacorasCollapse">
+                            <ul className="nav flex-column w-75 ms-4 gap-2">
+                                <li className="text-white-50 cursor-pointer">bitacora 1</li>
+                                <li className="text-white-50 cursor-pointer">bitacora 2</li>
+                            </ul>
+                        </div>
                     </li>
 
+                    {/* Settings Menu */}
+                    <li className="nav-item ms-3">
+                        <p className="">
+                            <a
+                                className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
+                                data-bs-toggle="collapse"
+                                href="#settingsCollapse"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="settingsCollapse">
+                                Settings
+                                <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
+                            </a>
+                        </p>
+                        <div className="collapse" id="settingsCollapse">
+                            <ul className="nav flex-column w-75 ms-4 gap-2">
+                                <li className="text-white-50 cursor-pointer">setting 1</li>
+                                <li className="text-white-50 cursor-pointer">setting 2</li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    {/* integraciones Menu */}
+                    <li className="nav-item ms-3">
+                        <p className="">
+                            <a
+                                className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
+                                data-bs-toggle="collapse"
+                                href="#settingsCollapse"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="settingsCollapse">
+                                Integraciones
+                                <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
+                            </a>
+                        </p>
+                        <div className="collapse" id="settingsCollapse">
+                            <ul className="nav flex-column w-75 ms-4 gap-2">
+                                <li className="text-white-50 cursor-pointer">Integraciones 1</li>
+                                <li className="text-white-50 cursor-pointer">Integraciones 2</li>
+                            </ul>
+                        </div>
+                    </li>
                 </ul>
                 {/* #Menu */}
             </div>
