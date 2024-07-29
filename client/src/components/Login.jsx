@@ -49,7 +49,7 @@ const Login = () => {
         } catch (e) {
             console.log(e);
         }
-        navigate("/home");
+        navigate("/inicio");
     };
 
     //form Switch

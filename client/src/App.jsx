@@ -6,6 +6,8 @@ import {Route, Routes} from "react-router-dom";
 import Header from "./components/Header";
 import Login from "./components/Login";
 import Home from "./components/Home";
+import ActiveBits from "./components/Bitacoras/ActiveBits";
+import PastBits from "./components/Bitacoras/PastBits";
 
 function App() {
     return (
@@ -13,7 +15,9 @@ function App() {
             <Routes>
                 <Route path="/" element={<Login />}></Route>
                 <Route path="/login" element={<Login />}></Route>
-                <Route path="/home" element={<Home />}></Route>
+                <Route path="/inicio" element={<Home />}></Route>
+                <Route path="/bitacoras_activas" element={<ActiveBits />}></Route>
+                <Route path="/bitacoras_pasadas" element={<PastBits />}></Route>
             </Routes>
         </>
     );

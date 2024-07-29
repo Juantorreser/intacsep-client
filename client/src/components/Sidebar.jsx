@@ -2,17 +2,20 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import {useAuth} from "../context/AuthContext";
+import {useNavigate} from "react-router-dom";
 
 const Sidebar = () => {
     const {user} = useAuth();
-    console.log(user);
+    const navigate = useNavigate();
+
     return (
         <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 vh-100">
             <div className="d-flex flex-column align-items-start p-3">
                 {/* User Info */}
                 <div
-                    className="d-flex align-items-center text-white-50 w-100 justify-content-start"
-                    style={{height: "100px"}}>
+                    className="d-flex align-items-center text-white-50 w-100 justify-content-start cursor-pointer"
+                    style={{height: "100px"}}
+                    onClick={() => navigate("/inicio")}>
                     <div className="d-flex justify-content-center align-items-center w-25 h-100">
                         <i className="fa fa-user" style={{fontSize: "3em"}}></i>
                     </div>
@@ -73,8 +76,16 @@ const Sidebar = () => {
                         </p>
                         <div className="collapse" id="bitacorasCollapse">
                             <ul className="nav flex-column w-75 ms-4 gap-2">
-                                <li className="text-white-50 cursor-pointer">Bitácoras Activas</li>
-                                <li className="text-white-50 cursor-pointer">Bitácoras Pasadas</li>
+                                <li
+                                    className="text-white-50 cursor-pointer"
+                                    onClick={() => navigate("/bitacoras_activas")}>
+                                    Bitácoras Activas
+                                </li>
+                                <li
+                                    className="text-white-50 cursor-pointer"
+                                    onClick={() => navigate("/bitacoras_pasadas")}>
+                                    Bitácoras Pasadas
+                                </li>
                             </ul>
                         </div>
                     </li>
