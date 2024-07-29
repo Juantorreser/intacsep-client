@@ -7,6 +7,7 @@ import User from "./models/User.js";
 import Bitacora from "./models/Bitacora.js";
 import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
+import Sequence from "./models/Sequence.js";
 
 dotenv.config();
 
@@ -298,32 +299,89 @@ app.get("/bitacora_past", async (req, res) => {
 app.post("/bitacora", async (req, res) => {
     const data = req.body;
 
-    console.log(data);
+    try {
+        // Fetch and update the sequence number
+        const sequence = await Sequence.findOneAndUpdate(
+            {name: "bitacora_id"},
+            {$inc: {sequence_value: 1}},
+            {new: true, upsert: true} // Create if not exists
+        );
 
-    //get id_enlace
-    const id_enlace = data.enlaceRastreo;
+        const sequenceNumber = sequence.sequence_value.toString().padStart(6, "0");
 
-    //get id_remolque
-    const id_remolque = data.placaRemolque;
+        const newItem = new Bitacora({
+            bitacora_id: sequenceNumber,
+            destino: data.destino,
+            origen: data.origen,
+            monitoreo: data.monitoreo,
+            cliente: data.cliente,
+            operador: data.operador,
+            telefono: data.telefono,
+            placa_tracto: data.placaTracto,
+            eco_tracto: data.ecoTracto,
+            placa_remolque: data.placaRemolque,
+            eco_remolque: data.ecoRemolque,
+            id_acceso: data.idAcceso,
+            contra_acceso: data.passwordAcceso,
+            enlace: data.enlaceRastreo,
+        });
 
-    //get id_tracto
-    const id_tracto = data.placaTracto;
-
-    const newItem = new Bitacora({
-        destino: data.destino,
-        origen: data.origen,
-        monitoreo: data.monitoreo,
-        cliente: data.cliente,
-        operador: data.operador,
-        telefono: data.telefono,
-        id_enlace: id_enlace,
-        id_remolque: id_remolque,
-        id_tracto: id_tracto,
-    });
-
-    await newItem.save();
+        await newItem.save();
+        res.status(201).send(newItem);
+    } catch (err) {
+        console.error("Error creating bitacora:", err);
+        res.status(500).send("Error creating bitacora");
+    }
 });
 
+app.get("/bitacora/:id", async (req, res) => {
+    try {
+        const bitacora = await Bitacora.findById(req.params.id);
+        if (!bitacora) {
+            return res.status(404).json({message: "Bitacora not found"});
+        }
+        res.json(bitacora);
+    } catch (error) {
+        res.status(500).json({message: "Server error"});
+    }
+});
+
+// Endpoint to start a bitacora
+app.patch("/bitacora/:id/start", async (req, res) => {
+    try {
+        const bitacora = await Bitacora.findById(req.params.id);
+        if (!bitacora) {
+            return res.status(404).json({message: "Bitacora not found"});
+        }
+
+        const date = new Date();
+        bitacora.iniciada = true;
+        bitacora.inicioMonitoreo = date;
+        await bitacora.save();
+
+        res.json(bitacora);
+    } catch (error) {
+        res.status(500).json({message: "Server error"});
+    }
+});
+
+// Endpoint to finish a bitacora
+app.patch("/bitacora/:id/finish", async (req, res) => {
+    try {
+        const bitacora = await Bitacora.findById(req.params.id);
+        if (!bitacora) {
+            return res.status(404).json({message: "Bitacora not found"});
+        }
+        const date = new Date();
+        bitacora.activa = false;
+        bitacora.finalMonitoreo = date;
+        await bitacora.save();
+
+        res.json(bitacora);
+    } catch (error) {
+        res.status(500).json({message: "Server error"});
+    }
+});
 
 //start the server
 app.listen(PORT, () => {

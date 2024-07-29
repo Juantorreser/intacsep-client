@@ -49,7 +49,7 @@ const Login = () => {
         } catch (e) {
             console.log(e);
         }
-        navigate("/inicio");
+        navigate("/bitacoras_activas");
     };
 
     //form Switch

@@ -3,18 +3,18 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import {useAuth} from "../context/AuthContext";
 import {useNavigate} from "react-router-dom";
-import { useEffect } from "react";
+import {useEffect} from "react";
 
 const Sidebar = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const {user} = useAuth();
     const navigate = useNavigate();
+
     // useEffect(() => {
     //     try {
     //         verifyToken();
     //     } catch (e) {
     //         navigate("/login");
-            
     //     }
     // }, []);
 
@@ -33,7 +33,9 @@ const Sidebar = () => {
                         <span className="d-block" style={{fontSize: "0.8rem"}}>
                             Bienvenido
                         </span>
-                        <h5 style={{fontSize: "1.2rem"}}>{`${user.firstName} ${user.lastName}`}</h5>
+                        <h5 style={{fontSize: "1.2rem"}}>
+                            {user ? `${user.firstName} ${user.lastName}` : "Usuario"}
+                        </h5>
                     </div>
                 </div>
                 {/* #User Info */}
@@ -94,7 +96,7 @@ const Sidebar = () => {
                                 <li
                                     className="text-white-50 cursor-pointer"
                                     onClick={() => navigate("/bitacoras_pasadas")}>
-                                    Bitácoras Pasadas
+                                    Bitácoras Cerradas
                                 </li>
                             </ul>
                         </div>
@@ -125,7 +127,7 @@ const Sidebar = () => {
                         </div>
                     </li>
 
-                    {/* integraciones Menu */}
+                    {/* Integraciones Menu */}
                     <li className="nav-item ms-3">
                         <p className="">
                             <a

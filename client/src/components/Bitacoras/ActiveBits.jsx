@@ -15,8 +15,14 @@ const ActiveBits = () => {
     const [showModal, setShowModal] = useState(false);
     const [bitacoras, setBitacoras] = useState([]);
 
+    // useEffect(() => {
+    //     console.log(user);
+    //     if (!user) {
+    //         navigate("/login");
+    //     }
+    // }, []);
     // Form state
-    const operador = `${user.firstName} ${user.lastName}`;
+    const operador = user ? `${user.firstName} ${user.lastName}` : "";
 
     const [formData, setFormData] = useState({
         monitoreo: "",
@@ -26,7 +32,7 @@ const ActiveBits = () => {
         ecoRemolque: "",
         placaRemolque: "",
         operador: operador,
-        telefono: user.phone,
+        telefono: user ? user.phone : "",
         origen: "",
         destino: "",
         enlaceRastreo: "",
@@ -86,7 +92,7 @@ const ActiveBits = () => {
             ecoRemolque: "",
             placaRemolque: "",
             operador: operador,
-            telefono: user.phone,
+            telefono: user ? user.phone : "",
             origen: "",
             destino: "",
             enlaceRastreo: "",
@@ -129,13 +135,18 @@ const ActiveBits = () => {
                                 <li key={bitacora._id} className="mb-3">
                                     <BitacoraCard
                                         id={bitacora._id}
+                                        bitacora_id={bitacora.bitacora_id}
                                         destino={bitacora.destino}
                                         origen={bitacora.origen}
                                         monitoreo={bitacora.monitoreo}
                                         cliente={bitacora.cliente}
-                                        id_enlace={bitacora.id_enlace}
-                                        id_remolque={bitacora.id_remolque}
-                                        id_tracto={bitacora.id_tracto}
+                                        enlace={bitacora.enlace}
+                                        id_acceso={bitacora.id_acceso}
+                                        contra_acceso={bitacora.contra_acceso}
+                                        eco_tracto={bitacora.eco_tracto}
+                                        placa_tracto={bitacora.placa_tracto}
+                                        eco_remolque={bitacora.eco_remolque}
+                                        placa_remolque={bitacora.placa_remolque}
                                         operador={bitacora.operador}
                                         telefono={bitacora.telefono}
                                         inicioMonitoreo={bitacora.inicioMonitoreo}
@@ -191,9 +202,7 @@ const ActiveBits = () => {
                                                 onChange={handleChange}
                                                 required>
                                                 <option value="">Selecciona una opción</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
+                                                <option value="Cuenta espejo">Cuenta espejo</option>
                                             </select>
                                         </div>
 
@@ -210,9 +219,9 @@ const ActiveBits = () => {
                                                 onChange={handleChange}
                                                 required>
                                                 <option value="">Selecciona una opción</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
+                                                <option value="Julio Perez">Julio Perez</option>
+                                                <option value="David Gomez">David Gomez</option>
+                                                <option value="Mario Casas">Mario Casas</option>
                                             </select>
                                         </div>
 
@@ -308,24 +317,18 @@ const ActiveBits = () => {
 
                                         <hr />
 
+                                        {/* Other Form Fields */}
                                         {/* Operador */}
-                                        <label
-                                            htmlFor="remolque-label"
-                                            className="form-label fw-semibold">
-                                            Operador
-                                        </label>
                                         <div className="mb-3">
                                             <label htmlFor="operador" className="form-label">
-                                                Nombre
+                                                Operador
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 id="operador"
                                                 value={formData.operador}
-                                                onChange={handleChange}
-                                                required
-                                                disabled
+                                                readOnly
                                             />
                                         </div>
 
@@ -335,13 +338,11 @@ const ActiveBits = () => {
                                                 Teléfono
                                             </label>
                                             <input
-                                                type="tel"
+                                                type="text"
                                                 className="form-control"
                                                 id="telefono"
                                                 value={formData.telefono}
-                                                onChange={handleChange}
-                                                required
-                                                disabled
+                                                readOnly
                                             />
                                         </div>
 
@@ -379,72 +380,84 @@ const ActiveBits = () => {
 
                                         <hr />
 
-                                        {/* Enlace de rastreo */}
+                                        {/* Enlace de Rastreo */}
                                         <div className="mb-3">
-                                            <label htmlFor="enlace-rastreo" className="form-label">
-                                                Enlace de rastreo
-                                            </label>
-                                            <textarea
-                                                className="form-control"
-                                                id="enlaceRastreo"
-                                                rows="3"
-                                                maxLength="500"
-                                                value={formData.enlaceRastreo}
-                                                onChange={handleChange}
-                                                required></textarea>
-                                        </div>
-
-                                        {/* ID Acceso */}
-                                        <div className="mb-3">
-                                            <label htmlFor="id-acceso" className="form-label">
-                                                ID Acceso
+                                            <label htmlFor="enlaceRastreo" className="form-label">
+                                                Enlace de Rastreo
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
-                                                id="idAcceso"
-                                                maxLength="200"
-                                                value={formData.idAcceso}
+                                                id="enlaceRastreo"
+                                                value={formData.enlaceRastreo}
                                                 onChange={handleChange}
                                                 required
                                             />
                                         </div>
 
-                                        {/* Contraseña de Acceso */}
+                                        {/* Id y Contraseña de Acceso */}
                                         <div className="mb-3">
-                                            <label htmlFor="password-acceso" className="form-label">
-                                                Contraseña de Acceso
+                                            <label
+                                                htmlFor="idAcceso"
+                                                className="form-label fw-semibold">
+                                                Id y Contraseña de Acceso
                                             </label>
-                                            <input
-                                                type="password"
-                                                className="form-control"
-                                                id="passwordAcceso"
-                                                maxLength="200"
-                                                value={formData.passwordAcceso}
-                                                onChange={handleChange}
-                                                required
-                                            />
+                                            <div className="row">
+                                                <div className="col-md-6 mb-3">
+                                                    <label
+                                                        htmlFor="idAcceso"
+                                                        className="form-label">
+                                                        ID de acceso
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="idAcceso"
+                                                        value={formData.idAcceso}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="col-md-6 mb-3">
+                                                    <label
+                                                        htmlFor="passwordAcceso"
+                                                        className="form-label">
+                                                        Contraseña
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="passwordAcceso"
+                                                        value={formData.passwordAcceso}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <hr />
 
-                                        <div className="text-center">
+                                        <div className="d-grid">
                                             <button
-                                                type="button"
-                                                className="btn btn-secondary me-3"
-                                                onClick={handleModalToggle}>
-                                                Cancelar
-                                            </button>
-                                            <button type="submit" className="btn btn-primary">
-                                                Crear Bitácora
+                                                type="submit"
+                                                className="btn btn-primary w-100 mt-2 mb-2">
+                                                Crear
                                             </button>
                                         </div>
                                     </form>
                                 </div>
+                                <div className="modal-footer">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={handleModalToggle}>
+                                        Cerrar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {/* Backdrop */}
                     <div className="modal-backdrop fade show"></div>
                 </>
             )}

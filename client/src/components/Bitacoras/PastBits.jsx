@@ -46,7 +46,7 @@ const PastBits = () => {
                     <Sidebar />
                 </div>
                 <div className="w-100 h-100 col mt-4">
-                    <h1 className="text-center fs-3 fw-semibold text-black">Bitácoras Pasadas</h1>
+                    <h1 className="text-center fs-3 fw-semibold text-black">Bitácoras Cerradas</h1>
 
                     {/* LIST */}
                     <div className="mx-3 my-4">
@@ -54,13 +54,19 @@ const PastBits = () => {
                             {bitacoras.map((bitacora) => (
                                 <li key={bitacora._id} className="mb-3">
                                     <BitacoraCard
+                                        id={bitacora._id}
+                                        bitacora_id={bitacora.bitacora_id}
                                         destino={bitacora.destino}
                                         origen={bitacora.origen}
                                         monitoreo={bitacora.monitoreo}
                                         cliente={bitacora.cliente}
-                                        id_enlace={bitacora.id_enlace}
-                                        id_remolque={bitacora.id_remolque}
-                                        id_tracto={bitacora.id_tracto}
+                                        enlace={bitacora.enlace}
+                                        id_acceso={bitacora.id_acceso}
+                                        contra_acceso={bitacora.contra_acceso}
+                                        placa_remolque={bitacora.placa_remolque}
+                                        placa_tracto={bitacora.placa_tracto}
+                                        eco_remolque={bitacora.eco_remolque}
+                                        eco_tracto={bitacora.eco_tracto}
                                         operador={bitacora.operador}
                                         telefono={bitacora.telefono}
                                         inicioMonitoreo={bitacora.inicioMonitoreo}
