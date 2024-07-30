@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import Sequence from "./models/Sequence.js";
 import Monitoreo from "./models/TipoMonitoreo.js";
 import Client from "./models/Cliente.js";
+import Event from "./models/Event.js";
 
 dotenv.config();
 
@@ -516,7 +517,6 @@ app.put("/users/:id", async (req, res) => {
     }
 });
 
-
 //CLIENTS
 // Get all clients
 app.get("/clients", async (req, res) => {
@@ -562,6 +562,53 @@ app.delete("/clients/:id", async (req, res) => {
         res.json({message: "Client deleted"});
     } catch (error) {
         res.status(500).json({message: error.message});
+    }
+});
+
+//EVENTS
+app.get("/events", async (req, res) => {
+    try {
+        const events = await Event.find();
+        res.json(events);
+    } catch (err) {
+        res.status(500).json({message: err.message});
+    }
+});
+
+app.put("/events/:id", async (req, res) => {
+    try {
+        const updatedEvent = await Event.findByIdAndUpdate(
+            req.params.id,
+            {event: req.body.name},
+            {new: true} // Return the updated document
+        );
+        if (!updatedEvent) return res.status(404).json({message: "Event not found"});
+        res.json(updatedEvent);
+    } catch (err) {
+        res.status(400).json({message: err.message});
+    }
+});
+
+
+app.post("/events", async (req, res) => {
+    const event = new Event({
+        event: req.body.name,
+    });
+    try {
+        const newEvent = await event.save();
+        res.status(201).json(newEvent);
+    } catch (err) {
+        res.status(400).json({message: err.message});
+    }
+});
+
+app.delete("/events/:id", async (req, res) => {
+    try {
+        const result = await Event.findByIdAndDelete(req.params.id);
+        if (!result) return res.status(404).json({message: "Event not found"});
+        res.json({message: "Event deleted"});
+    } catch (err) {
+        res.status(500).json({message: err.message});
     }
 });
 

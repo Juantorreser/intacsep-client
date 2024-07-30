@@ -13,6 +13,7 @@ import TiposMonitoreo from "./components/Settings/TiposMonitoreo";
 import UsersPage from "./components/Settings/UsersPage";
 import UserRolePage from "./components/Settings/UserRolePage";
 import ClientsPage from "./components/Settings/ClientsPage";
+import EventsPage from "./components/Settings/EventsPage";
 
 function App() {
     return (
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/usuarios" element={<UsersPage />}></Route>
                 <Route path="/roles" element={<UserRolePage />}></Route>
                 <Route path="/clientes" element={<ClientsPage />}></Route>
+                <Route path="/eventos" element={<EventsPage />}></Route>
             </Routes>
         </>
     );
