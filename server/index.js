@@ -9,6 +9,7 @@ import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import Sequence from "./models/Sequence.js";
 import Monitoreo from "./models/TipoMonitoreo.js";
+import Client from "./models/Cliente.js";
 
 dotenv.config();
 
@@ -482,6 +483,77 @@ app.delete("/users/:id", async (req, res) => {
             return res.status(404).json({message: "User not found"});
         }
         res.status(200).json(deletedUser);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+});
+
+//UPDATE user
+app.put("/users/:id", async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                administrator: req.body.administrator,
+                operator: req.body.operator,
+            },
+            {new: true}
+        );
+
+        if (!user) {
+            return res.status(404).json({message: "User not found"});
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({message: "Server error"});
+    }
+});
+
+//CLIENTS
+// Get all clients
+app.get("/clients", async (req, res) => {
+    try {
+        const clients = await Client.find();
+        res.json(clients);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+});
+
+// Create a new client
+app.post("/clients", async (req, res) => {
+    const client = new Client(req.body);
+    try {
+        const newClient = await client.save();
+        res.status(201).json(newClient);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+});
+
+// Update a client
+app.put("/clients/:id", async (req, res) => {
+    try {
+        const updatedClient = await Client.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        if (!updatedClient) {
+            return res.status(404).json({message: "Client not found"});
+        }
+        res.json(updatedClient);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+});
+
+// Delete a client
+app.delete("/clients/:id", async (req, res) => {
+    try {
+        const deletedClient = await Client.findByIdAndDelete(req.params.id);
+        if (!deletedClient) {
+            return res.status(404).json({message: "Client not found"});
+        }
+        res.json({message: "Client deleted"});
     } catch (error) {
         res.status(500).json({message: error.message});
     }

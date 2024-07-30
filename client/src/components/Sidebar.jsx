@@ -6,17 +6,21 @@ import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 
 const Sidebar = () => {
-    const baseUrl = import.meta.env.VITE_BASE_URL;
-    const {user} = useAuth();
+    const {user, verifyToken} = useAuth();
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     try {
-    //         verifyToken();
-    //     } catch (e) {
-    //         navigate("/login");
-    //     }
-    // }, []);
+    useEffect(() => {
+        const init = async () => {
+            try {
+                await verifyToken();
+            } catch (e) {
+                navigate("/login");
+            }
+        };
+
+        init();
+        console.log(user);
+    }, []);
 
     return (
         <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 h-100">
@@ -91,12 +95,12 @@ const Sidebar = () => {
                                 <li
                                     className="text-white-50 cursor-pointer"
                                     onClick={() => navigate("/bitacoras_activas")}>
-                                    Bitácoras Activas
+                                    Activas
                                 </li>
                                 <li
                                     className="text-white-50 cursor-pointer"
                                     onClick={() => navigate("/bitacoras_pasadas")}>
-                                    Bitácoras Cerradas
+                                    Cerradas
                                 </li>
                             </ul>
                         </div>
@@ -123,14 +127,26 @@ const Sidebar = () => {
                                     onClick={() => navigate("/tipos_monitoreo")}>
                                     Tipos de monitoreo
                                 </li>
-                                <li className="text-white-50 cursor-pointer">Eventos</li>
-                                <li className="text-white-50 cursor-pointer">Clientes</li>
+                                <li
+                                    className="text-white-50 cursor-pointer"
+                                    onClick={() => navigate("/eventos")}>
+                                    Eventos
+                                </li>
+                                <li
+                                    className="text-white-50 cursor-pointer"
+                                    onClick={() => navigate("/clientes")}>
+                                    Clientes
+                                </li>
                                 <li
                                     className="text-white-50 cursor-pointer"
                                     onClick={() => navigate("/usuarios")}>
                                     Usuarios
                                 </li>
-                                <li className="text-white-50 cursor-pointer">Roles</li>
+                                <li
+                                    className="text-white-50 cursor-pointer"
+                                    onClick={() => navigate("/roles")}>
+                                    Roles
+                                </li>
                             </ul>
                         </div>
                     </li>

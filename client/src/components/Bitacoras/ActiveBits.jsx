@@ -38,47 +38,61 @@ const ActiveBits = () => {
     });
 
     useEffect(() => {
-        // Fetch bitacoras when the component mounts
-        const fetchBitacoras = async () => {
+        const initialize = async () => {
             try {
-                const response = await fetch(`${baseUrl}/bitacora_active`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setBitacoras(data);
-                    console.log("Fetched bitácoras:", data);
+                await verifyToken();
+                console.log("User after verifyToken:", user);
+
+                if (!user) {
+                    await verifyToken();
                 } else {
-                    console.error("Failed to fetch bitácoras:", response.statusText);
+                    setFormData((prevData) => ({
+                        ...prevData,
+                        operador: `${user.firstName} ${user.lastName}`,
+                        telefono: user.phone,
+                    }));
+
+                    fetchBitacoras();
+                    fetchMonitoreos();
                 }
             } catch (e) {
-                console.error("Error fetching bitácoras:", e);
+                console.error("Verification failed:", e);
+                navigate("/login");
             }
         };
 
-        // Fetch monitoreos when the component mounts
-        const fetchMonitoreos = async () => {
-            try {
-                const response = await fetch(`${baseUrl}/monitoreos`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setMonitoreos(data);
-                    console.log("Fetched monitoreos:", data);
-                } else {
-                    console.error("Failed to fetch monitoreos:", response.statusText);
-                }
-            } catch (e) {
-                console.error("Error fetching monitoreos:", e);
-            }
-        };
+        initialize();
+    }, []);
 
-        fetchBitacoras();
-        fetchMonitoreos();
-
+    const fetchBitacoras = async () => {
         try {
-            verifyToken();
+            const response = await fetch(`${baseUrl}/bitacora_active`);
+            if (response.ok) {
+                const data = await response.json();
+                setBitacoras(data);
+                console.log("Fetched bitácoras:", data);
+            } else {
+                console.error("Failed to fetch bitácoras:", response.statusText);
+            }
         } catch (e) {
-            navigate("/login");
+            console.error("Error fetching bitácoras:", e);
         }
-    }, [baseUrl, navigate, verifyToken]);
+    };
+
+    const fetchMonitoreos = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/monitoreos`);
+            if (response.ok) {
+                const data = await response.json();
+                setMonitoreos(data);
+                console.log("Fetched monitoreos:", data);
+            } else {
+                console.error("Failed to fetch monitoreos:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching monitoreos:", e);
+        }
+    };
 
     const handleModalToggle = () => {
         setShowModal(!showModal);

@@ -11,6 +11,8 @@ import PastBits from "./components/Bitacoras/PastBits";
 import BitacoraDetail from "./components/Bitacoras/BitacoraDetail";
 import TiposMonitoreo from "./components/Settings/TiposMonitoreo";
 import UsersPage from "./components/Settings/UsersPage";
+import UserRolePage from "./components/Settings/UserRolePage";
+import ClientsPage from "./components/Settings/ClientsPage";
 
 function App() {
     return (
@@ -24,6 +26,8 @@ function App() {
                 <Route path="/bitacora/:id" element={<BitacoraDetail />} />
                 <Route path="/tipos_monitoreo" element={<TiposMonitoreo />}></Route>
                 <Route path="/usuarios" element={<UsersPage />}></Route>
+                <Route path="/roles" element={<UserRolePage />}></Route>
+                <Route path="/clientes" element={<ClientsPage />}></Route>
             </Routes>
         </>
     );

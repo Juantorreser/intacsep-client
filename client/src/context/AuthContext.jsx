@@ -3,48 +3,49 @@ import {createContext, useState, useEffect, useContext} from "react";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
 
-
 const AuthContext = createContext(undefined);
 
 const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
-    const [cookies] = useCookies(["access_token", "refresh_token"]);
+    const [cookies, setCookie, removeCookie] = useCookies(["access_token", "refresh_token"]);
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserFromToken = async () => {
-            try {
-                await verifyToken();
-            } catch (error) {
-                setUser(null);
+            if (cookies.access_token) {
+                try {
+                    await verifyToken();
+                } catch (error) {
+                    console.error("Token verification failed:", error);
+                    setUser(null); // Set user to null only if token verification fails
+                }
             }
         };
 
-        if (cookies.access_token) {
-            fetchUserFromToken();
-        }
+        fetchUserFromToken();
     }, [cookies.access_token]);
 
     const verifyToken = async () => {
         try {
             const response = await fetch(`${baseUrl}/protected`, {
                 method: "POST",
-                headers: {"content-type": "application/json"},
+                headers: {"Content-Type": "application/json"},
                 credentials: "include",
             });
 
             if (response.status === 401) {
+                // Attempt to refresh token if unauthorized
                 await refreshToken();
+                return; // Do not set user here; refreshToken will handle it
             }
 
-            if (!response.ok) {
-                throw new Error("Network Error");
-            }
             const data = await response.json();
-            setUser(data.user);
+            console.log("Verified user data:", data.user);
+            setUser(data.user); // Update user if verification is successful
         } catch (e) {
-            setUser(null);
+            console.error("Error verifying token:", e);
+            setUser(null); // Set user to null if there's an error
         }
     };
 
@@ -58,11 +59,14 @@ const AuthProvider = ({children}) => {
             if (!response.ok) {
                 throw new Error("Failed to refresh token");
             }
-            verifyToken();
+
+            const data = await response.json();
+            setCookie("access_token", data.access_token, {path: "/"});
+            await verifyToken(); // Verify the token again after refreshing
         } catch (e) {
-            setUser(null);
-            navigate("/");
-            logout();
+            console.error("Error refreshing token:", e);
+            setUser(null); // Set user to null if refresh fails
+            logout(); // Optionally, navigate to login or home
         }
     };
 
@@ -70,36 +74,43 @@ const AuthProvider = ({children}) => {
         try {
             const response = await fetch(`${baseUrl}/login`, {
                 method: "POST",
-                headers: {"content-type": "application/json"},
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({email, password}),
                 credentials: "include",
             });
+
             if (!response.ok) {
                 throw new Error("Login failed");
             }
+
             const data = await response.json();
             setUser(data.user);
+            setCookie("access_token", data.access_token, {path: "/"});
+            setCookie("refresh_token", data.refresh_token, {path: "/"});
         } catch (e) {
-            console.log(e);
+            console.error("Error during login:", e);
         }
-        console.log('Logged');
     };
 
     const logout = async () => {
         try {
             const response = await fetch(`${baseUrl}/logout`, {
                 method: "POST",
-                headers: {"content-type": "application/json"},
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({message: "logout"}),
                 credentials: "include",
             });
+
             if (!response.ok) {
                 throw new Error("Logout failed");
             }
-            setUser(null);
-            navigate("/");
+
+            setUser(null); // Clear user state upon logout
+            removeCookie("access_token", {path: "/"});
+            removeCookie("refresh_token", {path: "/"});
+            navigate("/"); // Navigate to the home or login page
         } catch (e) {
-            console.log(e);
+            console.error("Error during logout:", e);
         }
     };
 
