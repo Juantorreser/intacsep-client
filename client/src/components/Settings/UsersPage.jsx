@@ -1,12 +1,11 @@
 import React, {useState, useEffect} from "react";
-import UserCard from "./UserCard"; // Adjust path as needed
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
 
 const UsersPage = () => {
     const [users, setUsers] = useState([]);
-    const [showModal, setShowModal] = useState(false);
+    const [editingUserId, setEditingUserId] = useState(null);
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -17,6 +16,7 @@ const UsersPage = () => {
         administrator: false,
         operator: false,
     });
+    const [isModalVisible, setModalVisible] = useState(false);
 
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -36,7 +36,7 @@ const UsersPage = () => {
         };
 
         fetchUsers();
-    }, []);
+    }, [baseUrl]);
 
     const handleDelete = async (id) => {
         try {
@@ -54,8 +54,13 @@ const UsersPage = () => {
         }
     };
 
-    const handleModalToggle = () => {
-        setShowModal(!showModal);
+    const handleEdit = (user) => {
+        setEditingUserId(user._id);
+        setFormData({
+            ...user,
+            password: "", // Reset password field when editing
+        });
+        setModalVisible(true);
     };
 
     const handleChange = (e) => {
@@ -69,13 +74,16 @@ const UsersPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`${baseUrl}/users`, {
-                method: "POST",
+            const method = editingUserId ? "PUT" : "POST";
+            const url = editingUserId ? `${baseUrl}/users/${editingUserId}` : `${baseUrl}/users`;
+
+            const response = await fetch(url, {
+                method,
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
                 body: JSON.stringify({
                     email: formData.email,
-                    password: formData.password, // Ensure this matches the server expectation
+                    password: formData.password,
                     firstName: formData.firstName,
                     lastName: formData.lastName,
                     phone: formData.phone,
@@ -84,17 +92,56 @@ const UsersPage = () => {
                     operator: formData.operator,
                 }),
             });
+
             if (response.ok) {
-                const newUser = await response.json();
-                setUsers([...users, newUser]);
-                handleModalToggle();
+                const updatedUser = await response.json();
+                if (editingUserId) {
+                    setUsers(
+                        users.map((user) => (user._id === updatedUser._id ? updatedUser : user))
+                    );
+                } else {
+                    setUsers([...users, updatedUser]);
+                }
+                // Reset state
+                setEditingUserId(null);
+                setFormData({
+                    email: "",
+                    password: "",
+                    firstName: "",
+                    lastName: "",
+                    phone: "",
+                    countryKey: "",
+                    administrator: false,
+                    operator: false,
+                });
+                setModalVisible(false);
             } else {
                 const errorData = await response.json();
-                console.error("Failed to create user:", errorData.message);
+                console.error("Failed to save user:", errorData.message);
             }
         } catch (e) {
-            console.error("Error creating user:", e);
+            console.error("Error saving user:", e);
         }
+    };
+
+    const handleCreateNew = () => {
+        setEditingUserId(null);
+        setFormData({
+            email: "",
+            password: "",
+            firstName: "",
+            lastName: "",
+            phone: "",
+            countryKey: "",
+            administrator: false,
+            operator: false,
+        });
+        setModalVisible(true);
+    };
+
+    const closeModal = () => {
+        setModalVisible(false);
+        setEditingUserId(null);
     };
 
     return (
@@ -106,21 +153,59 @@ const UsersPage = () => {
                 </div>
 
                 <div className="w-100 h-100 col mt-4">
-                    <h1 className="text-center fs-3 fw-semibold text-black">Usuarios</h1>
-                    <div className="text-center mt-4">
-                        <button className="btn btn-primary" onClick={handleModalToggle}>
-                            Crear Nuevo Usuario
+                    <div className="position-relative mb-4">
+                        <h1 className="fs-3 fw-semibold text-black text-center m-0">Usuarios</h1>
+                        <button
+                            className="btn btn-primary rounded-5 position-absolute end-0 top-50 translate-middle-y me-3"
+                            onClick={handleCreateNew}>
+                            <i className="fas fa-plus"></i>
                         </button>
                     </div>
 
                     <div className="mx-3 my-4">
-                        {users.map((user) => (
-                            <UserCard key={user._id} user={user} onDelete={handleDelete} />
-                        ))}
+                        <div className="table-responsive">
+                            <table className="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Telefono</th>
+                                        <th>Administrador</th>
+                                        <th>Operador</th>
+                                        <th className="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {users.map((user) => (
+                                        <tr key={user._id}>
+                                            <td>{user.email}</td>
+                                            <td>{user.firstName}</td>
+                                            <td>{user.lastName}</td>
+                                            <td>{user.phone}</td>
+                                            <td>{user.administrator ? "Sí" : "No"}</td>
+                                            <td>{user.operator ? "Sí" : "No"}</td>
+                                            <td className="text-end">
+                                                <button
+                                                    className="btn btn-warning me-2"
+                                                    onClick={() => handleEdit(user)}>
+                                                    <i className="fas fa-pencil-alt"></i>
+                                                </button>
+                                                <button
+                                                    className="btn btn-danger"
+                                                    onClick={() => handleDelete(user._id)}>
+                                                    <i className="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     {/* Modal with Backdrop */}
-                    {showModal && (
+                    {isModalVisible && (
                         <>
                             <div
                                 className="modal fade show d-block"
@@ -132,12 +217,14 @@ const UsersPage = () => {
                                     <div className="modal-content">
                                         <div className="modal-header">
                                             <h5 className="modal-title" id="userModalLabel">
-                                                Crear Nuevo Usuario
+                                                {editingUserId
+                                                    ? "Editar Usuario"
+                                                    : "Crear Nuevo Usuario"}
                                             </h5>
                                             <button
                                                 type="button"
                                                 className="btn-close"
-                                                onClick={handleModalToggle}
+                                                onClick={closeModal}
                                                 aria-label="Close"></button>
                                         </div>
                                         <div className="modal-body">
@@ -170,7 +257,7 @@ const UsersPage = () => {
                                                         id="password"
                                                         value={formData.password}
                                                         onChange={handleChange}
-                                                        required
+                                                        required={!editingUserId}
                                                     />
                                                 </div>
 
@@ -223,7 +310,7 @@ const UsersPage = () => {
                                                 </div>
 
                                                 {/* Country Key */}
-                                                <div className="mb-3">
+                                                {/* <div className="mb-3">
                                                     <label
                                                         htmlFor="countryKey"
                                                         className="form-label">
@@ -236,7 +323,7 @@ const UsersPage = () => {
                                                         value={formData.countryKey}
                                                         onChange={handleChange}
                                                     />
-                                                </div>
+                                                </div> */}
 
                                                 {/* Administrator */}
                                                 <div className="mb-3 form-check">
@@ -271,16 +358,16 @@ const UsersPage = () => {
                                                 </div>
 
                                                 <button type="submit" className="btn btn-primary">
-                                                    Crear Usuario
+                                                    {editingUserId
+                                                        ? "Guardar Cambios"
+                                                        : "Crear Usuario"}
                                                 </button>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div
-                                className="modal-backdrop fade show"
-                                onClick={handleModalToggle}></div>
+                            <div className="modal-backdrop fade show" onClick={closeModal}></div>
                         </>
                     )}
                 </div>
