@@ -2,7 +2,6 @@ import React, {useState, useEffect} from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
-import MonitoreoCard from "./MonitoreoCard"; // Adjust path as needed
 
 const TiposMonitoreo = () => {
     const [monitoreos, setMonitoreos] = useState([]);
@@ -83,36 +82,53 @@ const TiposMonitoreo = () => {
                     <div className="mx-3 my-4">
                         <form onSubmit={handleCreate} className="mb-4">
                             <div className="form-group">
-                                <div className="row">
+                                <div className="input-group">
                                     <input
                                         type="text"
                                         id="newMonitoreo"
-                                        className="form-control"
+                                        className="form-control rounded-2"
                                         value={newMonitoreo}
                                         onChange={(e) => setNewMonitoreo(e.target.value)}
                                         placeholder="Ingrese nuevo tipo de monitoreo"
                                     />
-                                    <button type="submit" className="btn btn-primary mt-3">
-                                        Agregar
-                                    </button>
+                                    <div className="input-group-append ms-2">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-primary rounded-circle">
+                                            <i className="fas fa-plus"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </form>
                     </div>
 
-                    {/* LIST */}
+                    {/* Responsive Table */}
                     <div className="mx-3 my-4">
-                        <ul className="list-unstyled">
-                            {monitoreos.map((monitoreo) => (
-                                <li key={monitoreo._id} className="mb-3">
-                                    <MonitoreoCard
-                                        id={monitoreo._id}
-                                        tipoMonitoreo={monitoreo.tipoMonitoreo}
-                                        onDelete={handleDelete}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="table-responsive">
+                            <table className="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo de Monitoreo</th>
+                                        <th className="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {monitoreos.map((monitoreo) => (
+                                        <tr key={monitoreo._id}>
+                                            <td>{monitoreo.tipoMonitoreo}</td>
+                                            <td className="text-end">
+                                                <button
+                                                    className="btn btn-danger rounded-circle"
+                                                    onClick={() => handleDelete(monitoreo._id)}>
+                                                    <i className="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
