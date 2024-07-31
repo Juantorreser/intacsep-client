@@ -5,6 +5,8 @@ import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
 import {formatDate} from "../../utils/dateUtils"; // Ensure you have a utility to format dates
+import jsPDF from "jspdf";
+import "jspdf-autotable"; // For table support in jsPDF
 
 const BitacorasPage = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -137,6 +139,57 @@ const BitacorasPage = () => {
         }
     };
 
+    const generatePDF = (bitacora) => {
+        const doc = new jsPDF();
+
+        // Add a title
+        doc.text(`Bitácora Report`, 105, 10, null, null, "center");
+
+        // Table for Bitácora Details
+        doc.autoTable({
+            startY: 20,
+            head: [["Campo", "Valor"]],
+            body: [
+                ["Bitácora ID", bitacora.bitacora_id],
+                ["Cliente", bitacora.cliente],
+                ["Tipo de Monitoreo", bitacora.monitoreo],
+                ["Operador", bitacora.operador],
+                ["Teléfono", bitacora.telefono],
+                ["Fecha Creación", formatDate(bitacora.createdAt)],
+                ["Status", bitacora.status],
+                ["Origen", bitacora.origen],
+                ["Destino", bitacora.destino],
+                ["Enlace de Rastreo", bitacora.enlace],
+                ["ID de Acceso", bitacora.id_acceso],
+                ["Contraseña de Acceso", bitacora.contra_acceso],
+                ["ECO Tracto", bitacora.eco_tracto],
+                ["Placa Tracto", bitacora.placa_tracto],
+                ["ECO Remolque", bitacora.eco_remolque],
+                ["Placa Remolque", bitacora.placa_remolque],
+                ["Inicio de Monitoreo", formatDate(bitacora.inicioMonitoreo)],
+                ["Final de Monitoreo", formatDate(bitacora.finalMonitoreo)],
+            ],
+        });
+
+        // Add some space before the next table
+        let finalY = doc.lastAutoTable.finalY + 10;
+
+        // Table for Events
+        doc.autoTable({
+            startY: finalY,
+            head: [["Nombre del Evento", "Descripción", "Fecha de Creación"]],
+            body: bitacora.eventos.map((evento) => [
+                evento.name,
+                evento.description,
+                formatDate(evento.createdAt),
+            ]),
+        });
+
+        // Save the PDF
+        doc.save(`Bitacora_${bitacora.bitacora_id}.pdf`);
+    };
+
+
     return (
         <section id="activeBits">
             <Header />
@@ -164,7 +217,7 @@ const BitacorasPage = () => {
                                         <th>Cliente</th>
                                         <th>Tipo Monitoreo</th>
                                         <th>Operador</th>
-                                        <th>Fecha Creacion</th>
+                                        <th>Fecha Creación</th>
                                         <th>Status</th>
                                         <th>
                                             <i className="fa fa-download"></i>
@@ -187,7 +240,10 @@ const BitacorasPage = () => {
                                             <td>{formatDate(bitacora.createdAt)}</td>
                                             <td>{bitacora.status}</td>
                                             <td>
-                                                <button className="btn btn-secondary">
+                                                <button
+                                                    className="btn btn-secondary"
+                                                    onClick={() => generatePDF(bitacora)}
+                                                    disabled={bitacora.status !== "finalizada"}>
                                                     <i className="fa fa-download"></i>
                                                 </button>
                                             </td>

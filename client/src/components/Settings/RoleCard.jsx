@@ -31,27 +31,22 @@ const RoleCard = ({
                         <hr />
                         <div className="d-flex flex-wrap">
                             <div>
-                                <h6 className="font-weight-bold">Bitacoras</h6>
-                                {[
-                                    {name: "Bitacoras_activas", label: "Bitacoras Activas"},
-                                    {name: "Bitacoras_historial", label: "Bitacoras Historial"},
-                                ].map(({name, label}) => (
-                                    <div key={name} className="form-check me-3">
-                                        <input
-                                            type="checkbox"
-                                            name={name}
-                                            className="form-check-input"
-                                            checked={
-                                                editRole && role._id === editRole._id
-                                                    ? editRoleData[name]
-                                                    : role[name]
-                                            }
-                                            onChange={handleInputChange}
-                                            disabled={editRole && role._id !== editRole._id}
-                                        />
-                                        <label className="form-check-label">{label}</label>
-                                    </div>
-                                ))}
+                                <h6 className="font-weight-bold">Monitoreo</h6>
+                                <div className="form-check me-3">
+                                    <input
+                                        type="checkbox"
+                                        name="bitacoras"
+                                        className="form-check-input"
+                                        checked={
+                                            editRole && role._id === editRole._id
+                                                ? editRoleData.bitacoras
+                                                : role.bitacoras
+                                        }
+                                        onChange={handleInputChange}
+                                        disabled={editRole && role._id !== editRole._id}
+                                    />
+                                    <label className="form-check-label">Bitacoras</label>
+                                </div>
                             </div>
                             <hr className="d-md-none w-100" />
                             <div>

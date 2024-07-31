@@ -681,8 +681,7 @@ app.get("/roles", async (req, res) => {
 app.post("/roles", async (req, res) => {
     const role = new Role({
         name: req.body.name,
-        Bitacoras_activas: req.body.Bitacoras_activas,
-        Bitacoras_historial: req.body.Bitacoras_historial,
+        bitacoras: req.body.bitacoras,
         tipos_de_monitoreo: req.body.tipos_de_monitoreo,
         eventos: req.body.eventos,
         clientes: req.body.clientes,

@@ -3,12 +3,7 @@ import mongoose, {mongo} from "mongoose";
 
 const RoleSchema = new mongoose.Schema(
     {
-        Bitacoras_activas: {
-            type: Boolean,
-            required: true,
-            default: false,
-        },
-        Bitacoras_historial: {
+        bitacoras: {
             type: Boolean,
             required: true,
             default: false,

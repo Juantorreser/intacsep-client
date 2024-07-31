@@ -3,11 +3,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import {useAuth} from "../context/AuthContext";
 import {useNavigate} from "react-router-dom";
-import { Cookies } from "react-cookie";
+import {Cookies} from "react-cookie";
 
 const Sidebar = () => {
     const {user, verifyToken} = useAuth();
     const navigate = useNavigate();
+    const [roleData, setRoleData] = useState(null);
+    const baseUrl = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
         const init = async () => {
@@ -15,10 +17,10 @@ const Sidebar = () => {
                 await verifyToken();
 
                 if (user) {
-                    const response = await fetch(`/roles/${user.role}`);
+                    const response = await fetch(`${baseUrl}/roles/${user.role}`);
                     const data = await response.json();
-                    console.log(data);
-                    // setRoleData(data);
+                    console.log("Role Data:", data); // Log role data for debugging
+                    setRoleData(data);
                 }
             } catch (e) {
                 // navigate("/login");
@@ -26,7 +28,8 @@ const Sidebar = () => {
         };
 
         init();
-    }, [Cookies.access_token]);
+    }, []);
+
     const [collapsedItems, setCollapsedItems] = useState({
         dashboardCollapse: false,
         bitacorasCollapse: false,
@@ -111,78 +114,96 @@ const Sidebar = () => {
                     </li>
 
                     {/* Monitoreo Menu */}
-                    <li className="nav-item ms-3">
-                        <p className="">
-                            <a
-                                className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
-                                role="button"
-                                onClick={() => toggleCollapse("bitacorasCollapse")}>
-                                Monitoreo
-                                <i
-                                    className={`fa ${
-                                        collapsedItems.bitacorasCollapse ? "fa-minus" : "fa-plus"
-                                    } text-white-50 my-auto icon-toggle`}></i>
-                            </a>
-                        </p>
-                        <div
-                            className={`collapse ${
-                                collapsedItems.bitacorasCollapse ? "show" : ""
-                            }`}>
-                            <ul className="nav flex-column w-75 ms-4 gap-2">
-                                <li
-                                    className="text-white-50 cursor-pointer"
-                                    onClick={() => navigate("/bitacoras")}>
-                                    Bitácoras
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+                    {roleData && roleData.bitacoras && (
+                        <li className="nav-item ms-3">
+                            <p className="">
+                                <a
+                                    className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center"
+                                    role="button"
+                                    onClick={() => toggleCollapse("bitacorasCollapse")}>
+                                    Monitoreo
+                                    <i
+                                        className={`fa ${
+                                            collapsedItems.bitacorasCollapse
+                                                ? "fa-minus"
+                                                : "fa-plus"
+                                        } text-white-50 icon-toggle`}></i>
+                                </a>
+                            </p>
+                            <div
+                                className={`collapse ${
+                                    collapsedItems.bitacorasCollapse ? "show" : ""
+                                }`}>
+                                <ul className="nav flex-column w-75 gap-2">
+                                    <li
+                                        className="text-white-50 cursor-pointer mb-3 ms-3 mt-0"
+                                        onClick={() => navigate("/bitacoras")}>
+                                        Bitácoras
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    )}
 
                     {/* Settings Menu */}
-                    <li className="nav-item ms-3">
-                        <p className="">
-                            <a
-                                className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
-                                role="button"
-                                onClick={() => toggleCollapse("settingsCollapse")}>
-                                Configuración
-                                <i
-                                    className={`fa ${
-                                        collapsedItems.settingsCollapse ? "fa-minus" : "fa-plus"
-                                    } text-white-50 my-auto icon-toggle`}></i>
-                            </a>
-                        </p>
-                        <div
-                            className={`collapse ${collapsedItems.settingsCollapse ? "show" : ""}`}>
-                            <ul className="nav flex-column w-75 ms-4 gap-2">
-                                <li
-                                    className="text-white-50 cursor-pointer"
-                                    onClick={() => navigate("/tipos_monitoreo")}>
-                                    Tipos de monitoreo
-                                </li>
-                                <li
-                                    className="text-white-50 cursor-pointer"
-                                    onClick={() => navigate("/eventos")}>
-                                    Eventos
-                                </li>
-                                <li
-                                    className="text-white-50 cursor-pointer"
-                                    onClick={() => navigate("/clientes")}>
-                                    Clientes
-                                </li>
-                                <li
-                                    className="text-white-50 cursor-pointer"
-                                    onClick={() => navigate("/usuarios")}>
-                                    Usuarios
-                                </li>
-                                <li
-                                    className="text-white-50 cursor-pointer"
-                                    onClick={() => navigate("/roles")}>
-                                    Roles
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+                    {roleData && (
+                        <li className="nav-item ms-3">
+                            <p className="">
+                                <a
+                                    className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
+                                    role="button"
+                                    onClick={() => toggleCollapse("settingsCollapse")}>
+                                    Configuración
+                                    <i
+                                        className={`fa ${
+                                            collapsedItems.settingsCollapse ? "fa-minus" : "fa-plus"
+                                        } text-white-50 my-auto icon-toggle`}></i>
+                                </a>
+                            </p>
+                            <div
+                                className={`collapse ${
+                                    collapsedItems.settingsCollapse ? "show" : ""
+                                }`}>
+                                <ul className="nav flex-column w-75 ms-4 gap-2">
+                                    {roleData.tipos_de_monitoreo && (
+                                        <li
+                                            className="text-white-50 cursor-pointer"
+                                            onClick={() => navigate("/tipos_monitoreo")}>
+                                            Tipos de monitoreo
+                                        </li>
+                                    )}
+                                    {roleData.eventos && (
+                                        <li
+                                            className="text-white-50 cursor-pointer"
+                                            onClick={() => navigate("/eventos")}>
+                                            Eventos
+                                        </li>
+                                    )}
+                                    {roleData.clientes && (
+                                        <li
+                                            className="text-white-50 cursor-pointer"
+                                            onClick={() => navigate("/clientes")}>
+                                            Clientes
+                                        </li>
+                                    )}
+                                    {roleData.usuarios && (
+                                        <li
+                                            className="text-white-50 cursor-pointer"
+                                            onClick={() => navigate("/usuarios")}>
+                                            Usuarios
+                                        </li>
+                                    )}
+                                    {roleData.roles && (
+                                        <li
+                                            className="text-white-50 cursor-pointer"
+                                            onClick={() => navigate("/roles")}>
+                                            Roles
+                                        </li>
+                                    )}
+                                </ul>
+                            </div>
+                        </li>
+                    )}
 
                     {/* Integraciones Menu */}
                     <li className="nav-item ms-3">

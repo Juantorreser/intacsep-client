@@ -8,8 +8,7 @@ const RolePage = () => {
     const [roles, setRoles] = useState([]);
     const [newRole, setNewRole] = useState({
         name: "",
-        Bitacoras_activas: false,
-        Bitacoras_historial: false,
+        bitacoras: false,
         tipos_de_monitoreo: false,
         eventos: false,
         clientes: false,
@@ -19,8 +18,7 @@ const RolePage = () => {
     const [editRole, setEditRole] = useState(null);
     const [editRoleData, setEditRoleData] = useState({
         name: "",
-        Bitacoras_activas: false,
-        Bitacoras_historial: false,
+        bitacoras: false,
         tipos_de_monitoreo: false,
         eventos: false,
         clientes: false,
@@ -88,8 +86,7 @@ const RolePage = () => {
                 setRoles([...roles, createdRole]);
                 setNewRole({
                     name: "",
-                    Bitacoras_activas: false,
-                    Bitacoras_historial: false,
+                    bitacoras: false,
                     tipos_de_monitoreo: false,
                     eventos: false,
                     clientes: false,
@@ -129,8 +126,7 @@ const RolePage = () => {
                 setEditRole(null);
                 setEditRoleData({
                     name: "",
-                    Bitacoras_activas: false,
-                    Bitacoras_historial: false,
+                    bitacoras: false,
                     tipos_de_monitoreo: false,
                     eventos: false,
                     clientes: false,
@@ -150,8 +146,7 @@ const RolePage = () => {
         setEditRole(null);
         setEditRoleData({
             name: "",
-            Bitacoras_activas: false,
-            Bitacoras_historial: false,
+            bitacoras: false,
             tipos_de_monitoreo: false,
             eventos: false,
             clientes: false,
@@ -242,29 +237,14 @@ const RolePage = () => {
                                 <div className="form-check">
                                     <input
                                         type="checkbox"
-                                        id="Bitacoras_activas"
-                                        name="Bitacoras_activas"
+                                        id="bitacoras"
+                                        name="bitacoras"
                                         className="form-check-input"
-                                        checked={newRole.Bitacoras_activas}
+                                        checked={newRole.bitacoras}
                                         onChange={(e) => handleInputChange(e, setNewRole)}
                                     />
-                                    <label htmlFor="Bitacoras_activas" className="form-check-label">
-                                        Bitacoras Activas
-                                    </label>
-                                </div>
-                                <div className="form-check">
-                                    <input
-                                        type="checkbox"
-                                        id="Bitacoras_historial"
-                                        name="Bitacoras_historial"
-                                        className="form-check-input"
-                                        checked={newRole.Bitacoras_historial}
-                                        onChange={(e) => handleInputChange(e, setNewRole)}
-                                    />
-                                    <label
-                                        htmlFor="Bitacoras_historial"
-                                        className="form-check-label">
-                                        Bitacoras Historial
+                                    <label htmlFor="bitacoras" className="form-check-label">
+                                        Bitacoras
                                     </label>
                                 </div>
                                 <div className="form-check">
@@ -343,7 +323,7 @@ const RolePage = () => {
                                     Close
                                 </button>
                                 <button type="submit" className="btn btn-primary">
-                                    Save Role
+                                    Save
                                 </button>
                             </div>
                         </form>
