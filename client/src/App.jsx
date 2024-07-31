@@ -11,7 +11,7 @@ import PastBits from "./components/Bitacoras/PastBits";
 import BitacoraDetail from "./components/Bitacoras/BitacoraDetail";
 import TiposMonitoreo from "./components/Settings/TiposMonitoreo";
 import UsersPage from "./components/Settings/UsersPage";
-import UserRolePage from "./components/Settings/UserRolePage";
+import UserRolePage from "./components/Settings/RolePage";
 import ClientsPage from "./components/Settings/ClientsPage";
 import EventsPage from "./components/Settings/EventsPage";
 

@@ -11,6 +11,7 @@ import Sequence from "./models/Sequence.js";
 import Monitoreo from "./models/TipoMonitoreo.js";
 import Client from "./models/Cliente.js";
 import Event from "./models/Event.js";
+import Role from "./models/Role.js";
 
 dotenv.config();
 
@@ -589,7 +590,6 @@ app.put("/events/:id", async (req, res) => {
     }
 });
 
-
 app.post("/events", async (req, res) => {
     const event = new Event({
         event: req.body.name,
@@ -609,6 +609,61 @@ app.delete("/events/:id", async (req, res) => {
         res.json({message: "Event deleted"});
     } catch (err) {
         res.status(500).json({message: err.message});
+    }
+});
+
+//ROLES
+app.get("/roles", async (req, res) => {
+    try {
+        // Fetch all roles from the database
+        const roles = await Role.find();
+        // Send the roles as JSON response
+        res.json(roles);
+    } catch (error) {
+        // Handle errors and send appropriate response
+        console.error("Error fetching roles:", error);
+        res.status(500).json({message: "Internal Server Error"});
+    }
+});
+
+// POST a new role
+app.post("/roles", async (req, res) => {
+    const role = new Role({
+        name: req.body.name,
+        Bitacoras_activas: req.body.Bitacoras_activas,
+        Bitacoras_historial: req.body.Bitacoras_historial,
+        tipos_de_monitoreo: req.body.tipos_de_monitoreo,
+        eventos: req.body.eventos,
+        clientes: req.body.clientes,
+        usuarios: req.body.usuarios,
+        roles: req.body.roles,
+    });
+
+    try {
+        const newRole = await role.save();
+        res.status(201).json(newRole);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+});
+
+// PUT update a role
+app.put("/roles/:id", async (req, res) => {
+    try {
+        const updatedRole = await Role.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        res.json(updatedRole);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+});
+
+// DELETE a role
+app.delete("/roles/:id", async (req, res) => {
+    try {
+        await Role.findByIdAndDelete(req.params.id);
+        res.json({message: "Role deleted"});
+    } catch (error) {
+        res.status(500).json({message: error.message});
     }
 });
 
