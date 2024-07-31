@@ -100,7 +100,7 @@ const Sidebar = () => {
                                 <li
                                     className="text-white-50 cursor-pointer"
                                     onClick={() => navigate("/bitacoras_pasadas")}>
-                                    Cerradas
+                                    Historial
                                 </li>
                             </ul>
                         </div>

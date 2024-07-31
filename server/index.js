@@ -290,12 +290,12 @@ app.get("/bitacora_active", async (req, res) => {
     }
 });
 
-app.get("/bitacora_past", async (req, res) => {
+app.get("/bitacoras", async (req, res) => {
     try {
-        const pastBits = await Bitacora.find({activa: false});
-        res.status(200).json(pastBits);
+        const bitacoras = await Bitacora.find();
+        res.status(200).json(bitacoras);
     } catch (e) {
-        console.error("Error fetching past bitácoras:", e);
+        console.error("Error fetching  bitácoras:", e);
         res.status(500).json({error: "An error occurred while fetching past bitácoras."});
     }
 });
@@ -442,8 +442,7 @@ app.get("/users", async (req, res) => {
 
 //CREATE users
 app.post("/users", async (req, res) => {
-    const {email, password, firstName, lastName, phone, countryKey, role} =
-        req.body;
+    const {email, password, firstName, lastName, phone, countryKey, role} = req.body;
 
     try {
         // Check if user already exists
@@ -464,7 +463,7 @@ app.post("/users", async (req, res) => {
             lastName,
             phone,
             countryKey,
-            role
+            role,
         });
 
         await newUser.save();

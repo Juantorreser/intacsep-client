@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
-import BitacoraCard from "./BitacoraCard"; // Ensure this path is correct
+import {formatDate} from "../../utils/dateUtils"; // Ensure you have a utility to format dates
 
 const PastBits = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -13,19 +13,23 @@ const PastBits = () => {
     const [bitacoras, setBitacoras] = useState([]);
 
     useEffect(() => {
-        // Fetch past bitacoras when the component mounts
+        // Fetch all bitacoras when the component mounts
         const fetchBitacoras = async () => {
             try {
-                const response = await fetch(`${baseUrl}/bitacora_past`);
+                const response = await fetch(`${baseUrl}/bitacoras`);
                 if (response.ok) {
                     const data = await response.json();
-                    setBitacoras(data);
-                    console.log("Fetched past bitácoras:", data);
+                    // Sort bitacoras by createdAt in descending order
+                    const sortedData = data.sort(
+                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    );
+                    setBitacoras(sortedData);
+                    console.log("Fetched and sorted bitácoras:", sortedData);
                 } else {
-                    console.error("Failed to fetch past bitácoras:", response.statusText);
+                    console.error("Failed to fetch bitácoras:", response.statusText);
                 }
             } catch (e) {
-                console.error("Error fetching past bitácoras:", e);
+                console.error("Error fetching bitácoras:", e);
             }
         };
 
@@ -36,7 +40,7 @@ const PastBits = () => {
         } catch (e) {
             navigate("/login");
         }
-    }, []);
+    }, [baseUrl, navigate, verifyToken]);
 
     return (
         <section id="pastBits">
@@ -46,35 +50,42 @@ const PastBits = () => {
                     <Sidebar />
                 </div>
                 <div className="w-100 h-100 col mt-4">
-                    <h1 className="text-center fs-3 fw-semibold text-black">Bitácoras Cerradas</h1>
+                    <h1 className="text-center fs-3 fw-semibold text-black">Bitácoras</h1>
 
-                    {/* LIST */}
+                    {/* Table */}
                     <div className="mx-3 my-4">
-                        <ul className="list-unstyled">
-                            {bitacoras.map((bitacora) => (
-                                <li key={bitacora._id} className="mb-3">
-                                    <BitacoraCard
-                                        id={bitacora._id}
-                                        bitacora_id={bitacora.bitacora_id}
-                                        destino={bitacora.destino}
-                                        origen={bitacora.origen}
-                                        monitoreo={bitacora.monitoreo}
-                                        cliente={bitacora.cliente}
-                                        enlace={bitacora.enlace}
-                                        id_acceso={bitacora.id_acceso}
-                                        contra_acceso={bitacora.contra_acceso}
-                                        placa_remolque={bitacora.placa_remolque}
-                                        placa_tracto={bitacora.placa_tracto}
-                                        eco_remolque={bitacora.eco_remolque}
-                                        eco_tracto={bitacora.eco_tracto}
-                                        operador={bitacora.operador}
-                                        telefono={bitacora.telefono}
-                                        inicioMonitoreo={bitacora.inicioMonitoreo}
-                                        finalMonitoreo={bitacora.finalMonitoreo}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="table-responsive">
+                            <table className="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Tipo Monitoreo</th>
+                                        <th>Operador</th>
+                                        <th>Fecha Creacion</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {bitacoras.map((bitacora) => (
+                                        <tr key={bitacora._id}>
+                                            <td>
+                                                <a
+                                                    href={`/bitacora/${bitacora._id}`}
+                                                    className="text-decoration-none">
+                                                    {bitacora.bitacora_id}
+                                                </a>
+                                            </td>
+                                            <td>{bitacora.cliente}</td>
+                                            <td>{bitacora.monitoreo}</td>
+                                            <td>{bitacora.operador}</td>
+                                            <td>{formatDate(bitacora.createdAt)}</td>
+                                            <td>{bitacora.activa ? "Activa" : "Cerrada"}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
