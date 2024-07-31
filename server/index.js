@@ -442,7 +442,7 @@ app.get("/users", async (req, res) => {
 
 //CREATE users
 app.post("/users", async (req, res) => {
-    const {email, password, firstName, lastName, phone, countryKey, administrator, operator} =
+    const {email, password, firstName, lastName, phone, countryKey, role} =
         req.body;
 
     try {
@@ -464,8 +464,7 @@ app.post("/users", async (req, res) => {
             lastName,
             phone,
             countryKey,
-            administrator,
-            operator,
+            role
         });
 
         await newUser.save();

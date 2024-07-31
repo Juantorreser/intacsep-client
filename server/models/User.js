@@ -8,8 +8,7 @@ const UserSchema = new mongoose.Schema(
         lastName: {type: String, required: true},
         phone: {type: String, default: ""},
         countryKey: {type: String, default: ""},
-        administrator: {type: Boolean, required: true, default: false},
-        operator: {type: Boolean, required: true, default: false},
+        role: {type: String},
         refesh_token: String,
     },
     {timestamps: true}

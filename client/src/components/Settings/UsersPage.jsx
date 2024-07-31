@@ -5,6 +5,7 @@ import Footer from "../Footer";
 
 const UsersPage = () => {
     const [users, setUsers] = useState([]);
+    const [roles, setRoles] = useState([]);
     const [editingUserId, setEditingUserId] = useState(null);
     const [formData, setFormData] = useState({
         email: "",
@@ -13,8 +14,7 @@ const UsersPage = () => {
         lastName: "",
         phone: "",
         countryKey: "",
-        administrator: false,
-        operator: false,
+        role: "",
     });
     const [isModalVisible, setModalVisible] = useState(false);
 
@@ -35,7 +35,22 @@ const UsersPage = () => {
             }
         };
 
+        const fetchRoles = async () => {
+            try {
+                const response = await fetch(`${baseUrl}/roles`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setRoles(data);
+                } else {
+                    console.error("Failed to fetch roles:", response.statusText);
+                }
+            } catch (e) {
+                console.error("Error fetching roles:", e);
+            }
+        };
+
         fetchUsers();
+        fetchRoles();
     }, [baseUrl]);
 
     const handleDelete = async (id) => {
@@ -64,10 +79,10 @@ const UsersPage = () => {
     };
 
     const handleChange = (e) => {
-        const {id, value, checked, type} = e.target;
+        const {id, value} = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [id]: type === "checkbox" ? checked : value,
+            [id]: value,
         }));
     };
 
@@ -88,8 +103,7 @@ const UsersPage = () => {
                     lastName: formData.lastName,
                     phone: formData.phone,
                     countryKey: formData.countryKey,
-                    administrator: formData.administrator,
-                    operator: formData.operator,
+                    role: formData.role,
                 }),
             });
 
@@ -111,8 +125,7 @@ const UsersPage = () => {
                     lastName: "",
                     phone: "",
                     countryKey: "",
-                    administrator: false,
-                    operator: false,
+                    role: "",
                 });
                 setModalVisible(false);
             } else {
@@ -133,8 +146,7 @@ const UsersPage = () => {
             lastName: "",
             phone: "",
             countryKey: "",
-            administrator: false,
-            operator: false,
+            role: "",
         });
         setModalVisible(true);
     };
@@ -171,8 +183,7 @@ const UsersPage = () => {
                                         <th>Nombre</th>
                                         <th>Apellido</th>
                                         <th>Telefono</th>
-                                        <th>Administrador</th>
-                                        <th>Operador</th>
+                                        <th>Rol</th>
                                         <th className="text-end">Acciones</th>
                                     </tr>
                                 </thead>
@@ -183,8 +194,7 @@ const UsersPage = () => {
                                             <td>{user.firstName}</td>
                                             <td>{user.lastName}</td>
                                             <td>{user.phone}</td>
-                                            <td>{user.administrator ? "Sí" : "No"}</td>
-                                            <td>{user.operator ? "Sí" : "No"}</td>
+                                            <td>{user.role}</td>
                                             <td className="text-end">
                                                 <button
                                                     className="btn btn-warning me-2"
@@ -306,15 +316,16 @@ const UsersPage = () => {
                                                         id="phone"
                                                         value={formData.phone}
                                                         onChange={handleChange}
+                                                        required
                                                     />
                                                 </div>
 
-                                                {/* Country Key */}
-                                                {/* <div className="mb-3">
+                                                {/* Country Key
+                                                <div className="mb-3">
                                                     <label
                                                         htmlFor="countryKey"
                                                         className="form-label">
-                                                        Clave Pais
+                                                        Clave del País
                                                     </label>
                                                     <input
                                                         type="text"
@@ -322,52 +333,53 @@ const UsersPage = () => {
                                                         id="countryKey"
                                                         value={formData.countryKey}
                                                         onChange={handleChange}
+                                                        required
                                                     />
                                                 </div> */}
 
-                                                {/* Administrator */}
-                                                <div className="mb-3 form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="administrator"
-                                                        checked={formData.administrator}
-                                                        onChange={handleChange}
-                                                    />
-                                                    <label
-                                                        htmlFor="administrator"
-                                                        className="form-check-label">
-                                                        Administrador
+                                                {/* Role */}
+                                                <div className="mb-3">
+                                                    <label htmlFor="role" className="form-label">
+                                                        Rol
                                                     </label>
+                                                    <select
+                                                        id="role"
+                                                        className="form-select"
+                                                        value={formData.role}
+                                                        onChange={handleChange}
+                                                        required>
+                                                        <option value="">Seleccione un rol</option>
+                                                        {roles.map((role) => (
+                                                            <option
+                                                                key={role._id}
+                                                                value={role.name}>
+                                                                {role.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                 </div>
 
-                                                {/* Operator */}
-                                                <div className="mb-3 form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="operator"
-                                                        checked={formData.operator}
-                                                        onChange={handleChange}
-                                                    />
-                                                    <label
-                                                        htmlFor="operator"
-                                                        className="form-check-label">
-                                                        Operador
-                                                    </label>
+                                                <div className="modal-footer">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-secondary"
+                                                        onClick={closeModal}>
+                                                        Cancelar
+                                                    </button>
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn-primary">
+                                                        {editingUserId
+                                                            ? "Guardar cambios"
+                                                            : "Crear"}
+                                                    </button>
                                                 </div>
-
-                                                <button type="submit" className="btn btn-primary">
-                                                    {editingUserId
-                                                        ? "Guardar Cambios"
-                                                        : "Crear Usuario"}
-                                                </button>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="modal-backdrop fade show" onClick={closeModal}></div>
+                            <div className="modal-backdrop fade show"></div>
                         </>
                     )}
                 </div>
