@@ -7,6 +7,8 @@ import Footer from "../Footer";
 const ClientsPage = () => {
     const [clients, setClients] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [isEditing, setIsEditing] = useState(false); // New state for edit mode
+    const [currentClient, setCurrentClient] = useState(null); // State for the client being edited
     const [formData, setFormData] = useState({
         alcaldia: "",
         calle: "",
@@ -14,20 +16,22 @@ const ClientsPage = () => {
         clave_pais: "",
         codigo_postal: "",
         colonia: "",
-        email: "",
-        ID_Cliente: "",
         num_ext: "",
         num_int: "",
         razon_social: "",
         RFC: "",
-        telefono: "",
-        nombres: "",
-        apellidos: "",
-        pais: "",
+        contacto: {
+            nombres: "",
+            apellidos: "",
+            telefono: "",
+            email: "",
+            pais: "",
+        },
     });
 
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
+    // Fetch clients from the server
     const fetchClients = async () => {
         try {
             const response = await fetch(`${baseUrl}/clients`, {
@@ -49,14 +53,17 @@ const ClientsPage = () => {
         fetchClients(); // Fetch clients on component mount
     }, []);
 
+    // Handle client deletion
     const handleDelete = async (id) => {
+        fetchClients();
         try {
             const response = await fetch(`${baseUrl}/clients/${id}`, {
                 method: "DELETE",
                 credentials: "include",
             });
             if (response.ok) {
-                setClients((prevClients) => prevClients.filter((client) => client._id !== id));
+                // Fetch updated client list after deletion
+                await fetchClients();
             } else {
                 console.error("Failed to delete client:", response.statusText);
             }
@@ -65,37 +72,106 @@ const ClientsPage = () => {
         }
     };
 
-    const handleModalToggle = () => {
+    // Toggle modal visibility
+    const handleModalToggle = async () => {
         setShowModal(!showModal);
+        if (showModal) {
+            // Reset the form when closing the modal
+            fetchClients();
+            setFormData({
+                alcaldia: "",
+                calle: "",
+                ciudad: "",
+                clave_pais: "",
+                codigo_postal: "",
+                colonia: "",
+                num_ext: "",
+                num_int: "",
+                razon_social: "",
+                RFC: "",
+                contacto: {
+                    nombres: "",
+                    apellidos: "",
+                    telefono: "",
+                    email: "",
+                    pais: "",
+                },
+            });
+
+            setIsEditing(false);
+            setCurrentClient(null);
+            // Fetch updated client list after closing the modal
+        }
     };
 
+    // Prepare form data for editing
+    const handleEdit = (client) => {
+        setCurrentClient(client);
+        setIsEditing(true);
+        setFormData({
+            ...client,
+            contacto: client.contacto || {
+                nombres: "",
+                apellidos: "",
+                telefono: "",
+                email: "",
+                pais: "",
+            },
+        });
+        setShowModal(true);
+    };
+
+    // Handle form input changes
     const handleChange = (e) => {
         const {id, value} = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [id]: value,
-        }));
+        if (id.startsWith("contacto_")) {
+            setFormData((prevData) => ({
+                ...prevData,
+                contacto: {
+                    ...prevData.contacto,
+                    [id.replace("contacto_", "")]: value,
+                },
+            }));
+        } else {
+            setFormData((prevData) => ({
+                ...prevData,
+                [id]: value,
+            }));
+        }
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`${baseUrl}/clients`, {
-                method: "POST",
+            const method = isEditing ? "PUT" : "POST"; // Determine method based on edit mode
+            const url = isEditing
+                ? `${baseUrl}/clients/${currentClient._id}`
+                : `${baseUrl}/clients`;
+
+            const response = await fetch(url, {
+                method: method,
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
                 body: JSON.stringify(formData),
             });
+
             if (response.ok) {
-                const newClient = await response.json();
-                setClients((prevClients) => [...prevClients, newClient]);
-                handleModalToggle();
+                const result = await response.json();
+                if (isEditing) {
+                    setClients((prevClients) =>
+                        prevClients.map((client) => (client._id === result._id ? result : client))
+                    );
+                } else {
+                    setClients((prevClients) => [...prevClients, result]);
+                }
+                handleModalToggle(); // Close the modal and refresh the list
             } else {
                 const errorData = await response.json();
-                console.error("Failed to create client:", errorData.message);
+                console.error("Failed to save client:", errorData.message);
             }
         } catch (e) {
-            console.error("Error creating client:", e);
+            console.error("Error saving client:", e);
         }
     };
 
@@ -106,30 +182,26 @@ const ClientsPage = () => {
                 <div className="d-none d-lg-flex w-25">
                     <Sidebar />
                 </div>
-
                 <div className="w-100 h-100 col mt-4">
                     <h1 className="text-center fs-3 fw-semibold text-black">Clientes</h1>
                     <div className="text-center mt-4">
-                        <button className="btn btn-primary" onClick={handleModalToggle}>
+                        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
                             Crear Nuevo Cliente
                         </button>
                     </div>
-
                     <div className="mx-3 my-4">
                         <div className="col">
                             {clients.map((client) => (
                                 <div className="col mb-4" key={client._id}>
                                     <ClientCard
                                         client={client}
-                                        onDelete={handleDelete}
-                                        fetchClients={fetchClients} // Pass fetchClients to ClientCard
+                                        onDelete={() => handleDelete(client._id)}
+                                        onEdit={() => handleEdit(client)}
                                     />
                                 </div>
                             ))}
                         </div>
                     </div>
-
-                    {/* Modal with Backdrop */}
                     {showModal && (
                         <>
                             <div
@@ -142,7 +214,9 @@ const ClientsPage = () => {
                                     <div className="modal-content">
                                         <div className="modal-header">
                                             <h5 className="modal-title" id="clientModalLabel">
-                                                Crear Nuevo Cliente
+                                                {isEditing
+                                                    ? "Editar Cliente"
+                                                    : "Crear Nuevo Cliente"}
                                             </h5>
                                             <button
                                                 type="button"
@@ -152,76 +226,12 @@ const ClientsPage = () => {
                                         </div>
                                         <div className="modal-body">
                                             <form onSubmit={handleSubmit}>
-                                                {/* Nombres */}
-                                                <div className="mb-3">
-                                                    <label htmlFor="nombres" className="form-label">
-                                                        Nombres
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="nombres"
-                                                        value={formData.nombres}
-                                                        onChange={handleChange}
-                                                        required
-                                                    />
-                                                </div>
-
-                                                {/* Apellidos */}
-                                                <div className="mb-3">
-                                                    <label
-                                                        htmlFor="apellidos"
-                                                        className="form-label">
-                                                        Apellidos
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="apellidos"
-                                                        value={formData.apellidos}
-                                                        onChange={handleChange}
-                                                        required
-                                                    />
-                                                </div>
-
-                                                {/* Email */}
-                                                <div className="mb-3">
-                                                    <label htmlFor="email" className="form-label">
-                                                        Email
-                                                    </label>
-                                                    <input
-                                                        type="email"
-                                                        className="form-control"
-                                                        id="email"
-                                                        value={formData.email}
-                                                        onChange={handleChange}
-                                                        required
-                                                    />
-                                                </div>
-
-                                                {/* Teléfono */}
-                                                <div className="mb-3">
-                                                    <label
-                                                        htmlFor="telefono"
-                                                        className="form-label">
-                                                        Teléfono
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="telefono"
-                                                        value={formData.telefono}
-                                                        onChange={handleChange}
-                                                        required
-                                                    />
-                                                </div>
-
-                                                {/* Alcaldia */}
+                                                {/* Regular client fields */}
                                                 <div className="mb-3">
                                                     <label
                                                         htmlFor="alcaldia"
                                                         className="form-label">
-                                                        Alcaldia
+                                                        Alcaldía
                                                     </label>
                                                     <input
                                                         type="text"
@@ -229,11 +239,8 @@ const ClientsPage = () => {
                                                         id="alcaldia"
                                                         value={formData.alcaldia}
                                                         onChange={handleChange}
-                                                        required
                                                     />
                                                 </div>
-
-                                                {/* Calle */}
                                                 <div className="mb-3">
                                                     <label htmlFor="calle" className="form-label">
                                                         Calle
@@ -244,11 +251,8 @@ const ClientsPage = () => {
                                                         id="calle"
                                                         value={formData.calle}
                                                         onChange={handleChange}
-                                                        required
                                                     />
                                                 </div>
-
-                                                {/* Ciudad */}
                                                 <div className="mb-3">
                                                     <label htmlFor="ciudad" className="form-label">
                                                         Ciudad
@@ -259,11 +263,8 @@ const ClientsPage = () => {
                                                         id="ciudad"
                                                         value={formData.ciudad}
                                                         onChange={handleChange}
-                                                        required
                                                     />
                                                 </div>
-
-                                                {/* Clave País */}
                                                 <div className="mb-3">
                                                     <label
                                                         htmlFor="clave_pais"
@@ -276,11 +277,8 @@ const ClientsPage = () => {
                                                         id="clave_pais"
                                                         value={formData.clave_pais}
                                                         onChange={handleChange}
-                                                        required
                                                     />
                                                 </div>
-
-                                                {/* Código Postal */}
                                                 <div className="mb-3">
                                                     <label
                                                         htmlFor="codigo_postal"
@@ -293,11 +291,8 @@ const ClientsPage = () => {
                                                         id="codigo_postal"
                                                         value={formData.codigo_postal}
                                                         onChange={handleChange}
-                                                        required
                                                     />
                                                 </div>
-
-                                                {/* Colonia */}
                                                 <div className="mb-3">
                                                     <label htmlFor="colonia" className="form-label">
                                                         Colonia
@@ -308,28 +303,8 @@ const ClientsPage = () => {
                                                         id="colonia"
                                                         value={formData.colonia}
                                                         onChange={handleChange}
-                                                        required
                                                     />
                                                 </div>
-
-                                                {/* ID Cliente */}
-                                                <div className="mb-3">
-                                                    <label
-                                                        htmlFor="ID_Cliente"
-                                                        className="form-label">
-                                                        ID Cliente
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="ID_Cliente"
-                                                        value={formData.ID_Cliente}
-                                                        onChange={handleChange}
-                                                        required
-                                                    />
-                                                </div>
-
-                                                {/* Número Ext */}
                                                 <div className="mb-3">
                                                     <label htmlFor="num_ext" className="form-label">
                                                         Número Ext.
@@ -340,11 +315,8 @@ const ClientsPage = () => {
                                                         id="num_ext"
                                                         value={formData.num_ext}
                                                         onChange={handleChange}
-                                                        required
                                                     />
                                                 </div>
-
-                                                {/* Número Int */}
                                                 <div className="mb-3">
                                                     <label htmlFor="num_int" className="form-label">
                                                         Número Int.
@@ -355,11 +327,8 @@ const ClientsPage = () => {
                                                         id="num_int"
                                                         value={formData.num_int}
                                                         onChange={handleChange}
-                                                        required
                                                     />
                                                 </div>
-
-                                                {/* Razón Social */}
                                                 <div className="mb-3">
                                                     <label
                                                         htmlFor="razon_social"
@@ -372,11 +341,8 @@ const ClientsPage = () => {
                                                         id="razon_social"
                                                         value={formData.razon_social}
                                                         onChange={handleChange}
-                                                        required
                                                     />
                                                 </div>
-
-                                                {/* RFC */}
                                                 <div className="mb-3">
                                                     <label htmlFor="RFC" className="form-label">
                                                         RFC
@@ -387,36 +353,94 @@ const ClientsPage = () => {
                                                         id="RFC"
                                                         value={formData.RFC}
                                                         onChange={handleChange}
+                                                    />
+                                                </div>
+                                                <hr />
+                                                {/* Contact fields */}
+                                                <div className="mb-3">
+                                                    <label
+                                                        htmlFor="contacto_nombres"
+                                                        className="form-label">
+                                                        Nombres
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="contacto_nombres"
+                                                        value={formData.contacto.nombres}
+                                                        onChange={handleChange}
                                                         required
                                                     />
                                                 </div>
-
-                                                {/* País */}
                                                 <div className="mb-3">
-                                                    <label htmlFor="pais" className="form-label">
+                                                    <label
+                                                        htmlFor="contacto_apellidos"
+                                                        className="form-label">
+                                                        Apellidos
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="contacto_apellidos"
+                                                        value={formData.contacto.apellidos}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label
+                                                        htmlFor="contacto_email"
+                                                        className="form-label">
+                                                        Email
+                                                    </label>
+                                                    <input
+                                                        type="email"
+                                                        className="form-control"
+                                                        id="contacto_email"
+                                                        value={formData.contacto.email}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label
+                                                        htmlFor="contacto_telefono"
+                                                        className="form-label">
+                                                        Teléfono
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="contacto_telefono"
+                                                        value={formData.contacto.telefono}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label
+                                                        htmlFor="contacto_pais"
+                                                        className="form-label">
                                                         País
                                                     </label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        id="pais"
-                                                        value={formData.pais}
+                                                        id="contacto_pais"
+                                                        value={formData.contacto.pais}
                                                         onChange={handleChange}
                                                         required
                                                     />
                                                 </div>
-
                                                 <button type="submit" className="btn btn-primary">
-                                                    Crear Cliente
+                                                    {isEditing ? "Guardar Cambios" : "Crear"}
                                                 </button>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div
-                                className="modal-backdrop fade show"
-                                onClick={handleModalToggle}></div>
+                            <div className="modal-backdrop fade show"></div>
                         </>
                     )}
                 </div>

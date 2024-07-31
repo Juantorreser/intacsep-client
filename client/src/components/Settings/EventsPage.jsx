@@ -13,7 +13,7 @@ const EventsPage = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await fetch(`${baseUrl}/events`);
+                const response = await fetch(`${baseUrl}/event_types`);
                 if (response.ok) {
                     const data = await response.json();
                     setEvents(data);
@@ -30,7 +30,7 @@ const EventsPage = () => {
 
     const handleDelete = async (id) => {
         try {
-            const response = await fetch(`${baseUrl}/events/${id}`, {
+            const response = await fetch(`${baseUrl}/event_types/${id}`, {
                 method: "DELETE",
                 credentials: "include",
             });
@@ -49,12 +49,12 @@ const EventsPage = () => {
         if (!newEvent) return;
 
         try {
-            const response = await fetch(`${baseUrl}/events`, {
+            const response = await fetch(`${baseUrl}/event_types`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({name: newEvent}),
+                body: JSON.stringify({eventType: newEvent}), // Update this to match the schema field
                 credentials: "include",
             });
 
@@ -70,6 +70,7 @@ const EventsPage = () => {
         }
     };
 
+
     const handleEditClick = (event) => {
         setEditEvent(event);
         setEditEventName(event.name);
@@ -77,7 +78,7 @@ const EventsPage = () => {
 
     const handleEditSave = async (id) => {
         try {
-            const response = await fetch(`${baseUrl}/events/${id}`, {
+            const response = await fetch(`${baseUrl}/event_types/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -159,7 +160,7 @@ const EventsPage = () => {
                                                         }
                                                     />
                                                 ) : (
-                                                    event.event
+                                                    event.eventType // Update this to match the schema field
                                                 )}
                                             </td>
                                             <td className="text-end">

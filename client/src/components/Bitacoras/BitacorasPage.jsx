@@ -1,0 +1,442 @@
+import React, {useState, useEffect} from "react";
+import {useAuth} from "../../context/AuthContext";
+import {useNavigate} from "react-router-dom";
+import Header from "../Header";
+import Sidebar from "../Sidebar";
+import Footer from "../Footer";
+import {formatDate} from "../../utils/dateUtils"; // Ensure you have a utility to format dates
+
+const BitacorasPage = () => {
+    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const {user, verifyToken} = useAuth();
+    const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+    const [bitacoras, setBitacoras] = useState([]);
+    const [clients, setClients] = useState([]);
+    const [monitoreos, setMonitoreos] = useState([]); // New state for monitoreos
+    const [formData, setFormData] = useState({
+        monitoreo: "",
+        cliente: "",
+        ecoTracto: "",
+        placaTracto: "",
+        ecoRemolque: "",
+        placaRemolque: "",
+        operador: "", // Start empty
+        telefono: "", // Start empty
+        origen: "",
+        destino: "",
+        enlaceRastreo: "",
+        idAcceso: "",
+        passwordAcceso: "",
+        status: "creada", // Initialize status as 'creada'
+        eventos: [], // Initialize empty eventos array
+    });
+
+    useEffect(() => {
+        const initialize = async () => {
+            try {
+                fetchBitacoras();
+                fetchClients();
+                fetchMonitoreos();
+                updateFormDataFromUser();
+            } catch (e) {
+                console.error("Verification failed:", e);
+                navigate("/login");
+            }
+        };
+
+        initialize();
+    }, [user]);
+
+    const fetchBitacoras = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/bitacoras`);
+            if (response.ok) {
+                const data = await response.json();
+                // Sort bitacoras by createdAt in descending order
+                const sortedData = data.sort(
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                );
+                setBitacoras(sortedData);
+            } else {
+                console.error("Failed to fetch bitácoras:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching bitácoras:", e);
+        }
+    };
+
+    const fetchClients = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/clients`);
+            if (response.ok) {
+                const data = await response.json();
+                setClients(data);
+            } else {
+                console.error("Failed to fetch clients:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching clients:", e);
+        }
+    };
+
+    const fetchMonitoreos = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/monitoreos`);
+            if (response.ok) {
+                const data = await response.json();
+                setMonitoreos(data);
+            } else {
+                console.error("Failed to fetch monitoreos:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching monitoreos:", e);
+        }
+    };
+
+    const updateFormDataFromUser = () => {
+        if (user) {
+            setFormData((prevData) => ({
+                ...prevData,
+                operador: `${user.firstName} ${user.lastName}`,
+                telefono: user.phone,
+            }));
+        }
+    };
+
+    const handleModalToggle = () => {
+        setShowModal(!showModal);
+    };
+
+    const handleChange = (e) => {
+        const {id, value} = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [id]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(`${baseUrl}/bitacora`, {
+                method: "POST",
+                headers: {"content-type": "application/json"},
+                credentials: "include",
+                body: JSON.stringify(formData),
+            });
+            if (response.ok) {
+                // After successful creation, you might want to refetch bitacoras
+                fetchBitacoras();
+                handleModalToggle();
+            } else {
+                console.error("Failed to create bitácora:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error creating bitácora:", e);
+        }
+    };
+
+    return (
+        <section id="activeBits">
+            <Header />
+            <div className="w-100 d-flex">
+                <div className="d-none d-lg-flex w-25">
+                    <Sidebar />
+                </div>
+                <div className="w-100 h-100 col mt-4">
+                    <div className="d-flex justify-content-between align-items-center mx-3">
+                        <h1 className="text-center flex-grow-1 fs-3 fw-semibold text-black">
+                            Bitácoras
+                        </h1>
+                        <button className="btn btn-primary rounded-5" onClick={handleModalToggle}>
+                            <i className="fa fa-plus"></i>
+                        </button>
+                    </div>
+
+                    {/* Table */}
+                    <div className="mx-3 my-4">
+                        <div className="table-responsive">
+                            <table className="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Tipo Monitoreo</th>
+                                        <th>Operador</th>
+                                        <th>Fecha Creacion</th>
+                                        <th>Status</th>
+                                        <th>
+                                            <i className="fa fa-download"></i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {bitacoras.map((bitacora) => (
+                                        <tr key={bitacora._id}>
+                                            <td>
+                                                <a
+                                                    href={`/bitacora/${bitacora._id}`}
+                                                    className="text-decoration-none">
+                                                    {bitacora.bitacora_id}
+                                                </a>
+                                            </td>
+                                            <td>{bitacora.cliente}</td>
+                                            <td>{bitacora.monitoreo}</td>
+                                            <td>{bitacora.operador}</td>
+                                            <td>{formatDate(bitacora.createdAt)}</td>
+                                            <td>{bitacora.status}</td>
+                                            <td>
+                                                <button className="btn btn-secondary">
+                                                    <i className="fa fa-download"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Modal with Backdrop */}
+            {showModal && (
+                <>
+                    <div
+                        className="modal fade show d-block"
+                        id="exampleModal"
+                        tabIndex="-1"
+                        aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalLabel">
+                                        Crear Bitácora
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        onClick={handleModalToggle}
+                                        aria-label="Close"></button>
+                                </div>
+                                <div className="modal-body w-100">
+                                    <div className="w-100 col justify-content-center align-items-center">
+                                        <img src="/logo2.png" alt="" width={50} />
+                                        <p className="p-0 m-0"> Nueva Bitácora</p>
+                                    </div>
+                                    <hr />
+                                    <form onSubmit={handleSubmit}>
+                                        {/* Tipo de Monitoreo */}
+                                        <div className="mb-3">
+                                            <label htmlFor="monitoreo" className="form-label">
+                                                Tipo de Monitoreo
+                                            </label>
+                                            <select
+                                                className="form-select"
+                                                id="monitoreo"
+                                                aria-label="Tipo de Monitoreo"
+                                                value={formData.monitoreo}
+                                                onChange={handleChange}
+                                                required>
+                                                <option value="">Selecciona una opción</option>
+                                                {monitoreos.map((monitoreo) => (
+                                                    <option
+                                                        key={monitoreo._id}
+                                                        value={monitoreo.tipoMonitoreo}>
+                                                        {monitoreo.tipoMonitoreo}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        {/* Cliente */}
+                                        <div className="mb-3">
+                                            <label htmlFor="cliente" className="form-label">
+                                                Cliente
+                                            </label>
+                                            <select
+                                                className="form-select"
+                                                id="cliente"
+                                                aria-label="Cliente"
+                                                value={formData.cliente}
+                                                onChange={handleChange}
+                                                required>
+                                                <option value="">Selecciona una opción</option>
+                                                {clients.map((client) => (
+                                                    <option
+                                                        key={client._id}
+                                                        value={client.razon_social}>
+                                                        {client.razon_social}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        {/* Otros Campos */}
+                                        <div className="mb-3">
+                                            <label htmlFor="ecoTracto" className="form-label">
+                                                ECO Tracto
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="ecoTracto"
+                                                value={formData.ecoTracto}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="placaTracto" className="form-label">
+                                                Placa Tracto
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="placaTracto"
+                                                value={formData.placaTracto}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="ecoRemolque" className="form-label">
+                                                ECO Remolque
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="ecoRemolque"
+                                                value={formData.ecoRemolque}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="placaRemolque" className="form-label">
+                                                Placa Remolque
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="placaRemolque"
+                                                value={formData.placaRemolque}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="operador" className="form-label">
+                                                Operador
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="operador"
+                                                value={formData.operador}
+                                                onChange={handleChange}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="telefono" className="form-label">
+                                                Teléfono
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="telefono"
+                                                value={formData.telefono}
+                                                onChange={handleChange}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="origen" className="form-label">
+                                                Origen
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="origen"
+                                                value={formData.origen}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="destino" className="form-label">
+                                                Destino
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="destino"
+                                                value={formData.destino}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="enlaceRastreo" className="form-label">
+                                                Enlace de Rastreo
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="enlaceRastreo"
+                                                value={formData.enlaceRastreo}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="idAcceso" className="form-label">
+                                                ID de Acceso
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="idAcceso"
+                                                value={formData.idAcceso}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="passwordAcceso" className="form-label">
+                                                Contraseña de Acceso
+                                            </label>
+                                            <input
+                                                type="password"
+                                                className="form-control"
+                                                id="passwordAcceso"
+                                                value={formData.passwordAcceso}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                        <div className="d-flex justify-content-between">
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary"
+                                                onClick={handleModalToggle}>
+                                                Cancelar
+                                            </button>
+                                            <button type="submit" className="btn btn-primary">
+                                                Crear Bitácora
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="modal-backdrop fade show"></div>
+                </>
+            )}
+            <Footer />
+        </section>
+    );
+};
+
+export default BitacorasPage;

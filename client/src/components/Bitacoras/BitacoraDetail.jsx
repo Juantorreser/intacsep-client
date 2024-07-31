@@ -3,134 +3,230 @@ import {useParams} from "react-router-dom";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faChevronDown, faChevronUp, faPlus} from "@fortawesome/free-solid-svg-icons";
 
 const BitacoraDetail = () => {
     const {id} = useParams();
     const [bitacora, setBitacora] = useState(null);
-    const [finishButtonDisabled, setFinishButtonDisabled] = useState(false);
+    const [isEventStarted, setIsEventStarted] = useState(false);
+    const [finishButtonDisabled, setFinishButtonDisabled] = useState(true);
+    const [isCollapsed, setIsCollapsed] = useState(true);
+    const [newEvent, setNewEvent] = useState({name: "", details: ""});
+    const [eventTypes, setEventTypes] = useState([]);
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
+    const fetchBitacora = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/bitacora/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setBitacora(data);
+                setIsEventStarted(data.status === "iniciada");
+                setFinishButtonDisabled(data.status === "finalizada");
+            } else {
+                console.error("Failed to fetch bitácora:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching bitácora:", e);
+        }
+    };
+
     useEffect(() => {
-        const fetchBitacora = async () => {
+        const fetchEventTypes = async () => {
             try {
-                const response = await fetch(`${baseUrl}/bitacora/${id}`);
+                const response = await fetch(`${baseUrl}/event_types`);
                 if (response.ok) {
                     const data = await response.json();
-                    setBitacora(data);
-                    // Update button state based on bitacora status
-                    if (data.finalMonitoreo) {
-                        setFinishButtonDisabled(true);
-                    }
+                    setEventTypes(data);
                 } else {
-                    console.error("Failed to fetch bitácora:", response.statusText);
+                    console.error("Failed to fetch event types:", response.statusText);
                 }
             } catch (e) {
-                console.error("Error fetching bitácora:", e);
+                console.error("Error fetching event types:", e);
             }
         };
 
         fetchBitacora();
-    }, [id, baseUrl]);
+        fetchEventTypes();
+    }, []);
 
     const handleStart = async () => {
-        try {
-            const response = await fetch(`${baseUrl}/bitacora/${id}/start`, {
-                method: "PATCH",
-                credentials: "include",
-            });
-            if (response.ok) {
-                const updatedBitacora = await response.json();
-                setBitacora(updatedBitacora);
-            } else {
-                console.error("Failed to start bitácora:", response.statusText);
+        if (bitacora.status === "creada") {
+            try {
+                const response = await fetch(`${baseUrl}/bitacora/${id}/start`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        inicioMonitoreo: new Date().toISOString(), // Set the start time
+                    }),
+                    credentials: "include",
+                });
+                if (response.ok) {
+                    const updatedBitacora = await response.json();
+                    setBitacora(updatedBitacora);
+                    setIsEventStarted(true);
+                    setFinishButtonDisabled(false);
+                } else {
+                    console.error("Failed to start bitácora:", response.statusText);
+                }
+            } catch (e) {
+                console.error("Error starting bitácora:", e);
             }
-        } catch (e) {
-            console.error("Error starting bitácora:", e);
+        }
+        if (bitacora.status === "creada") {
+            try {
+                const response = await fetch(`${baseUrl}/bitacora/${id}/status`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        status: "iniciada",
+                        inicioMonitoreo: new Date().toISOString(), // Set the start time
+                    }),
+                    credentials: "include",
+                });
+                if (response.ok) {
+                    const updatedBitacora = await response.json();
+                    setBitacora(updatedBitacora);
+                    setIsEventStarted(true);
+                    setFinishButtonDisabled(false);
+                } else {
+                    console.error("Failed to start bitácora:", response.statusText);
+                }
+            } catch (e) {
+                console.error("Error starting bitácora:", e);
+            }
         }
     };
 
     const handleFinish = async () => {
+        if (bitacora.status === "iniciada") {
+            try {
+                const response = await fetch(`${baseUrl}/bitacora/${id}/finish`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        finalMonitoreo: new Date().toISOString(), // Set the finish time
+                    }),
+                    credentials: "include",
+                });
+                if (response.ok) {
+                    const updatedBitacora = await response.json();
+                    setBitacora(updatedBitacora);
+                    setFinishButtonDisabled(true);
+                } else {
+                    console.error("Failed to finish bitácora:", response.statusText);
+                }
+            } catch (e) {
+                console.error("Error finishing bitácora:", e);
+            }
+        }
+        if (bitacora.status === "iniciada") {
+            try {
+                const response = await fetch(`${baseUrl}/bitacora/${id}/status`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        status: "finalizada",
+                        inicioMonitoreo: new Date().toISOString(), // Set the start time
+                    }),
+                    credentials: "include",
+                });
+                if (response.ok) {
+                    const updatedBitacora = await response.json();
+                    setBitacora(updatedBitacora);
+                    setIsEventStarted(true);
+                    setFinishButtonDisabled(false);
+                } else {
+                    console.error("Failed to start bitácora:", response.statusText);
+                }
+            } catch (e) {
+                console.error("Error starting bitácora:", e);
+            }
+            fetchBitacora();
+        }
+
+        fetchBitacora();
+    };
+
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setNewEvent((prev) => ({...prev, [name]: value}));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            const response = await fetch(`${baseUrl}/bitacora/${id}/finish`, {
+            const response = await fetch(`${baseUrl}/bitacora/${id}/event`, {
                 method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newEvent),
                 credentials: "include",
             });
             if (response.ok) {
                 const updatedBitacora = await response.json();
                 setBitacora(updatedBitacora);
-                setFinishButtonDisabled(true); // Disable the finish button after successful finish
+                setNewEvent({name: "", details: ""});
+                window.bootstrap.Modal.getInstance(document.getElementById("eventModal")).hide();
             } else {
-                console.error("Failed to finish bitácora:", response.statusText);
+                console.error("Failed to add event:", response.statusText);
             }
         } catch (e) {
-            console.error("Error finishing bitácora:", e);
+            console.error("Error adding event:", e);
         }
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return "Fecha inválida";
+
+        const options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+            timeZoneName: "short",
+        };
+        return date.toLocaleString("es-ES", options);
     };
 
     if (!bitacora) {
         return <div>Loading...</div>;
     }
 
-    const EventCard = ({title, dateTime, address, lastUpdate, speed, timestamp}) => (
-        <div className="col-md-6 col-lg-4">
-            <div className="card mb-3">
-                <div className="card-body">
-                    <h5 className="card-title">{title}</h5>
+    const EventCard = ({name, description, createdAt}) => (
+        <div className="card mb-3">
+            <div className="card-body d-flex">
+                <div className="me-3">
+                    <h5 className="card-title">{name}</h5>
                     <p className="card-text">
-                        <strong>Fecha y Hora:</strong> {dateTime}
+                        <strong>Detalles:</strong> {description}
                     </p>
                     <p className="card-text">
-                        <strong>Dirección:</strong> {address}
+                        <strong>Fecha:</strong> {new Date(createdAt).toLocaleDateString()}
                     </p>
                     <p className="card-text">
-                        <strong>Última actualización:</strong> {lastUpdate}
-                    </p>
-                    <p className="card-text">
-                        <strong>Velocidad:</strong> {speed}
-                    </p>
-                    <p className="card-text">
-                        <strong>Timestamp:</strong> {timestamp}
+                        <strong>Hora:</strong> {new Date(createdAt).toLocaleTimeString()}
                     </p>
                 </div>
             </div>
         </div>
     );
 
-    const events = [
-        {
-            title: "Validación de Datos",
-            dateTime: "03/06/2024 09:30 HRS",
-            address:
-                "Calle 25 54, Progreso Nacional, Gustavo A Madero, Ciudad De México 07600, Mexico",
-            lastUpdate: "hace 3 h 3 min",
-            speed: "0 km/h",
-            timestamp: "27.06.2024 19:04:09",
-        },
-        {
-            title: "Validación de Datos",
-            dateTime: "10/06/2024 10:45 HRS",
-            address: "Avenida Insurgentes 3000, Ciudad De México, 03900, Mexico",
-            lastUpdate: "hace 1 h 15 min",
-            speed: "10 km/h",
-            timestamp: "27.06.2024 20:12:30",
-        },
-        {
-            title: "Validación de Datos",
-            dateTime: "15/06/2024 14:00 HRS",
-            address: "Paseo de la Reforma 400, Ciudad De México, 06600, Mexico",
-            lastUpdate: "hace 2 h 45 min",
-            speed: "5 km/h",
-            timestamp: "27.06.2024 21:45:00",
-        },
-        {
-            title: "Validación de Datos",
-            dateTime: "20/06/2024 11:30 HRS",
-            address: "Eje Central Lázaro Cárdenas 200, Ciudad De México, 07000, Mexico",
-            lastUpdate: "hace 30 min",
-            speed: "15 km/h",
-            timestamp: "27.06.2024 22:00:00",
-        },
-    ];
+    const events = Array.isArray(bitacora.eventos) ? bitacora.eventos : [];
 
     return (
         <section id="bitacoraDetail">
@@ -140,10 +236,18 @@ const BitacoraDetail = () => {
                     <Sidebar />
                 </div>
                 <div className="w-100 h-100 col mt-4">
-                    <h1 className="text-center fs-3 fw-semibold text-black">
-                        Detalle de la Bitácora
-                    </h1>
-                    <div className="card mb-3">
+                    <div className="d-flex justify-content-center align-items-center mb-3">
+                        <h1 className="fs-3 fw-semibold text-black d-flex align-items-center">
+                            Detalles
+                            <button
+                                className="btn ms-2"
+                                onClick={() => setIsCollapsed(!isCollapsed)}
+                                aria-expanded={!isCollapsed}>
+                                <FontAwesomeIcon icon={isCollapsed ? faChevronDown : faChevronUp} />
+                            </button>
+                        </h1>
+                    </div>
+                    <div className={`card mb-3 ${isCollapsed ? "collapse" : ""}`}>
                         <div className="card-body">
                             <div className="row mb-2">
                                 <div className="col-md-6">
@@ -233,42 +337,52 @@ const BitacoraDetail = () => {
                                 <div className="col-md-6">
                                     <p className="card-text">
                                         <strong>Inicio Monitoreo:</strong>{" "}
-                                        {bitacora.inicioMonitoreo
-                                            ? new Date(
-                                                  bitacora.inicioMonitoreo
-                                              ).toLocaleDateString()
-                                            : "N/A"}
+                                        <p className="card-text">
+                                            {bitacora.inicioMonitoreo
+                                                ? formatDate(bitacora.inicioMonitoreo)
+                                                : "--"}
+                                        </p>
                                     </p>
                                 </div>
                                 <div className="col-md-6">
                                     <p className="card-text">
                                         <strong>Final Monitoreo:</strong>{" "}
-                                        {bitacora.finalMonitoreo
-                                            ? new Date(bitacora.finalMonitoreo).toLocaleDateString()
-                                            : "N/A"}
+                                        <p className="card-text">
+                                            {bitacora.finalMonitoreo
+                                                ? formatDate(bitacora.finalMonitoreo)
+                                                : "--"}
+                                        </p>
                                     </p>
                                 </div>
                             </div>
-                            <div className="text-center mt-3">
-                                {!bitacora.iniciada ? (
-                                    <button className="btn btn-success" onClick={handleStart}>
-                                        Iniciar
-                                    </button>
-                                ) : (
-                                    <button
-                                        className={`btn ${
-                                            !bitacora.iniciada ? "btn-success" : "btn-danger"
-                                        } ${finishButtonDisabled ? "btn-disabled" : ""}`}
-                                        onClick={handleFinish}
-                                        disabled={finishButtonDisabled}>
-                                        Finalizar
-                                    </button>
-                                )}
-                            </div>
                         </div>
                     </div>
-                    <h1 className="text-center fs-3 fw-semibold text-black">Eventos</h1>
                     <div className="container mt-4">
+                        <div className="row mb-3">
+                            <div className="d-flex justify-content-between align-items-center">
+                                <button
+                                    className="btn btn-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#eventModal">
+                                    <FontAwesomeIcon icon={faPlus} /> Añadir Evento
+                                </button>
+                                <h1 className="text-center fs-3 fw-semibold text-black flex-grow-1">
+                                    Eventos
+                                </h1>
+                                <button
+                                    className={`btn ${
+                                        bitacora.status === "iniciada"
+                                            ? "btn-danger"
+                                            : "btn-success"
+                                    } ${finishButtonDisabled ? "disabled" : ""}`}
+                                    onClick={
+                                        bitacora.status === "iniciada" ? handleFinish : handleStart
+                                    }
+                                    disabled={finishButtonDisabled}>
+                                    {bitacora.status === "iniciada" ? "Finalizar" : "Iniciar"}
+                                </button>
+                            </div>
+                        </div>
                         <div className="row">
                             {events.map((event, index) => (
                                 <EventCard key={index} {...event} />
@@ -278,6 +392,76 @@ const BitacoraDetail = () => {
                 </div>
             </div>
             <Footer />
+
+            {/* Bootstrap Modal for adding a new event */}
+            <div
+                className="modal fade"
+                id="eventModal"
+                tabIndex="-1"
+                aria-labelledby="eventModalLabel"
+                aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="eventModalLabel">
+                                Añadir Evento
+                            </h5>
+                            <button
+                                type="button"
+                                className="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label htmlFor="name" className="form-label">
+                                        Tipo de Evento
+                                    </label>
+                                    <select
+                                        id="name"
+                                        name="name"
+                                        className="form-select"
+                                        value={newEvent.name}
+                                        onChange={handleChange}
+                                        required>
+                                        <option value="">Seleccionar tipo de evento</option>
+                                        {eventTypes.map((eventType) => (
+                                            <option key={eventType._id} value={eventType.eventType}>
+                                                {eventType.eventType}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="details" className="form-label">
+                                        Detalles
+                                    </label>
+                                    <textarea
+                                        id="details"
+                                        name="details"
+                                        className="form-control"
+                                        value={newEvent.details}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="text-center">
+                                    <button type="submit" className="btn btn-primary">
+                                        Añadir Evento
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary ms-2"
+                                        data-bs-dismiss="modal">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     );
 };

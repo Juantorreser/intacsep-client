@@ -19,12 +19,13 @@ const BitacoraCard = ({
     telefono,
     inicioMonitoreo,
     finalMonitoreo,
+    onStartMonitoring,
+    onEndMonitoring,
 }) => {
     const navigate = useNavigate();
 
     const handleViewDetails = () => {
         navigate(`/bitacora/${id}`);
-        console.log(id);
     };
 
     return (
@@ -44,7 +45,6 @@ const BitacoraCard = ({
                                 </h6>
                             </div>
                         </div>
-
                         <div className="row mb-2">
                             <div className="col-md-6">
                                 <h6 className="card-subtitle mb-1">
@@ -125,6 +125,11 @@ const BitacoraCard = ({
                                         ? new Date(inicioMonitoreo).toLocaleDateString()
                                         : "N/A"}
                                 </p>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => onStartMonitoring(id)}>
+                                    Iniciar Monitoreo
+                                </button>
                             </div>
                             <div className="col-md-6">
                                 <p className="card-text mb-1">
@@ -133,6 +138,11 @@ const BitacoraCard = ({
                                         ? new Date(finalMonitoreo).toLocaleDateString()
                                         : "N/A"}
                                 </p>
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={() => onEndMonitoring(id)}>
+                                    Finalizar Monitoreo
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -1,9 +1,9 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import {useAuth} from "../context/AuthContext";
 import {useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+import { Cookies } from "react-cookie";
 
 const Sidebar = () => {
     const {user, verifyToken} = useAuth();
@@ -13,14 +13,33 @@ const Sidebar = () => {
         const init = async () => {
             try {
                 await verifyToken();
+
+                if (user) {
+                    const response = await fetch(`/roles/${user.role}`);
+                    const data = await response.json();
+                    console.log(data);
+                    // setRoleData(data);
+                }
             } catch (e) {
-                navigate("/login");
+                // navigate("/login");
             }
         };
 
         init();
-        console.log(user);
-    }, []);
+    }, [Cookies.access_token]);
+    const [collapsedItems, setCollapsedItems] = useState({
+        dashboardCollapse: false,
+        bitacorasCollapse: false,
+        settingsCollapse: false,
+        integrationsCollapse: false,
+    });
+
+    const toggleCollapse = (item) => {
+        setCollapsedItems((prevState) => ({
+            ...prevState,
+            [item]: !prevState[item],
+        }));
+    };
 
     return (
         <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 h-100">
@@ -38,8 +57,20 @@ const Sidebar = () => {
                             Bienvenido
                         </span>
                         <h5 style={{fontSize: "1.2rem"}}>
-                            {user ? `${user.firstName} ${user.lastName}` : "Usuario"}
+                            {user && user.firstName && user.lastName
+                                ? `${user.firstName} ${user.lastName}`
+                                : "Usuario"}
                         </h5>
+                        {user && (
+                            <>
+                                <span style={{fontSize: "0.8rem"}}>
+                                    {user.email || "Email no disponible"}
+                                </span>
+                                <span style={{fontSize: "0.8rem"}}>
+                                    {user.role || "Rol no disponible"}
+                                </span>
+                            </>
+                        )}
                     </div>
                 </div>
                 {/* #User Info */}
@@ -59,16 +90,19 @@ const Sidebar = () => {
                         <p className="">
                             <a
                                 className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
-                                data-bs-toggle="collapse"
-                                href="#dashboardCollapse"
                                 role="button"
-                                aria-expanded="false"
-                                aria-controls="dashboardCollapse">
+                                onClick={() => toggleCollapse("dashboardCollapse")}>
                                 Dashboard
-                                <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
+                                <i
+                                    className={`fa ${
+                                        collapsedItems.dashboardCollapse ? "fa-minus" : "fa-plus"
+                                    } text-white-50 my-auto icon-toggle`}></i>
                             </a>
                         </p>
-                        <div className="collapse" id="dashboardCollapse">
+                        <div
+                            className={`collapse ${
+                                collapsedItems.dashboardCollapse ? "show" : ""
+                            }`}>
                             <ul className="nav flex-column w-75 ms-4 gap-2">
                                 <li className="text-white-50 cursor-pointer">dashboard 1</li>
                                 <li className="text-white-50 cursor-pointer">dashboard 2</li>
@@ -76,31 +110,29 @@ const Sidebar = () => {
                         </div>
                     </li>
 
-                    {/* Bitacoras Menu */}
+                    {/* Monitoreo Menu */}
                     <li className="nav-item ms-3">
                         <p className="">
                             <a
                                 className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
-                                data-bs-toggle="collapse"
-                                href="#bitacorasCollapse"
                                 role="button"
-                                aria-expanded="false"
-                                aria-controls="bitacorasCollapse">
-                                Bitácoras
-                                <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
+                                onClick={() => toggleCollapse("bitacorasCollapse")}>
+                                Monitoreo
+                                <i
+                                    className={`fa ${
+                                        collapsedItems.bitacorasCollapse ? "fa-minus" : "fa-plus"
+                                    } text-white-50 my-auto icon-toggle`}></i>
                             </a>
                         </p>
-                        <div className="collapse" id="bitacorasCollapse">
+                        <div
+                            className={`collapse ${
+                                collapsedItems.bitacorasCollapse ? "show" : ""
+                            }`}>
                             <ul className="nav flex-column w-75 ms-4 gap-2">
                                 <li
                                     className="text-white-50 cursor-pointer"
-                                    onClick={() => navigate("/bitacoras_activas")}>
-                                    Activas
-                                </li>
-                                <li
-                                    className="text-white-50 cursor-pointer"
-                                    onClick={() => navigate("/bitacoras_pasadas")}>
-                                    Historial
+                                    onClick={() => navigate("/bitacoras")}>
+                                    Bitácoras
                                 </li>
                             </ul>
                         </div>
@@ -111,16 +143,17 @@ const Sidebar = () => {
                         <p className="">
                             <a
                                 className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
-                                data-bs-toggle="collapse"
-                                href="#settingsCollapse"
                                 role="button"
-                                aria-expanded="false"
-                                aria-controls="settingsCollapse">
+                                onClick={() => toggleCollapse("settingsCollapse")}>
                                 Configuración
-                                <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
+                                <i
+                                    className={`fa ${
+                                        collapsedItems.settingsCollapse ? "fa-minus" : "fa-plus"
+                                    } text-white-50 my-auto icon-toggle`}></i>
                             </a>
                         </p>
-                        <div className="collapse" id="settingsCollapse">
+                        <div
+                            className={`collapse ${collapsedItems.settingsCollapse ? "show" : ""}`}>
                             <ul className="nav flex-column w-75 ms-4 gap-2">
                                 <li
                                     className="text-white-50 cursor-pointer"
@@ -156,16 +189,19 @@ const Sidebar = () => {
                         <p className="">
                             <a
                                 className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
-                                data-bs-toggle="collapse"
-                                href="#integrationsCollapse"
                                 role="button"
-                                aria-expanded="false"
-                                aria-controls="integrationsCollapse">
+                                onClick={() => toggleCollapse("integrationsCollapse")}>
                                 Integraciones
-                                <i className="fa fa-plus text-white-50 my-auto icon-toggle"></i>
+                                <i
+                                    className={`fa ${
+                                        collapsedItems.integrationsCollapse ? "fa-minus" : "fa-plus"
+                                    } text-white-50 my-auto icon-toggle`}></i>
                             </a>
                         </p>
-                        <div className="collapse" id="integrationsCollapse">
+                        <div
+                            className={`collapse ${
+                                collapsedItems.integrationsCollapse ? "show" : ""
+                            }`}>
                             <ul className="nav flex-column w-75 ms-4 gap-2">
                                 <li className="text-white-50 cursor-pointer">Integraciones 1</li>
                                 <li className="text-white-50 cursor-pointer">Integraciones 2</li>

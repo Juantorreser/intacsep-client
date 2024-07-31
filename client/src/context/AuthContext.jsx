@@ -24,7 +24,7 @@ const AuthProvider = ({children}) => {
         };
 
         fetchUserFromToken();
-    }, [cookies.access_token]);
+    }, [cookies.access_token]); // Add cookies.access_token as a dependency
 
     const verifyToken = async () => {
         try {

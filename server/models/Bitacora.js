@@ -1,4 +1,12 @@
-import mongoose, {mongo} from "mongoose";
+import mongoose from "mongoose";
+
+const EventoSchema = new mongoose.Schema(
+    {
+        name: {type: String, required: true},
+        description: {type: String, required: true},
+    },
+    {timestamps: true} // This will automatically add `createdAt` and `updatedAt` fields
+);
 
 const BitSchema = new mongoose.Schema(
     {
@@ -18,8 +26,8 @@ const BitSchema = new mongoose.Schema(
         telefono: {type: String, required: true},
         inicioMonitoreo: {type: Date},
         finalMonitoreo: {type: Date},
-        activa: {type: Boolean, default: true},
-        iniciada: {type: Boolean, default: false},
+        status: {type: String, default: "creada", required: true},
+        eventos: [EventoSchema],
     },
     {timestamps: true}
 );

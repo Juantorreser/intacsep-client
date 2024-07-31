@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useAuth} from "../context/AuthContext";
-import {Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 const Login = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -10,7 +10,11 @@ const Login = () => {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
+        firstName: "",
+        lastName: "",
+        phone: "",
     });
+    const [errorMessage, setErrorMessage] = useState(""); // For feedback messages
 
     const handleForm = (e) => {
         const {name, value} = e.target;
@@ -18,7 +22,6 @@ const Login = () => {
             ...prevData,
             [name]: value,
         }));
-        console.log(formData);
     };
 
     useEffect(() => {
@@ -28,6 +31,7 @@ const Login = () => {
 
     const registerUser = async (e) => {
         e.preventDefault();
+        setErrorMessage(""); // Clear previous error messages
 
         const response = await fetch(`${baseUrl}/register`, {
             method: "POST",
@@ -39,22 +43,25 @@ const Login = () => {
 
         if (response.status === 200) {
             setIsRegistered(true);
+        } else {
+            setErrorMessage(data.message || "Error registering user"); // Set error message
         }
     };
 
     const loginUser = async (e) => {
         e.preventDefault();
+        setErrorMessage(""); // Clear previous error messages
+
         try {
             await login(formData.email, formData.password);
+            navigate("/bitacoras");
         } catch (e) {
-            console.log(e);
+            setErrorMessage(e.message || "Email or password incorrect"); // Set error message
         }
-        navigate("/bitacoras_activas");
     };
 
-    //form Switch
     const setForm = () => {
-        //Register Form
+        // Register Form
         if (!isRegistered) {
             return (
                 <section id="login">
@@ -133,18 +140,19 @@ const Login = () => {
                             <button type="submit" className="btn btn-primary mt-3">
                                 Registrarse
                             </button>
+                            {errorMessage && <p className="text-danger mt-3">{errorMessage}</p>}
                         </form>
 
-                        <p className=" mt-3 registerSwitch" onClick={() => setIsRegistered(true)}>
+                        <p className="mt-3 registerSwitch" onClick={() => setIsRegistered(true)}>
                             Iniciar sesión
                         </p>
-                        <p className=" opacity-25 mt-3">© Spotynet 2024</p>
+                        <p className="opacity-25 mt-3">© Spotynet 2024</p>
                     </div>
                 </section>
             );
         }
 
-        //Login Form
+        // Login Form
         return (
             <section id="login">
                 <div className="container col justify-content-center align-items-center">
@@ -179,21 +187,22 @@ const Login = () => {
                             />
                             <label htmlFor="floatingPassword">Contraseña</label>
                         </div>
-                        <a href="">Olvidaste tu constraseña?</a>
+                        <a href="">Olvidaste tu contraseña?</a>
                         <button type="submit" className="btn btn-primary">
                             Iniciar sesión
                         </button>
+                        {errorMessage && <p className="text-danger mt-3">{errorMessage}</p>}
                     </form>
-                    <p className=" mt-3 registerSwitch" onClick={() => setIsRegistered(false)}>
+                    <p className="mt-3 registerSwitch" onClick={() => setIsRegistered(false)}>
                         Registrarse
                     </p>
-                    <p className=" opacity-25 mt-5">© Spotynet 2024</p>
+                    <p className="opacity-25 mt-5">© Spotynet 2024</p>
                 </div>
             </section>
         );
     };
 
-    return <> {setForm()}</>;
+    return <> {setForm()} </>;
 };
 
 export default Login;
