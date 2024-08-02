@@ -13,6 +13,8 @@ import Client from "./models/Cliente.js";
 import EventType from "./models/EventType.js";
 import Role from "./models/Role.js";
 import ClientSequence from "./models/ClientSequence.js";
+import Destino from "./models/Destino.js";
+import Origen from "./models/Origen.js";
 
 dotenv.config();
 
@@ -747,6 +749,139 @@ app.delete("/roles/:id", async (req, res) => {
         res.json({message: "Role deleted"});
     } catch (error) {
         res.status(500).json({message: error.message});
+    }
+});
+
+//ORIGENES
+// Fetch all origenes
+router.get("/origenes", async (req, res) => {
+    try {
+        const origenes = await Origen.find();
+        res.json(origenes);
+    } catch (e) {
+        res.status(500).json({ message: "Failed to fetch origenes", error: e.message });
+    }
+});
+
+// Create a new origen
+router.post("/origenes", async (req, res) => {
+    try {
+        const { name } = req.body;
+        const newOrigen = new Origen({ name });
+        const savedOrigen = await newOrigen.save();
+        res.status(201).json(savedOrigen);
+    } catch (e) {
+        res.status(500).json({ message: "Failed to create origen", error: e.message });
+    }
+});
+
+// Edit an existing origen
+router.put("/origenes/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
+        const updatedOrigen = await Origen.findByIdAndUpdate(id, { name }, { new: true });
+        res.json(updatedOrigen);
+    } catch (e) {
+        res.status(500).json({ message: "Failed to edit origen", error: e.message });
+    }
+});
+
+// Delete an origen
+router.delete("/origenes/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Origen.findByIdAndDelete(id);
+        res.status(204).end();
+    } catch (e) {
+        res.status(500).json({ message: "Failed to delete origen", error: e.message });
+    }
+});
+
+//DESTINOS
+router.get("/destinos", async (req, res) => {
+    try {
+        const destinos = await Destino.find();
+        res.status(200).json(destinos);
+    } catch (e) {
+        res.status(500).json({message: "Error fetching destinos", error: e.message});
+    }
+});
+
+// Create a new destino
+router.post("/destinos", async (req, res) => {
+    try {
+        const newDestino = new Destino({name: req.body.name});
+        const savedDestino = await newDestino.save();
+        res.status(201).json(savedDestino);
+    } catch (e) {
+        res.status(500).json({message: "Error creating destino", error: e.message});
+    }
+});
+
+// Edit a destino
+router.put("/destinos/:id", async (req, res) => {
+    try {
+        const updatedDestino = await Destino.findByIdAndUpdate(
+            req.params.id,
+            {name: req.body.name},
+            {new: true}
+        );
+        res.status(200).json(updatedDestino);
+    } catch (e) {
+        res.status(500).json({message: "Error updating destino", error: e.message});
+    }
+});
+
+// Delete a destino
+router.delete("/destinos/:id", async (req, res) => {
+    try {
+        await Destino.findByIdAndDelete(req.params.id);
+        res.status(200).json({message: "Destino deleted successfully"});
+    } catch (e) {
+        res.status(500).json({message: "Error deleting destino", error: e.message});
+    }
+});
+
+//OPERADORES
+// Get all operadores
+router.get("/operadores", async (req, res) => {
+    try {
+        const operadores = await Operador.find();
+        res.status(200).json(operadores);
+    } catch (e) {
+        res.status(500).json({ message: "Error fetching operadores", error: e.message });
+    }
+});
+
+// Create a new operador
+router.post("/operadores", async (req, res) => {
+    try {
+        const newOperador = new Operador({ name: req.body.name });
+        const savedOperador = await newOperador.save();
+        res.status(201).json(savedOperador);
+    } catch (e) {
+        res.status(500).json({ message: "Error creating operador", error: e.message });
+    }
+});
+
+// Edit an operador
+router.put("/operadores/:id", async (req, res) => {
+    try {
+        const updatedOperador = await Operador.findByIdAndUpdate(req.params.id, { name: req.body.name }, { new: true });
+        res.status(200).json(updatedOperador);
+    } catch (e) {
+        res.status(500).json({ message: "Error updating operador", error: e.message });
+    }
+});
+
+// Delete an operador
+router.delete("/operadores/:id", async (req, res) => {
+    try {
+        await Operador.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: "Operador deleted successfully" });
+    } catch (e) {
+        res.status(500).json({ message: "Error deleting operador", error: e.message });
     }
 });
 

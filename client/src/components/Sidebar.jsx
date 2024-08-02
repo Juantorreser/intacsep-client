@@ -204,6 +204,27 @@ const Sidebar = () => {
                                             Roles
                                         </li>
                                     )}
+                                    {roleData.origenes && (
+                                        <li
+                                            className="text-white-50 cursor-pointer"
+                                            onClick={() => navigate("/origenes")}>
+                                            Origenes
+                                        </li>
+                                    )}
+                                    {roleData.destinos && (
+                                        <li
+                                            className="text-white-50 cursor-pointer"
+                                            onClick={() => navigate("/destinos")}>
+                                            Destinos
+                                        </li>
+                                    )}
+                                    {roleData.operadores && (
+                                        <li
+                                            className="text-white-50 cursor-pointer"
+                                            onClick={() => navigate("/operadores")}>
+                                            Operadores
+                                        </li>
+                                    )}
                                 </ul>
                             </div>
                         </li>

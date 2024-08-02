@@ -33,6 +33,21 @@ const RoleSchema = new mongoose.Schema(
             required: true,
             default: false,
         },
+        origenes: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
+        destinos: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
+        operadores: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
         name: {
             type: String,
             required: true,
