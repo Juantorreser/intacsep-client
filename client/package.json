@@ -1,6 +1,7 @@
 {
   "name": "intacsep",
   "private": true,
+  "homepage" : "https://intacsep.spotynet.com/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

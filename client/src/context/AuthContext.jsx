@@ -61,7 +61,6 @@ const AuthProvider = ({children}) => {
             }
 
             const data = await response.json();
-            setCookie("access_token", data.access_token, {path: "/"});
             await verifyToken(); // Verify the token again after refreshing
         } catch (e) {
             console.error("Error refreshing token:", e);
@@ -85,10 +84,9 @@ const AuthProvider = ({children}) => {
 
             const data = await response.json();
             setUser(data.user);
-            setCookie("access_token", data.access_token, {path: "/"});
-            setCookie("refresh_token", data.refresh_token, {path: "/"});
         } catch (e) {
-            console.error("Error during login:", e);
+            console.error("Error during login: a", e);
+            setUser(null); // Clear user state upon logout
         }
     };
 
@@ -106,8 +104,8 @@ const AuthProvider = ({children}) => {
             }
 
             setUser(null); // Clear user state upon logout
-            removeCookie("access_token", {path: "/"});
-            removeCookie("refresh_token", {path: "/"});
+            // removeCookie("access_token", {path: "/"});
+            // removeCookie("refresh_token", {path: "/"});
             navigate("/"); // Navigate to the home or login page
         } catch (e) {
             console.error("Error during logout:", e);

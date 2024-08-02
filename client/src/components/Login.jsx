@@ -56,6 +56,7 @@ const Login = () => {
             await login(formData.email, formData.password);
             navigate("/bitacoras");
         } catch (e) {
+            navigate("/");
             setErrorMessage(e.message || "Email or password incorrect"); // Set error message
         }
     };
@@ -156,7 +157,7 @@ const Login = () => {
         return (
             <section id="login">
                 <div className="container col justify-content-center align-items-center">
-                    <img src="./logo1.png" alt="logo" width={50} />
+                    <img src="./logo1.png" alt="logo" width={80} />
                     <p>Inicio de sesión</p>
                     <form
                         onSubmit={loginUser}
@@ -193,10 +194,16 @@ const Login = () => {
                         </button>
                         {errorMessage && <p className="text-danger mt-3">{errorMessage}</p>}
                     </form>
-                    <p className="mt-3 registerSwitch" onClick={() => setIsRegistered(false)}>
+                    {/* <p className="mt-3 registerSwitch" onClick={() => setIsRegistered(false)}>
                         Registrarse
-                    </p>
-                    <p className="opacity-25 mt-5">© Spotynet 2024</p>
+                    </p> */}
+                    <a
+                        href="https://www.spotynet.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="opacity-25 mt-5">
+                        Powered by © Spotynet 2024
+                    </a>
                 </div>
             </section>
         );

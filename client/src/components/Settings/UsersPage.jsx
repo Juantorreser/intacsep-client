@@ -160,7 +160,7 @@ const UsersPage = () => {
         <section id="usersPage">
             <Header />
             <div className="w-100 d-flex">
-                <div className="d-none d-lg-flex w-25">
+                <div className="d-none d-lg-flex w-[15%]">
                     <Sidebar />
                 </div>
 

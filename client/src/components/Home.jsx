@@ -9,19 +9,17 @@ const Home = () => {
     const {user, logout, verifyToken} = useAuth();
     const navigate = useNavigate();
     useEffect(() => {
-        try {
-            verifyToken();
-        } catch (e) {
-            navigate("/login");
+        if (!user) {
+            navigate("/");
         }
-    }, [user]);
+    }, []);
     return (
         <section id="homeScreen" className="vh-100">
             <Header />
-            <div className="d-none d-lg-flex w-25 h-100">
+            <div className="d-none d-lg-flex w-[15%] h-100">
                 <Sidebar />
             </div>
-            <Footer/>
+            <Footer />
         </section>
     );
 };

@@ -80,14 +80,14 @@ $gray: #30373e;
         .form-floating > .form-control:focus ~ label::after,
         .form-floating > .form-control:not(:placeholder-shown) ~ label::after,
         .form-floating > .form-select ~ label::after {
-            background-color: transparent;
+            background-color: white;
         }
         .form-floating > .form-control-plaintext ~ label,
         .form-floating > .form-control:focus ~ label,
         .form-floating > .form-control:not(:placeholder-shown) ~ label,
         .form-floating > .form-select ~ label {
-            color: white;
-            opacity: 75%;
+            color: black;
+            opacity: 85%;
         }
 
         .registerSwitch {

@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import {useParams} from "react-router-dom";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Footer from "../Footer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown, faChevronUp, faPlus} from "@fortawesome/free-solid-svg-icons";
@@ -12,7 +13,14 @@ const BitacoraDetail = () => {
     const [isEventStarted, setIsEventStarted] = useState(false);
     const [finishButtonDisabled, setFinishButtonDisabled] = useState(true);
     const [isCollapsed, setIsCollapsed] = useState(true);
-    const [newEvent, setNewEvent] = useState({name: "", details: ""});
+    const [newEvent, setNewEvent] = useState({
+        name: "",
+        details: "",
+        ubicacion: "",
+        duracion: "",
+        distancia: "",
+    });
+
     const [eventTypes, setEventTypes] = useState([]);
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -170,13 +178,25 @@ const BitacoraDetail = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(newEvent),
+                body: JSON.stringify({
+                    name: newEvent.name, // Ensure this matches the backend field
+                    descripcion: newEvent.details,
+                    ubicacion: newEvent.ubicacion,
+                    duracion: newEvent.duracion,
+                    distancia: newEvent.distancia,
+                }),
                 credentials: "include",
             });
             if (response.ok) {
                 const updatedBitacora = await response.json();
                 setBitacora(updatedBitacora);
-                setNewEvent({name: "", details: ""});
+                setNewEvent({
+                    name: "",
+                    details: "",
+                    ubicacion: "",
+                    duracion: "",
+                    distancia: "",
+                });
                 window.bootstrap.Modal.getInstance(document.getElementById("eventModal")).hide();
             } else {
                 console.error("Failed to add event:", response.statusText);
@@ -207,20 +227,33 @@ const BitacoraDetail = () => {
         return <div>Loading...</div>;
     }
 
-    const EventCard = ({name, description, createdAt}) => (
+    const EventCard = ({name, details, ubicacion, duracion, distancia, createdAt}) => (
         <div className="card mb-3">
-            <div className="card-body d-flex">
-                <div className="me-3">
-                    <h5 className="card-title">{name}</h5>
-                    <p className="card-text">
-                        <strong>Detalles:</strong> {description}
-                    </p>
-                    <p className="card-text">
-                        <strong>Fecha:</strong> {new Date(createdAt).toLocaleDateString()}
-                    </p>
-                    <p className="card-text">
-                        <strong>Hora:</strong> {new Date(createdAt).toLocaleTimeString()}
-                    </p>
+            <div className="card-body">
+                <div className="row">
+                    <div className="col-md-6">
+                        <h5 className="card-title">{name}</h5>
+                        <p className="card-text">
+                            <strong>Detalles:</strong> {details}
+                        </p>
+                        <p className="card-text">
+                            <strong>Fecha:</strong> {new Date(createdAt).toLocaleDateString()}
+                        </p>
+                        <p className="card-text">
+                            <strong>Hora:</strong> {new Date(createdAt).toLocaleTimeString()}
+                        </p>
+                    </div>
+                    <div className="col-md-6">
+                        <p className="card-text">
+                            <strong>Ubicación:</strong> {ubicacion}
+                        </p>
+                        <p className="card-text">
+                            <strong>Duración:</strong> {duracion}
+                        </p>
+                        <p className="card-text">
+                            <strong>Distancia:</strong> {distancia}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -232,7 +265,7 @@ const BitacoraDetail = () => {
         <section id="bitacoraDetail">
             <Header />
             <div className="w-100 d-flex">
-                <div className="d-none d-lg-flex w-25">
+                <div className="d-none d-lg-flex w-[15%]">
                     <Sidebar />
                 </div>
                 <div className="w-100 h-100 col mt-4">
@@ -249,110 +282,71 @@ const BitacoraDetail = () => {
                     </div>
                     <div className={`card mb-3 ${isCollapsed ? "collapse" : ""}`}>
                         <div className="card-body">
-                            <div className="row mb-2">
-                                <div className="col-md-6">
-                                    <h6 className="card-subtitle mb-1">
-                                        <strong>ID:</strong> {bitacora.bitacora_id}
+                            <div className="row">
+                                {/* Column 1 */}
+                                <div className="col-md-4">
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>ID Cliente:</strong> {bitacora.cliente}
                                     </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Cliente:</strong> {bitacora.cliente}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Teléfono:</strong> {bitacora.telefono}
+                                    </h6>
+                                    <p className="card-text mb-2">
+                                        <strong>Inicio Monitoreo:</strong>{" "}
+                                        {bitacora.inicioMonitoreo
+                                            ? formatDate(bitacora.inicioMonitoreo)
+                                            : "--"}
+                                    </p>
+                                    <p className="card-text mb-2">
+                                        <strong>Final Monitoreo:</strong>{" "}
+                                        {bitacora.finalMonitoreo
+                                            ? formatDate(bitacora.finalMonitoreo)
+                                            : "--"}
+                                    </p>
                                 </div>
-                                <div className="col-md-6">
-                                    <h6 className="card-subtitle mb-1">
+
+                                {/* Column 2 */}
+                                <div className="col-md-4">
+                                    <h6 className="card-subtitle mb-2">
                                         <strong>Monitoreo:</strong> {bitacora.monitoreo}
                                     </h6>
-                                </div>
-                            </div>
-                            <div className="row mb-2">
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Destino:</strong> {bitacora.destino}
-                                    </p>
-                                </div>
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Origen:</strong> {bitacora.origen}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="row mb-2">
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Cliente:</strong> {bitacora.cliente}
-                                    </p>
-                                </div>
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Enlace:</strong> {bitacora.enlace}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="row mb-2">
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>ID Acceso:</strong> {bitacora.id_acceso}
-                                    </p>
-                                </div>
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Contra Acceso:</strong> {bitacora.contra_acceso}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="row mb-2">
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Placa Remolque:</strong> {bitacora.placa_remolque}
-                                    </p>
-                                </div>
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Placa Tracto:</strong> {bitacora.placa_tracto}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="row mb-2">
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Eco Remolque:</strong> {bitacora.eco_remolque}
-                                    </p>
-                                </div>
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Eco Tracto:</strong> {bitacora.eco_tracto}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="row mb-2">
-                                <div className="col-md-6">
-                                    <p className="card-text">
+                                    <h6 className="card-subtitle mb-2">
                                         <strong>Operador:</strong> {bitacora.operador}
-                                    </p>
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>ECO Tracto:</strong> {bitacora.eco_tracto}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Placa Tracto:</strong> {bitacora.placa_tracto}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>ECO Remolque:</strong> {bitacora.eco_remolque}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Placa Remolque:</strong> {bitacora.placa_remolque}
+                                    </h6>
                                 </div>
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Teléfono:</strong> {bitacora.telefono}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="row mb-2">
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Inicio Monitoreo:</strong>{" "}
-                                        <p className="card-text">
-                                            {bitacora.inicioMonitoreo
-                                                ? formatDate(bitacora.inicioMonitoreo)
-                                                : "--"}
-                                        </p>
-                                    </p>
-                                </div>
-                                <div className="col-md-6">
-                                    <p className="card-text">
-                                        <strong>Final Monitoreo:</strong>{" "}
-                                        <p className="card-text">
-                                            {bitacora.finalMonitoreo
-                                                ? formatDate(bitacora.finalMonitoreo)
-                                                : "--"}
-                                        </p>
-                                    </p>
+
+                                {/* Column 3 */}
+                                <div className="col-md-4">
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Origen:</strong> {bitacora.origen}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Destino:</strong> {bitacora.destino}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Enlace:</strong> {bitacora.enlace}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>ID Acceso:</strong> {bitacora.id_acceso}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Contraseña Acceso:</strong> {bitacora.contra_acceso}
+                                    </h6>
                                 </div>
                             </div>
                         </div>
@@ -442,6 +436,48 @@ const BitacoraDetail = () => {
                                         name="details"
                                         className="form-control"
                                         value={newEvent.details}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="ubicacion" className="form-label">
+                                        Ubicación
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="ubicacion"
+                                        name="ubicacion"
+                                        value={newEvent.ubicacion}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="duracion" className="form-label">
+                                        Duración
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="duracion"
+                                        name="duracion"
+                                        value={newEvent.duracion}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="distancia" className="form-label">
+                                        Distancia
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="distancia"
+                                        name="distancia"
+                                        value={newEvent.distancia}
                                         onChange={handleChange}
                                         required
                                     />

@@ -35,11 +35,11 @@ const PastBits = () => {
 
         fetchBitacoras();
 
-        try {
-            verifyToken();
-        } catch (e) {
-            navigate("/login");
-        }
+        // try {
+        //     verifyToken();
+        // } catch (e) {
+        //     navigate("/login");
+        // }
     }, [baseUrl, navigate, verifyToken]);
 
     return (

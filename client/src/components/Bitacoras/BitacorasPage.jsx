@@ -7,6 +7,7 @@ import Footer from "../Footer";
 import {formatDate} from "../../utils/dateUtils"; // Ensure you have a utility to format dates
 import jsPDF from "jspdf";
 import "jspdf-autotable"; // For table support in jsPDF
+import {Cookies} from "react-cookie";
 
 const BitacorasPage = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -15,7 +16,9 @@ const BitacorasPage = () => {
     const [showModal, setShowModal] = useState(false);
     const [bitacoras, setBitacoras] = useState([]);
     const [clients, setClients] = useState([]);
-    const [monitoreos, setMonitoreos] = useState([]); // New state for monitoreos
+    const [monitoreos, setMonitoreos] = useState([]);
+    const [users, setUsers] = useState([]);
+
     const [formData, setFormData] = useState({
         monitoreo: "",
         cliente: "",
@@ -40,15 +43,31 @@ const BitacorasPage = () => {
                 fetchBitacoras();
                 fetchClients();
                 fetchMonitoreos();
+                fetchUsers();
                 updateFormDataFromUser();
             } catch (e) {
                 console.error("Verification failed:", e);
-                navigate("/login");
+                // navigate("/login");
             }
         };
 
         initialize();
     }, [user]);
+
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/users/`);
+            if (response.ok) {
+                const data = await response.json();
+                const operadores = data.filter((user) => user.role === "Operador");
+                setUsers(operadores);
+            } else {
+                console.error("Failed to fetch users:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching users:", e);
+        }
+    };
 
     const fetchBitacoras = async () => {
         try {
@@ -177,10 +196,22 @@ const BitacorasPage = () => {
         // Table for Events
         doc.autoTable({
             startY: finalY,
-            head: [["Nombre del Evento", "Descripción", "Fecha de Creación"]],
+            head: [
+                [
+                    "Nombre del Evento",
+                    "Descripción",
+                    "Ubicacion",
+                    "Distancia",
+                    "Duracion",
+                    "Fecha de Creación",
+                ],
+            ],
             body: bitacora.eventos.map((evento) => [
                 evento.name,
                 evento.description,
+                evento.ubicacion,
+                evento.distancia,
+                evento.duracion,
                 formatDate(evento.createdAt),
             ]),
         });
@@ -189,12 +220,11 @@ const BitacorasPage = () => {
         doc.save(`Bitacora_${bitacora.bitacora_id}.pdf`);
     };
 
-
     return (
         <section id="activeBits">
             <Header />
             <div className="w-100 d-flex">
-                <div className="d-none d-lg-flex w-25">
+                <div className="d-none d-lg-flex w-[15%]">
                     <Sidebar />
                 </div>
                 <div className="w-100 h-100 col mt-4">
@@ -267,16 +297,6 @@ const BitacorasPage = () => {
                         aria-hidden="true">
                         <div className="modal-dialog">
                             <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">
-                                        Crear Bitácora
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={handleModalToggle}
-                                        aria-label="Close"></button>
-                                </div>
                                 <div className="modal-body w-100">
                                     <div className="w-100 col justify-content-center align-items-center">
                                         <img src="/logo2.png" alt="" width={50} />
@@ -383,32 +403,29 @@ const BitacorasPage = () => {
                                                 required
                                             />
                                         </div>
+
+                                        {/* New Select Field */}
                                         <div className="mb-3">
-                                            <label htmlFor="operador" className="form-label">
+                                            <label htmlFor="selectOption" className="form-label">
                                                 Operador
                                             </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
+                                            <select
                                                 id="operador"
+                                                className="form-select"
                                                 value={formData.operador}
                                                 onChange={handleChange}
-                                                readOnly
-                                            />
+                                                required>
+                                                <option value="">Seleccionar</option>
+                                                {users.map((user) => (
+                                                    <option
+                                                        key={user._id}
+                                                        value={`${user.firstName} ${user.lastName}`}>
+                                                        {`${user.firstName} ${user.lastName}`}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="telefono" className="form-label">
-                                                Teléfono
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="telefono"
-                                                value={formData.telefono}
-                                                onChange={handleChange}
-                                                readOnly
-                                            />
-                                        </div>
+
                                         <div className="mb-3">
                                             <label htmlFor="origen" className="form-label">
                                                 Origen
@@ -464,7 +481,7 @@ const BitacorasPage = () => {
                                                 Contraseña de Acceso
                                             </label>
                                             <input
-                                                type="password"
+                                                type="text"
                                                 className="form-control"
                                                 id="passwordAcceso"
                                                 value={formData.passwordAcceso}

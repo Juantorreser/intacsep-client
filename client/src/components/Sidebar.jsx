@@ -12,9 +12,12 @@ const Sidebar = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
+        console.log(baseUrl);
         const init = async () => {
             try {
-                await verifyToken();
+                // if (!user) {
+                //     navigate("/");
+                // }
 
                 if (user) {
                     const response = await fetch(`${baseUrl}/roles/${user.role}`);
@@ -51,7 +54,8 @@ const Sidebar = () => {
                 <div
                     className="d-flex align-items-center text-white-50 w-100 justify-content-start cursor-pointer"
                     style={{height: "100px"}}
-                    onClick={() => navigate("/inicio")}>
+                    // onClick={() => navigate("/bitacoras")}
+                >
                     <div className="d-flex justify-content-center align-items-center w-25 h-100">
                         <i className="fa fa-user" style={{fontSize: "3em"}}></i>
                     </div>
@@ -127,7 +131,7 @@ const Sidebar = () => {
                                             collapsedItems.bitacorasCollapse
                                                 ? "fa-minus"
                                                 : "fa-plus"
-                                        } text-white-50 icon-toggle`}></i>
+                                        } text-white-50 my-auto icon-toggle me-2`}></i>
                                 </a>
                             </p>
                             <div
@@ -169,7 +173,7 @@ const Sidebar = () => {
                                         <li
                                             className="text-white-50 cursor-pointer"
                                             onClick={() => navigate("/tipos_monitoreo")}>
-                                            Tipos de monitoreo
+                                            Tipos Monitoreo
                                         </li>
                                     )}
                                     {roleData.eventos && (
