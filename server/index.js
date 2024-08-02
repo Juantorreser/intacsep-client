@@ -45,38 +45,38 @@ app.use(express.json());
 app.use(cookieParser());
 
 //Create Custom Middleware to retreive Token Data
-// app.use((req, res, next) => {
-//     // Skip requests for login, logout, and refresh_token
-//     if (
-//         req.path === "/login" ||
-//         req.path === "/logout" ||
-//         req.path === "/refresh_token" ||
-//         req.path === "/register" ||
-//         (req.method === "GET" && req.path != "/user")
-//     ) {
-//         return next();
-//     }
+app.use((req, res, next) => {
+    // Skip requests for login, logout, and refresh_token
+    if (
+        req.path === "/login" ||
+        req.path === "/logout" ||
+        req.path === "/refresh_token" ||
+        req.path === "/register" ||
+        (req.method === "GET" && req.path != "/user")
+    ) {
+        return next();
+    }
 
-//     const token = req.cookies.access_token; // Retrieve token after the path check
-//     req.session = {user: null}; // Initialize session
+    const token = req.cookies.access_token; // Retrieve token after the path check
+    req.session = {user: null}; // Initialize session
 
-//     // Check if the token exists
-//     if (!token) {
-//         console.log("Token is undefined");
-//         return res.status(401).json({message: "Unauthorized: Token missing"});
-//     }
+    // Check if the token exists
+    if (!token) {
+        console.log("Token is undefined");
+        return res.status(401).json({message: "Unauthorized: Token missing"});
+    }
 
-//     try {
-//         const data = jwt.verify(token, JWT_SECRET); // Verify the token
-//         req.session.user = data.user; // Store user data in session
-//     } catch (e) {
-//         console.log(e);
-//         req.session.user = null;
-//         return res.status(401).json({message: "Unauthorized: Invalid token"}); // Return response on error
-//     }
+    try {
+        const data = jwt.verify(token, JWT_SECRET); // Verify the token
+        req.session.user = data.user; // Store user data in session
+    } catch (e) {
+        console.log(e);
+        req.session.user = null;
+        return res.status(401).json({message: "Unauthorized: Invalid token"}); // Return response on error
+    }
 
-//     next(); // Proceed to the next middleware
-// });
+    next(); // Proceed to the next middleware
+});
 
 //mongoose connection
 mongoose.connect(process.env.MONGO_URI);
