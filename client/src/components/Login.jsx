@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 
 const Login = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
-    const navigate = useNavigate(); // Get the navigate function
+    const navigate = useNavigate();
     const {user, login} = useAuth();
     const [isRegistered, setIsRegistered] = useState(true);
     const [formData, setFormData] = useState({
@@ -14,7 +14,8 @@ const Login = () => {
         lastName: "",
         phone: "",
     });
-    const [errorMessage, setErrorMessage] = useState(""); // For feedback messages
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false); // Loading state
 
     const handleForm = (e) => {
         const {name, value} = e.target;
@@ -31,7 +32,8 @@ const Login = () => {
 
     const registerUser = async (e) => {
         e.preventDefault();
-        setErrorMessage(""); // Clear previous error messages
+        setErrorMessage("");
+        setIsLoading(true); // Set loading state
 
         const response = await fetch(`${baseUrl}/register`, {
             method: "POST",
@@ -40,29 +42,32 @@ const Login = () => {
         });
 
         const data = await response.json();
+        setIsLoading(false); // Reset loading state
 
         if (response.status === 200) {
             setIsRegistered(true);
         } else {
-            setErrorMessage(data.message || "Error registering user"); // Set error message
+            setErrorMessage(data.message || "Error registering user");
         }
     };
 
     const loginUser = async (e) => {
         e.preventDefault();
-        setErrorMessage(""); // Clear previous error messages
+        setErrorMessage("");
+        setIsLoading(true); // Set loading state
 
         try {
             await login(formData.email, formData.password);
             navigate("/bitacoras");
         } catch (e) {
             navigate("/");
-            setErrorMessage(e.message || "Email or password incorrect"); // Set error message
+            setErrorMessage(e.message || "Email or password incorrect");
+        } finally {
+            setIsLoading(false); // Reset loading state
         }
     };
 
     const setForm = () => {
-        // Register Form
         if (!isRegistered) {
             return (
                 <section id="login">
@@ -138,8 +143,11 @@ const Login = () => {
                                 />
                                 <label htmlFor="password">Contraseña</label>
                             </div>
-                            <button type="submit" className="btn btn-primary mt-3">
-                                Registrarse
+                            <button
+                                type="submit"
+                                className="btn btn-primary mt-3"
+                                disabled={isLoading}>
+                                {isLoading ? "..." : "Registrarse"}
                             </button>
                             {errorMessage && <p className="text-danger mt-3">{errorMessage}</p>}
                         </form>
@@ -153,7 +161,6 @@ const Login = () => {
             );
         }
 
-        // Login Form
         return (
             <section id="login">
                 <div className="container col justify-content-center align-items-center">
@@ -189,14 +196,11 @@ const Login = () => {
                             <label htmlFor="floatingPassword">Contraseña</label>
                         </div>
                         <a href="">Olvidaste tu contraseña?</a>
-                        <button type="submit" className="btn btn-primary">
-                            Iniciar sesión
+                        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                            {isLoading ? "Iniciando Sesión ..." : "Iniciar sesión"}
                         </button>
                         {errorMessage && <p className="text-danger mt-3">{errorMessage}</p>}
                     </form>
-                    {/* <p className="mt-3 registerSwitch" onClick={() => setIsRegistered(false)}>
-                        Registrarse
-                    </p> */}
                     <a
                         href="https://www.spotynet.com/"
                         target="_blank"
