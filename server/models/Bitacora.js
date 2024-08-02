@@ -27,7 +27,7 @@ const BitSchema = new mongoose.Schema(
         placa_tracto: {type: String, required: true},
         eco_remolque: {type: String, required: true},
         eco_tracto: {type: String, required: true},
-        operador: {type: String, required: true},
+        monitorista: {type: String, required: true},
         inicioMonitoreo: {type: Date},
         finalMonitoreo: {type: Date},
         status: {type: String, default: "creada", required: true},

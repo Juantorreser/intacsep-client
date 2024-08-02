@@ -323,7 +323,7 @@ app.post("/bitacora", async (req, res) => {
             origen: data.origen,
             monitoreo: data.monitoreo,
             cliente: data.cliente,
-            operador: data.operador,
+            monitorista: data.monitorista,
             placa_tracto: data.placaTracto,
             eco_tracto: data.ecoTracto,
             placa_remolque: data.placaRemolque,

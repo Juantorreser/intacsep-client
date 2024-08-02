@@ -291,9 +291,6 @@ const BitacoraDetail = () => {
                                     <h6 className="card-subtitle mb-2">
                                         <strong>Cliente:</strong> {bitacora.cliente}
                                     </h6>
-                                    <h6 className="card-subtitle mb-2">
-                                        <strong>Teléfono:</strong> {bitacora.telefono}
-                                    </h6>
                                     <p className="card-text mb-2">
                                         <strong>Inicio Monitoreo:</strong>{" "}
                                         {bitacora.inicioMonitoreo
@@ -314,7 +311,7 @@ const BitacoraDetail = () => {
                                         <strong>Monitoreo:</strong> {bitacora.monitoreo}
                                     </h6>
                                     <h6 className="card-subtitle mb-2">
-                                        <strong>Operador:</strong> {bitacora.operador}
+                                        <strong>MOnitorista:</strong> {bitacora.monitorista}
                                     </h6>
                                     <h6 className="card-subtitle mb-2">
                                         <strong>ECO Tracto:</strong> {bitacora.eco_tracto}

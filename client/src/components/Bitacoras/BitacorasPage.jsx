@@ -26,8 +26,7 @@ const BitacorasPage = () => {
         placaTracto: "",
         ecoRemolque: "",
         placaRemolque: "",
-        operador: "", // Start empty
-        telefono: "", // Start empty
+        monitorista: "", // Start empty
         origen: "",
         destino: "",
         enlaceRastreo: "",
@@ -59,7 +58,7 @@ const BitacorasPage = () => {
             const response = await fetch(`${baseUrl}/users/`);
             if (response.ok) {
                 const data = await response.json();
-                const operadores = data.filter((user) => user.role === "Operador");
+                const operadores = data.filter((user) => user.role === "Monitorista");
                 setUsers(operadores);
             } else {
                 console.error("Failed to fetch users:", response.statusText);
@@ -172,7 +171,7 @@ const BitacorasPage = () => {
                 ["Bitácora ID", bitacora.bitacora_id],
                 ["Cliente", bitacora.cliente],
                 ["Tipo de Monitoreo", bitacora.monitoreo],
-                ["Operador", bitacora.operador],
+                ["Monitorista", bitacora.operador],
                 ["Teléfono", bitacora.telefono],
                 ["Fecha Creación", formatDate(bitacora.createdAt)],
                 ["Status", bitacora.status],
@@ -246,7 +245,7 @@ const BitacorasPage = () => {
                                         <th>ID</th>
                                         <th>Cliente</th>
                                         <th>Tipo Monitoreo</th>
-                                        <th>Operador</th>
+                                        <th>Monitorista</th>
                                         <th>Fecha Creación</th>
                                         <th>Status</th>
                                         <th>
@@ -407,12 +406,12 @@ const BitacorasPage = () => {
                                         {/* New Select Field */}
                                         <div className="mb-3">
                                             <label htmlFor="selectOption" className="form-label">
-                                                Operador
+                                                Monitorista
                                             </label>
                                             <select
-                                                id="operador"
+                                                id="monitorista"
                                                 className="form-select"
-                                                value={formData.operador}
+                                                value={formData.monitorista}
                                                 onChange={handleChange}
                                                 required>
                                                 <option value="">Seleccionar</option>
