@@ -183,12 +183,19 @@ const ClientsPage = () => {
                     <Sidebar />
                 </div>
                 <div className="w-100 h-100 col mt-4">
-                    <h1 className="text-center fs-3 fw-semibold text-black">Clientes</h1>
-                    <div className="text-center mt-4">
-                        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-                            Crear Nuevo Cliente
-                        </button>
+                    <div className="row w-100 d-flex align-items-center">
+                        <div className="col text-center">
+                            <h1 className="fs-3 fw-semibold text-black">Clientes</h1>
+                        </div>
+                        <div className="col-auto ms-auto">
+                            <button
+                                className="btn btn-primary rounded-5"
+                                onClick={() => setShowModal(true)}>
+                                <i className="fa fa-plus"></i>
+                            </button>
+                        </div>
                     </div>
+
                     <div className="mx-3 my-4">
                         <div className="col">
                             {clients.map((client) => (
@@ -227,17 +234,30 @@ const ClientsPage = () => {
                                         <div className="modal-body">
                                             <form onSubmit={handleSubmit}>
                                                 {/* Regular client fields */}
+
                                                 <div className="mb-3">
                                                     <label
-                                                        htmlFor="alcaldia"
+                                                        htmlFor="razon_social"
                                                         className="form-label">
-                                                        Alcaldía
+                                                        Razón Social
                                                     </label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        id="alcaldia"
-                                                        value={formData.alcaldia}
+                                                        id="razon_social"
+                                                        value={formData.razon_social}
+                                                        onChange={handleChange}
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="RFC" className="form-label">
+                                                        RFC
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="RFC"
+                                                        value={formData.RFC}
                                                         onChange={handleChange}
                                                     />
                                                 </div>
@@ -250,58 +270,6 @@ const ClientsPage = () => {
                                                         className="form-control"
                                                         id="calle"
                                                         value={formData.calle}
-                                                        onChange={handleChange}
-                                                    />
-                                                </div>
-                                                <div className="mb-3">
-                                                    <label htmlFor="ciudad" className="form-label">
-                                                        Ciudad
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="ciudad"
-                                                        value={formData.ciudad}
-                                                        onChange={handleChange}
-                                                    />
-                                                </div>
-                                                <div className="mb-3">
-                                                    <label
-                                                        htmlFor="clave_pais"
-                                                        className="form-label">
-                                                        Clave País
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="clave_pais"
-                                                        value={formData.clave_pais}
-                                                        onChange={handleChange}
-                                                    />
-                                                </div>
-                                                <div className="mb-3">
-                                                    <label
-                                                        htmlFor="codigo_postal"
-                                                        className="form-label">
-                                                        Código Postal
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="codigo_postal"
-                                                        value={formData.codigo_postal}
-                                                        onChange={handleChange}
-                                                    />
-                                                </div>
-                                                <div className="mb-3">
-                                                    <label htmlFor="colonia" className="form-label">
-                                                        Colonia
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="colonia"
-                                                        value={formData.colonia}
                                                         onChange={handleChange}
                                                     />
                                                 </div>
@@ -330,33 +298,78 @@ const ClientsPage = () => {
                                                     />
                                                 </div>
                                                 <div className="mb-3">
-                                                    <label
-                                                        htmlFor="razon_social"
-                                                        className="form-label">
-                                                        Razón Social
+                                                    <label htmlFor="colonia" className="form-label">
+                                                        Colonia
                                                     </label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        id="razon_social"
-                                                        value={formData.razon_social}
+                                                        id="colonia"
+                                                        value={formData.colonia}
                                                         onChange={handleChange}
                                                     />
                                                 </div>
                                                 <div className="mb-3">
-                                                    <label htmlFor="RFC" className="form-label">
-                                                        RFC
+                                                    <label
+                                                        htmlFor="alcaldia"
+                                                        className="form-label">
+                                                        Alcaldía
                                                     </label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        id="RFC"
-                                                        value={formData.RFC}
+                                                        id="alcaldia"
+                                                        value={formData.alcaldia}
                                                         onChange={handleChange}
                                                     />
                                                 </div>
+
+                                                <div className="mb-3">
+                                                    <label htmlFor="ciudad" className="form-label">
+                                                        Ciudad
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="ciudad"
+                                                        value={formData.ciudad}
+                                                        onChange={handleChange}
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label
+                                                        htmlFor="codigo_postal"
+                                                        className="form-label">
+                                                        Código Postal
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="codigo_postal"
+                                                        value={formData.codigo_postal}
+                                                        onChange={handleChange}
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label
+                                                        htmlFor="clave_pais"
+                                                        className="form-label">
+                                                        Clave País
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="clave_pais"
+                                                        value={formData.clave_pais}
+                                                        onChange={handleChange}
+                                                    />
+                                                </div>
+
                                                 <hr />
                                                 {/* Contact fields */}
+
+                                                <p>Contacto:</p>
+                                                <hr />
                                                 <div className="mb-3">
                                                     <label
                                                         htmlFor="contacto_nombres"
@@ -432,7 +445,8 @@ const ClientsPage = () => {
                                                         required
                                                     />
                                                 </div>
-                                                <button type="submit" className="btn btn-primary">
+                                                <button type="button" className="btn btn-danger ms-auto">Cancelar</button>
+                                                <button type="submit" className="btn btn-success ms-3">
                                                     {isEditing ? "Guardar Cambios" : "Crear"}
                                                 </button>
                                             </form>

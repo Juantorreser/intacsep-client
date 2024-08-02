@@ -96,14 +96,20 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
         }
     };
 
+    // Helper function to format ID
+    const formatID = (id) => {
+        return id.toString().padStart(5, "0");
+    };
+
     return (
         <div className="card mb-3">
             <div className="card-body">
                 <div className="d-flex flex-wrap align-items-center">
                     <div className="col-md-6">
-                        <p className="card-text mb-0 fs-5">
-                            <strong >ID Cliente:</strong> {formData.ID_Cliente || ""}
+                        <p className="card-text mb-3 fs-5">
+                            <strong>ID Cliente:</strong> {formatID(formData.ID_Cliente || "")}
                         </p>
+
                         <p className="card-text mb-0">
                             <strong>Razón Social:</strong> {formData.razon_social || ""}
                         </p>
@@ -111,13 +117,19 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
                             <strong>RFC:</strong> {formData.RFC || ""}
                         </p>
                         <p className="card-text mb-0">
-                            <strong>Alcaldía:</strong> {formData.alcaldia || ""}
-                        </p>
-                        <p className="card-text mb-0">
                             <strong>Calle:</strong> {formData.calle || ""}
                         </p>
                         <p className="card-text mb-0">
+                            <strong>Número Ext:</strong> {formData.num_ext || ""}
+                        </p>
+                        <p className="card-text mb-0">
+                            <strong>Número Int:</strong> {formData.num_int || ""}
+                        </p>
+                        <p className="card-text mb-0">
                             <strong>Colonia:</strong> {formData.colonia || ""}
+                        </p>
+                        <p className="card-text mb-0">
+                            <strong>Alcaldía:</strong> {formData.alcaldia || ""}
                         </p>
                         <p className="card-text mb-0">
                             <strong>Ciudad:</strong> {formData.ciudad || ""}
@@ -128,18 +140,13 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
                         <p className="card-text mb-0">
                             <strong>Clave País:</strong> {formData.clave_pais || ""}
                         </p>
-                        <p className="card-text mb-0">
-                            <strong>Número Ext:</strong> {formData.num_ext || ""}
-                        </p>
-                        <p className="card-text mb-0">
-                            <strong>Número Int:</strong> {formData.num_int || ""}
-                        </p>
                     </div>
                     <div className="col-md-6">
                         <hr />
                         <p className="card-text mb-0">
                             <strong className="fs-5">Contacto</strong>
                         </p>
+                        <hr />
                         <p className="card-text mb-0">
                             <strong>Nombre:</strong> {formData.contacto.nombres || "No disponible"}{" "}
                             {formData.contacto.apellidos || "No disponible"}
@@ -156,7 +163,7 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
                         </p>
                     </div>
                     <div className="ms-auto">
-                        <button className="btn btn-warning me-2" onClick={handleEdit}>
+                        <button className="btn btn-primary me-2" onClick={handleEdit}>
                             <i className="fa fa-pencil-alt"></i>
                         </button>
                         <button className="btn btn-danger" onClick={handleDelete}>
@@ -169,13 +176,15 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
             {/* Modal for Editing */}
             <Modal show={showModal} onHide={handleClose} backdrop="static">
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Client</Modal.Title>
+                    <Modal.Title>Editar</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form>
                         {/* Client Info */}
                         <div className="row">
                             <div className="col-md-6">
+                                <p>Cliente</p>
+                                <hr />
                                 <div className="mb-3">
                                     <label htmlFor="razon_social" className="form-label">
                                         Razón Social
@@ -204,19 +213,6 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label htmlFor="alcaldia" className="form-label">
-                                        Alcaldía
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="alcaldia"
-                                        value={formData.alcaldia || ""}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-3">
                                     <label htmlFor="calle" className="form-label">
                                         Calle
                                     </label>
@@ -229,6 +225,34 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
                                         required
                                     />
                                 </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="num_ext" className="form-label">
+                                        Número Ext
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="num_ext"
+                                        value={formData.num_ext || ""}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="num_int" className="form-label">
+                                        Número Int
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="num_int"
+                                        value={formData.num_int || ""}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
                                 <div className="mb-3">
                                     <label htmlFor="colonia" className="form-label">
                                         Colonia
@@ -242,6 +266,21 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
                                         required
                                     />
                                 </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="alcaldia" className="form-label">
+                                        Alcaldía
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="alcaldia"
+                                        value={formData.alcaldia || ""}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
                                 <div className="mb-3">
                                     <label htmlFor="ciudad" className="form-label">
                                         Ciudad
@@ -281,35 +320,10 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-3">
-                                    <label htmlFor="num_ext" className="form-label">
-                                        Número Ext
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="num_ext"
-                                        value={formData.num_ext || ""}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="num_int" className="form-label">
-                                        Número Int
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="num_int"
-                                        value={formData.num_int || ""}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
                             </div>
                             {/* Contact Info */}
                             <div className="col-md-6">
+                                <p>Contacto</p>
                                 <hr />
                                 <div className="mb-3">
                                     <label htmlFor="nombres" className="form-label">
@@ -381,10 +395,10 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="danger" onClick={handleClose}>
                         Cancelar
                     </Button>
-                    <Button variant="primary" onClick={handleConfirm}>
+                    <Button variant="success" onClick={handleConfirm}>
                         Confirmar
                     </Button>
                 </Modal.Footer>
