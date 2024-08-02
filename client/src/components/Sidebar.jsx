@@ -61,7 +61,7 @@ const Sidebar = () => {
                     </div>
                     <div className="d-flex flex-column justify-content-center align-items-start ms-2">
                         <span className="d-block" style={{fontSize: "0.8rem"}}>
-                            Bienvenido
+                            Bienvenido (a)
                         </span>
                         <h5 style={{fontSize: "1.2rem"}}>
                             {user && user.firstName && user.lastName
