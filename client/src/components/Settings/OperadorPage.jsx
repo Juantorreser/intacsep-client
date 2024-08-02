@@ -2,10 +2,16 @@ import React, {useState, useEffect} from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 const OperadorPage = () => {
     const [operadores, setOperadores] = useState([]);
     const [newOperador, setNewOperador] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [currentOperador, setCurrentOperador] = useState(null);
+    const [editingName, setEditingName] = useState("");
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
@@ -68,23 +74,29 @@ const OperadorPage = () => {
         }
     };
 
-    const handleEdit = async (id, updatedName) => {
+    const handleSaveEdit = async () => {
+        if (!currentOperador) return;
+
         try {
-            const response = await fetch(`${baseUrl}/operadores/${id}`, {
+            const response = await fetch(`${baseUrl}/operadores/${currentOperador._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({name: updatedName}),
+                body: JSON.stringify({name: editingName}),
                 credentials: "include",
             });
 
             if (response.ok) {
+                const updatedOperador = await response.json();
                 setOperadores(
                     operadores.map((operador) =>
-                        operador._id === id ? {...operador, name: updatedName} : operador
+                        operador._id === updatedOperador._id ? updatedOperador : operador
                     )
                 );
+                setShowModal(false);
+                setCurrentOperador(null);
+                setEditingName("");
             } else {
                 console.error("Failed to update operador:", response.statusText);
             }
@@ -141,17 +153,17 @@ const OperadorPage = () => {
                                 <tbody>
                                     {operadores.map((operador) => (
                                         <tr key={operador._id}>
-                                            <td>
-                                                <input
-                                                    type="text"
-                                                    value={operador.name}
-                                                    onChange={(e) =>
-                                                        handleEdit(operador._id, e.target.value)
-                                                    }
-                                                    className="form-control"
-                                                />
-                                            </td>
+                                            <td>{operador.name}</td>
                                             <td className="text-end">
+                                                <button
+                                                    className="btn btn-primary rounded-circle me-2"
+                                                    onClick={() => {
+                                                        setCurrentOperador(operador);
+                                                        setEditingName(operador.name);
+                                                        setShowModal(true);
+                                                    }}>
+                                                    <i className="fas fa-edit"></i>
+                                                </button>
                                                 <button
                                                     className="btn btn-danger rounded-circle"
                                                     onClick={() => handleDelete(operador._id)}>
@@ -166,6 +178,34 @@ const OperadorPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Edit Modal */}
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Editar Operador</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Nombre del Operador</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={editingName}
+                                onChange={(e) => setEditingName(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Cancelar
+                    </Button>
+                    <Button variant="primary" onClick={handleSaveEdit}>
+                        Guardar Cambios
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <Footer />
         </section>
     );

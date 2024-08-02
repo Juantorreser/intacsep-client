@@ -15,6 +15,7 @@ import Role from "./models/Role.js";
 import ClientSequence from "./models/ClientSequence.js";
 import Destino from "./models/Destino.js";
 import Origen from "./models/Origen.js";
+import Operador from "./models/Operador.js";
 
 dotenv.config();
 
@@ -46,39 +47,39 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-//Create Custom Middleware to retreive Token Data
-app.use((req, res, next) => {
-    // Skip requests for login, logout, and refresh_token
-    if (
-        req.path === "/login" ||
-        req.path === "/logout" ||
-        req.path === "/refresh_token" ||
-        req.path === "/register" ||
-        (req.method === "GET" && req.path != "/user")
-    ) {
-        return next();
-    }
+// //Create Custom Middleware to retreive Token Data
+// app.use((req, res, next) => {
+//     // Skip requests for login, logout, and refresh_token
+//     if (
+//         req.path === "/login" ||
+//         req.path === "/logout" ||
+//         req.path === "/refresh_token" ||
+//         req.path === "/register" ||
+//         (req.method === "GET" && req.path != "/user")
+//     ) {
+//         return next();
+//     }
 
-    const token = req.cookies.access_token; // Retrieve token after the path check
-    req.session = {user: null}; // Initialize session
+//     const token = req.cookies.access_token; // Retrieve token after the path check
+//     req.session = {user: null}; // Initialize session
 
-    // Check if the token exists
-    if (!token) {
-        console.log("Token is undefined");
-        return res.status(401).json({message: "Unauthorized: Token missing"});
-    }
+//     // Check if the token exists
+//     if (!token) {
+//         console.log("Token is undefined");
+//         return res.status(401).json({message: "Unauthorized: Token missing"});
+//     }
 
-    try {
-        const data = jwt.verify(token, JWT_SECRET); // Verify the token
-        req.session.user = data.user; // Store user data in session
-    } catch (e) {
-        console.log(e);
-        req.session.user = null;
-        return res.status(401).json({message: "Unauthorized: Invalid token"}); // Return response on error
-    }
+//     try {
+//         const data = jwt.verify(token, JWT_SECRET); // Verify the token
+//         req.session.user = data.user; // Store user data in session
+//     } catch (e) {
+//         console.log(e);
+//         req.session.user = null;
+//         return res.status(401).json({message: "Unauthorized: Invalid token"}); // Return response on error
+//     }
 
-    next(); // Proceed to the next middleware
-});
+//     next(); // Proceed to the next middleware
+// });
 
 //mongoose connection
 mongoose.connect(process.env.MONGO_URI);
@@ -121,9 +122,6 @@ app.post("/login", async (req, res) => {
         const refreshToken = jwt.sign({id: user.id, email: user.email}, JWT_SECRET_REFRESH, {
             expiresIn: "5d",
         });
-
-        console.log("Access Token:", accessToken);
-        console.log("Refresh Token:", refreshToken);
 
         // Save tokens in cookies
         res.cookie("access_token", accessToken, {
@@ -325,7 +323,7 @@ app.post("/bitacora", async (req, res) => {
             origen: data.origen,
             monitoreo: data.monitoreo,
             cliente: data.cliente,
-            monitorista: data.monitorista,
+            operador: data.operador,
             placa_tracto: data.placaTracto,
             eco_tracto: data.ecoTracto,
             placa_remolque: data.placaRemolque,
@@ -754,7 +752,7 @@ app.delete("/roles/:id", async (req, res) => {
 
 //ORIGENES
 // Fetch all origenes
-router.get("/origenes", async (req, res) => {
+app.get("/origenes", async (req, res) => {
     try {
         const origenes = await Origen.find();
         res.json(origenes);
@@ -764,7 +762,7 @@ router.get("/origenes", async (req, res) => {
 });
 
 // Create a new origen
-router.post("/origenes", async (req, res) => {
+app.post("/origenes", async (req, res) => {
     try {
         const { name } = req.body;
         const newOrigen = new Origen({ name });
@@ -776,7 +774,7 @@ router.post("/origenes", async (req, res) => {
 });
 
 // Edit an existing origen
-router.put("/origenes/:id", async (req, res) => {
+app.put("/origenes/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const { name } = req.body;
@@ -788,7 +786,7 @@ router.put("/origenes/:id", async (req, res) => {
 });
 
 // Delete an origen
-router.delete("/origenes/:id", async (req, res) => {
+app.delete("/origenes/:id", async (req, res) => {
     try {
         const { id } = req.params;
         await Origen.findByIdAndDelete(id);
@@ -799,7 +797,7 @@ router.delete("/origenes/:id", async (req, res) => {
 });
 
 //DESTINOS
-router.get("/destinos", async (req, res) => {
+app.get("/destinos", async (req, res) => {
     try {
         const destinos = await Destino.find();
         res.status(200).json(destinos);
@@ -809,7 +807,7 @@ router.get("/destinos", async (req, res) => {
 });
 
 // Create a new destino
-router.post("/destinos", async (req, res) => {
+app.post("/destinos", async (req, res) => {
     try {
         const newDestino = new Destino({name: req.body.name});
         const savedDestino = await newDestino.save();
@@ -820,7 +818,7 @@ router.post("/destinos", async (req, res) => {
 });
 
 // Edit a destino
-router.put("/destinos/:id", async (req, res) => {
+app.put("/destinos/:id", async (req, res) => {
     try {
         const updatedDestino = await Destino.findByIdAndUpdate(
             req.params.id,
@@ -834,7 +832,7 @@ router.put("/destinos/:id", async (req, res) => {
 });
 
 // Delete a destino
-router.delete("/destinos/:id", async (req, res) => {
+app.delete("/destinos/:id", async (req, res) => {
     try {
         await Destino.findByIdAndDelete(req.params.id);
         res.status(200).json({message: "Destino deleted successfully"});
@@ -845,7 +843,7 @@ router.delete("/destinos/:id", async (req, res) => {
 
 //OPERADORES
 // Get all operadores
-router.get("/operadores", async (req, res) => {
+app.get("/operadores", async (req, res) => {
     try {
         const operadores = await Operador.find();
         res.status(200).json(operadores);
@@ -855,7 +853,7 @@ router.get("/operadores", async (req, res) => {
 });
 
 // Create a new operador
-router.post("/operadores", async (req, res) => {
+app.post("/operadores", async (req, res) => {
     try {
         const newOperador = new Operador({ name: req.body.name });
         const savedOperador = await newOperador.save();
@@ -866,7 +864,7 @@ router.post("/operadores", async (req, res) => {
 });
 
 // Edit an operador
-router.put("/operadores/:id", async (req, res) => {
+app.put("/operadores/:id", async (req, res) => {
     try {
         const updatedOperador = await Operador.findByIdAndUpdate(req.params.id, { name: req.body.name }, { new: true });
         res.status(200).json(updatedOperador);
@@ -876,7 +874,7 @@ router.put("/operadores/:id", async (req, res) => {
 });
 
 // Delete an operador
-router.delete("/operadores/:id", async (req, res) => {
+app.delete("/operadores/:id", async (req, res) => {
     try {
         await Operador.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Operador deleted successfully" });

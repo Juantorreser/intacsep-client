@@ -2,11 +2,15 @@ import React, {useState, useEffect} from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 const OrigenPage = () => {
     const [origenes, setOrigenes] = useState([]);
     const [newOrigen, setNewOrigen] = useState("");
-    const [editingOrigen, setEditingOrigen] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [currentOrigen, setCurrentOrigen] = useState(null);
     const [editingName, setEditingName] = useState("");
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -70,12 +74,11 @@ const OrigenPage = () => {
         }
     };
 
-    const handleEdit = async (e) => {
-        e.preventDefault();
-        if (!editingOrigen) return;
+    const handleSaveEdit = async () => {
+        if (!currentOrigen) return;
 
         try {
-            const response = await fetch(`${baseUrl}/origenes/${editingOrigen._id}`, {
+            const response = await fetch(`${baseUrl}/origenes/${currentOrigen._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -91,7 +94,8 @@ const OrigenPage = () => {
                         origen._id === updatedOrigen._id ? updatedOrigen : origen
                     )
                 );
-                setEditingOrigen(null);
+                setShowModal(false);
+                setCurrentOrigen(null);
                 setEditingName("");
             } else {
                 console.error("Failed to edit origen:", response.statusText);
@@ -113,19 +117,15 @@ const OrigenPage = () => {
 
                     {/* Create New Origen Form */}
                     <div className="mx-3 my-4">
-                        <form onSubmit={editingOrigen ? handleEdit : handleCreate} className="mb-4">
+                        <form onSubmit={handleCreate} className="mb-4">
                             <div className="form-group">
                                 <div className="input-group">
                                     <input
                                         type="text"
                                         id="newOrigen"
                                         className="form-control rounded-2"
-                                        value={editingOrigen ? editingName : newOrigen}
-                                        onChange={(e) =>
-                                            editingOrigen
-                                                ? setEditingName(e.target.value)
-                                                : setNewOrigen(e.target.value)
-                                        }
+                                        value={newOrigen}
+                                        onChange={(e) => setNewOrigen(e.target.value)}
                                         placeholder="Ingrese nuevo origen"
                                     />
                                     <div className="input-group-append ms-2">
@@ -156,10 +156,11 @@ const OrigenPage = () => {
                                             <td>{origen.name}</td>
                                             <td className="text-end">
                                                 <button
-                                                    className="btn btn-warning rounded-circle me-2"
+                                                    className="btn btn-primary rounded-circle me-2"
                                                     onClick={() => {
-                                                        setEditingOrigen(origen);
+                                                        setCurrentOrigen(origen);
                                                         setEditingName(origen.name);
+                                                        setShowModal(true);
                                                     }}>
                                                     <i className="fas fa-edit"></i>
                                                 </button>
@@ -177,6 +178,34 @@ const OrigenPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Edit Modal */}
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Editar Origen</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Nombre del Origen</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={editingName}
+                                onChange={(e) => setEditingName(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Cancelar
+                    </Button>
+                    <Button variant="primary" onClick={handleSaveEdit}>
+                        Guardar Cambios
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <Footer />
         </section>
     );

@@ -18,6 +18,9 @@ const BitacorasPage = () => {
     const [clients, setClients] = useState([]);
     const [monitoreos, setMonitoreos] = useState([]);
     const [users, setUsers] = useState([]);
+    const [origenes, setOrigenes] = useState([]);
+    const [destinos, setDestinos] = useState([]);
+    const [operadores, setOperadores] = useState([]);
 
     const [formData, setFormData] = useState({
         monitoreo: "",
@@ -26,7 +29,7 @@ const BitacorasPage = () => {
         placaTracto: "",
         ecoRemolque: "",
         placaRemolque: "",
-        monitorista: "", // Start empty
+        operador: "", // Start empty
         origen: "",
         destino: "",
         enlaceRastreo: "",
@@ -43,15 +46,59 @@ const BitacorasPage = () => {
                 fetchClients();
                 fetchMonitoreos();
                 fetchUsers();
+                fetchOrigenes();
+                fetchDestinos();
+                fetchOperadores();
                 updateFormDataFromUser();
             } catch (e) {
                 console.error("Verification failed:", e);
-                // navigate("/login");
             }
         };
 
         initialize();
     }, [user]);
+
+    const fetchOrigenes = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/origenes`);
+            if (response.ok) {
+                const data = await response.json();
+                setOrigenes(data);
+            } else {
+                console.error("Failed to fetch origenes:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching origenes:", e);
+        }
+    };
+
+    const fetchDestinos = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/destinos`);
+            if (response.ok) {
+                const data = await response.json();
+                setDestinos(data);
+            } else {
+                console.error("Failed to fetch destinos:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching destinos:", e);
+        }
+    };
+
+    const fetchOperadores = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/operadores`);
+            if (response.ok) {
+                const data = await response.json();
+                setOperadores(data);
+            } else {
+                console.error("Failed to fetch operadores:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching operadores:", e);
+        }
+    };
 
     const fetchUsers = async () => {
         try {
@@ -171,7 +218,7 @@ const BitacorasPage = () => {
                 ["Bitácora ID", bitacora.bitacora_id],
                 ["Cliente", bitacora.cliente],
                 ["Tipo de Monitoreo", bitacora.monitoreo],
-                ["Monitorista", bitacora.operador],
+                ["Operador", bitacora.operador],
                 ["Teléfono", bitacora.telefono],
                 ["Fecha Creación", formatDate(bitacora.createdAt)],
                 ["Status", bitacora.status],
@@ -245,7 +292,7 @@ const BitacorasPage = () => {
                                         <th>ID</th>
                                         <th>Cliente</th>
                                         <th>Tipo Monitoreo</th>
-                                        <th>Monitorista</th>
+                                        <th>Operador</th>
                                         <th>Fecha Creación</th>
                                         <th>Status</th>
                                         <th>
@@ -403,54 +450,65 @@ const BitacorasPage = () => {
                                             />
                                         </div>
 
-                                        {/* New Select Field */}
                                         <div className="mb-3">
-                                            <label htmlFor="selectOption" className="form-label">
-                                                Monitorista
+                                            <label htmlFor="origen" className="form-label">
+                                                Origen
                                             </label>
                                             <select
-                                                id="monitorista"
+                                                id="origen"
                                                 className="form-select"
-                                                value={formData.monitorista}
+                                                value={formData.origen}
                                                 onChange={handleChange}
                                                 required>
                                                 <option value="">Seleccionar</option>
-                                                {users.map((user) => (
-                                                    <option
-                                                        key={user._id}
-                                                        value={`${user.firstName} ${user.lastName}`}>
-                                                        {`${user.firstName} ${user.lastName}`}
+                                                {origenes.map((origen) => (
+                                                    <option key={origen._id} value={origen.name}>
+                                                        {origen.name}
                                                     </option>
                                                 ))}
                                             </select>
                                         </div>
 
                                         <div className="mb-3">
-                                            <label htmlFor="origen" className="form-label">
-                                                Origen
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="origen"
-                                                value={formData.origen}
-                                                onChange={handleChange}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-3">
                                             <label htmlFor="destino" className="form-label">
                                                 Destino
                                             </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
+                                            <select
                                                 id="destino"
+                                                className="form-select"
                                                 value={formData.destino}
                                                 onChange={handleChange}
-                                                required
-                                            />
+                                                required>
+                                                <option value="">Seleccionar</option>
+                                                {destinos.map((destino) => (
+                                                    <option key={destino._id} value={destino.name}>
+                                                        {destino.name}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </div>
+
+                                        <div className="mb-3">
+                                            <label htmlFor="operador" className="form-label">
+                                                Operador
+                                            </label>
+                                            <select
+                                                id="operador"
+                                                className="form-select"
+                                                value={formData.operador}
+                                                onChange={handleChange}
+                                                required>
+                                                <option value="">Seleccionar</option>
+                                                {operadores.map((operador) => (
+                                                    <option
+                                                        key={operador._id}
+                                                        value={operador.name}>
+                                                        {operador.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
                                         <div className="mb-3">
                                             <label htmlFor="enlaceRastreo" className="form-label">
                                                 Enlace de Rastreo

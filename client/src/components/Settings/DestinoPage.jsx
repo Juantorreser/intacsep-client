@@ -2,10 +2,15 @@ import React, {useState, useEffect} from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 const DestinoPage = () => {
     const [destinos, setDestinos] = useState([]);
     const [newDestino, setNewDestino] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [currentDestino, setCurrentDestino] = useState(null);
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
@@ -44,6 +49,7 @@ const DestinoPage = () => {
 
     const handleCreate = async (e) => {
         e.preventDefault();
+
         if (!newDestino) return;
 
         try {
@@ -68,29 +74,37 @@ const DestinoPage = () => {
         }
     };
 
-    const handleEdit = async (id, updatedName) => {
+    const handleSaveEdit = async () => {
+        if (!currentDestino) return;
+
         try {
-            const response = await fetch(`${baseUrl}/destinos/${id}`, {
+            const response = await fetch(`${baseUrl}/destinos/${currentDestino._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({name: updatedName}),
+                body: JSON.stringify({name: currentDestino.name}),
                 credentials: "include",
             });
 
             if (response.ok) {
                 setDestinos(
                     destinos.map((destino) =>
-                        destino._id === id ? {...destino, name: updatedName} : destino
+                        destino._id === currentDestino._id ? currentDestino : destino
                     )
                 );
+                setShowModal(false);
+                setCurrentDestino(null);
             } else {
                 console.error("Failed to update destino:", response.statusText);
             }
         } catch (e) {
             console.error("Error updating destino:", e);
         }
+    };
+
+    const handleChange = (e) => {
+        setCurrentDestino({...currentDestino, name: e.target.value});
     };
 
     return (
@@ -141,17 +155,16 @@ const DestinoPage = () => {
                                 <tbody>
                                     {destinos.map((destino) => (
                                         <tr key={destino._id}>
-                                            <td>
-                                                <input
-                                                    type="text"
-                                                    value={destino.name}
-                                                    onChange={(e) =>
-                                                        handleEdit(destino._id, e.target.value)
-                                                    }
-                                                    className="form-control"
-                                                />
-                                            </td>
+                                            <td>{destino.name}</td>
                                             <td className="text-end">
+                                                <button
+                                                    className="btn btn-primary rounded-circle me-2"
+                                                    onClick={() => {
+                                                        setCurrentDestino(destino);
+                                                        setShowModal(true);
+                                                    }}>
+                                                    <i className="fas fa-edit"></i>
+                                                </button>
                                                 <button
                                                     className="btn btn-danger rounded-circle"
                                                     onClick={() => handleDelete(destino._id)}>
@@ -166,6 +179,34 @@ const DestinoPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Edit Modal */}
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Editar Destino</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Nombre del Destino</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={currentDestino?.name || ""}
+                                onChange={handleChange}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Cancelar
+                    </Button>
+                    <Button variant="primary" onClick={handleSaveEdit}>
+                        Guardar Cambios
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <Footer />
         </section>
     );

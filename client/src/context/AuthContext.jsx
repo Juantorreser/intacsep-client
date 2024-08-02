@@ -79,6 +79,7 @@ const AuthProvider = ({children}) => {
             });
 
             if (!response.ok) {
+                navigate("/");
                 throw new Error("Login failed");
             }
 
@@ -87,6 +88,7 @@ const AuthProvider = ({children}) => {
         } catch (e) {
             console.error("Error during login: a", e);
             setUser(null); // Clear user state upon logout
+            navigate("/");
         }
     };
 
