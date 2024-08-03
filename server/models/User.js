@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema(
         phone: {type: String, default: ""},
         countryKey: {type: String, default: ""},
         role: {type: String},
-        refesh_token: String,
+        refresh_token: String,
     },
     {timestamps: true}
 );

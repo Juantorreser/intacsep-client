@@ -126,12 +126,14 @@ app.post("/login", async (req, res) => {
         // Save tokens in cookies
         res.cookie("access_token", accessToken, {
             httpOnly: true,
-            secure: true,
+            sameSite: "Strict", // or "Lax" depending on your needs
+            // secure: true, // Uncomment this line when using HTTPS
         });
 
         res.cookie("refresh_token", refreshToken, {
             httpOnly: true,
-            secure: true,
+            sameSite: "Strict", // or "Lax" depending on your needs
+            // secure: true, // Uncomment this line when using HTTPS
         });
 
         user.refresh_token = refreshToken;
