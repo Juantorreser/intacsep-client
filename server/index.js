@@ -317,20 +317,38 @@ app.post("/bitacora", async (req, res) => {
 
         const sequenceNumber = sequence.sequence_value.toString().padStart(6, "0");
 
+        // Create new Bitacora instance with updated data structure
         const newItem = new Bitacora({
             bitacora_id: sequenceNumber,
+            folio_servicio: data.folio_servicio,
+            linea_transporte: data.linea_transporte,
             destino: data.destino,
             origen: data.origen,
             monitoreo: data.monitoreo,
             cliente: data.cliente,
+            enlace: data.enlace,
+            id_acceso: data.id_acceso,
+            contra_acceso: data.contra_acceso,
+            remolque: {
+                eco: data.remolque?.eco,
+                placa: data.remolque?.placa,
+                color: data.remolque?.color,
+                capacidad: data.remolque?.capacidad,
+                sello: data.remolque?.sello,
+            },
+            tracto: {
+                eco: data.tracto?.eco,
+                placa: data.tracto?.placa,
+                marca: data.tracto?.marca,
+                modelo: data.tracto?.modelo,
+                color: data.tracto?.color,
+                tipo: data.tracto?.tipo,
+            },
             operador: data.operador,
-            placa_tracto: data.placaTracto,
-            eco_tracto: data.ecoTracto,
-            placa_remolque: data.placaRemolque,
-            eco_remolque: data.ecoRemolque,
-            id_acceso: data.idAcceso,
-            contra_acceso: data.passwordAcceso,
-            enlace: data.enlaceRastreo,
+            inicioMonitoreo: data.inicioMonitoreo ? new Date(data.inicioMonitoreo) : null,
+            finalMonitoreo: data.finalMonitoreo ? new Date(data.finalMonitoreo) : null,
+            status: data.status || "creada",
+            eventos: data.eventos || [],
         });
 
         await newItem.save();
@@ -340,6 +358,7 @@ app.post("/bitacora", async (req, res) => {
         res.status(500).send("Error creating bitacora");
     }
 });
+
 
 app.get("/bitacora/:id", async (req, res) => {
     try {

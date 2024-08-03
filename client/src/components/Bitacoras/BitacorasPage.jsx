@@ -23,20 +23,36 @@ const BitacorasPage = () => {
     const [operadores, setOperadores] = useState([]);
 
     const [formData, setFormData] = useState({
+        bitacora_id: "",
+        folio_servicio: "",
+        linea_transporte: "",
+        destino: "",
+        origen: "",
         monitoreo: "",
         cliente: "",
-        ecoTracto: "",
-        placaTracto: "",
-        ecoRemolque: "",
-        placaRemolque: "",
-        operador: "", // Start empty
-        origen: "",
-        destino: "",
-        enlaceRastreo: "",
-        idAcceso: "",
-        passwordAcceso: "",
-        status: "creada", // Initialize status as 'creada'
-        eventos: [], // Initialize empty eventos array
+        enlace: "",
+        id_acceso: "",
+        contra_acceso: "",
+        remolque: {
+            eco: "",
+            placa: "",
+            color: "",
+            capacidad: "",
+            sello: "",
+        },
+        tracto: {
+            eco: "",
+            placa: "",
+            marca: "",
+            modelo: "",
+            color: "",
+            tipo: "",
+        },
+        operador: "",
+        inicioMonitoreo: "",
+        finalMonitoreo: "",
+        status: "creada",
+        eventos: [],
     });
 
     useEffect(() => {
@@ -177,10 +193,21 @@ const BitacorasPage = () => {
 
     const handleChange = (e) => {
         const {id, value} = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [id]: value,
-        }));
+        if (id.startsWith("remolque") || id.startsWith("tracto")) {
+            const [field, key] = id.split("_");
+            setFormData((prevData) => ({
+                ...prevData,
+                [field]: {
+                    ...prevData[field],
+                    [key]: value,
+                },
+            }));
+        } else {
+            setFormData((prevData) => ({
+                ...prevData,
+                [id]: value,
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -206,64 +233,47 @@ const BitacorasPage = () => {
 
     const generatePDF = (bitacora) => {
         const doc = new jsPDF();
+        doc.text(`ID de Bitácora: ${bitacora.bitacora_id}`, 10, 10);
+        doc.text(`Folio de Servicio: ${bitacora.folio_servicio}`, 10, 20);
+        doc.text(`Línea de Transporte: ${bitacora.linea_transporte}`, 10, 30);
+        doc.text(`Destino: ${bitacora.destino}`, 10, 40);
+        doc.text(`Origen: ${bitacora.origen}`, 10, 50);
+        doc.text(`Monitoreo: ${bitacora.monitoreo}`, 10, 60);
+        doc.text(`Cliente: ${bitacora.cliente}`, 10, 70);
+        doc.text(`Enlace: ${bitacora.enlace}`, 10, 80);
+        doc.text(`ID de Acceso: ${bitacora.id_acceso}`, 10, 90);
+        doc.text(`Contraseña de Acceso: ${bitacora.contra_acceso}`, 10, 100);
+        doc.text(`Operador: ${bitacora.operador}`, 10, 110);
+        if (bitacora.inicioMonitoreo) {
+            doc.text(
+                `Inicio de Monitoreo: ${new Date(bitacora.inicioMonitoreo).toLocaleDateString()}`,
+                10,
+                120
+            );
+        }
+        if (bitacora.finalMonitoreo) {
+            doc.text(
+                `Final de Monitoreo: ${new Date(bitacora.finalMonitoreo).toLocaleDateString()}`,
+                10,
+                130
+            );
+        }
+        doc.text(`Status: ${bitacora.status}`, 10, 140);
 
-        // Add a title
-        doc.text(`Bitácora Report`, 105, 10, null, null, "center");
+        doc.text(`ECO Remolque: ${bitacora.remolque.eco}`, 10, 150);
+        doc.text(`Placa Remolque: ${bitacora.remolque.placa}`, 10, 160);
+        doc.text(`Color Remolque: ${bitacora.remolque.color}`, 10, 170);
+        doc.text(`Capacidad Remolque: ${bitacora.remolque.capacidad}`, 10, 180);
+        doc.text(`Sello Remolque: ${bitacora.remolque.sello}`, 10, 190);
 
-        // Table for Bitácora Details
-        doc.autoTable({
-            startY: 20,
-            head: [["Campo", "Valor"]],
-            body: [
-                ["Bitácora ID", bitacora.bitacora_id],
-                ["Cliente", bitacora.cliente],
-                ["Tipo de Monitoreo", bitacora.monitoreo],
-                ["Operador", bitacora.operador],
-                ["Teléfono", bitacora.telefono],
-                ["Fecha Creación", formatDate(bitacora.createdAt)],
-                ["Status", bitacora.status],
-                ["Origen", bitacora.origen],
-                ["Destino", bitacora.destino],
-                ["Enlace de Rastreo", bitacora.enlace],
-                ["ID de Acceso", bitacora.id_acceso],
-                ["Contraseña de Acceso", bitacora.contra_acceso],
-                ["ECO Tracto", bitacora.eco_tracto],
-                ["Placa Tracto", bitacora.placa_tracto],
-                ["ECO Remolque", bitacora.eco_remolque],
-                ["Placa Remolque", bitacora.placa_remolque],
-                ["Inicio de Monitoreo", formatDate(bitacora.inicioMonitoreo)],
-                ["Final de Monitoreo", formatDate(bitacora.finalMonitoreo)],
-            ],
-        });
+        doc.text(`ECO Tracto: ${bitacora.tracto.eco}`, 10, 200);
+        doc.text(`Placa Tracto: ${bitacora.tracto.placa}`, 10, 210);
+        doc.text(`Marca Tracto: ${bitacora.tracto.marca}`, 10, 220);
+        doc.text(`Modelo Tracto: ${bitacora.tracto.modelo}`, 10, 230);
+        doc.text(`Color Tracto: ${bitacora.tracto.color}`, 10, 240);
+        doc.text(`Tipo Tracto: ${bitacora.tracto.tipo}`, 10, 250);
 
-        // Add some space before the next table
-        let finalY = doc.lastAutoTable.finalY + 10;
-
-        // Table for Events
-        doc.autoTable({
-            startY: finalY,
-            head: [
-                [
-                    "Nombre del Evento",
-                    "Descripción",
-                    "Ubicacion",
-                    "Distancia",
-                    "Duracion",
-                    "Fecha de Creación",
-                ],
-            ],
-            body: bitacora.eventos.map((evento) => [
-                evento.name,
-                evento.description,
-                evento.ubicacion,
-                evento.distancia,
-                evento.duracion,
-                formatDate(evento.createdAt),
-            ]),
-        });
-
-        // Save the PDF
-        doc.save(`Bitacora_${bitacora.bitacora_id}.pdf`);
+        doc.save(`bitacora_${bitacora.bitacora_id}.pdf`);
     };
 
     return (
@@ -396,56 +406,29 @@ const BitacorasPage = () => {
                                             </select>
                                         </div>
 
-                                        {/* Otros Campos */}
-                                        <div className="mb-3">
-                                            <label htmlFor="ecoTracto" className="form-label">
-                                                ECO Tracto
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="folio_servicio">
+                                                Folio de Servicio
                                             </label>
                                             <input
+                                                id="folio_servicio"
                                                 type="text"
-                                                className="form-control"
-                                                id="ecoTracto"
-                                                value={formData.ecoTracto}
+                                                value={formData.folio_servicio}
                                                 onChange={handleChange}
+                                                className="form-control"
                                                 required
                                             />
                                         </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="placaTracto" className="form-label">
-                                                Placa Tracto
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="linea_transporte">
+                                                Línea de Transporte
                                             </label>
                                             <input
+                                                id="linea_transporte"
                                                 type="text"
-                                                className="form-control"
-                                                id="placaTracto"
-                                                value={formData.placaTracto}
+                                                value={formData.linea_transporte}
                                                 onChange={handleChange}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="ecoRemolque" className="form-label">
-                                                ECO Remolque
-                                            </label>
-                                            <input
-                                                type="text"
                                                 className="form-control"
-                                                id="ecoRemolque"
-                                                value={formData.ecoRemolque}
-                                                onChange={handleChange}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="placaRemolque" className="form-label">
-                                                Placa Remolque
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="placaRemolque"
-                                                value={formData.placaRemolque}
-                                                onChange={handleChange}
                                                 required
                                             />
                                         </div>
@@ -509,51 +492,169 @@ const BitacorasPage = () => {
                                             </select>
                                         </div>
 
-                                        <div className="mb-3">
-                                            <label htmlFor="enlaceRastreo" className="form-label">
-                                                Enlace de Rastreo
-                                            </label>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="enlace">Enlace</label>
                                             <input
+                                                id="enlace"
                                                 type="text"
-                                                className="form-control"
-                                                id="enlaceRastreo"
-                                                value={formData.enlaceRastreo}
+                                                value={formData.enlace}
                                                 onChange={handleChange}
+                                                className="form-control"
+                                                required
                                             />
                                         </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="idAcceso" className="form-label">
-                                                ID de Acceso
-                                            </label>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="id_acceso">ID de Acceso</label>
                                             <input
+                                                id="id_acceso"
                                                 type="text"
-                                                className="form-control"
-                                                id="idAcceso"
-                                                value={formData.idAcceso}
+                                                value={formData.id_acceso}
                                                 onChange={handleChange}
+                                                className="form-control"
+                                                required
                                             />
                                         </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="passwordAcceso" className="form-label">
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="contra_acceso">
                                                 Contraseña de Acceso
                                             </label>
                                             <input
+                                                id="contra_acceso"
                                                 type="text"
-                                                className="form-control"
-                                                id="passwordAcceso"
-                                                value={formData.passwordAcceso}
+                                                value={formData.contra_acceso}
                                                 onChange={handleChange}
+                                                className="form-control"
+                                                required
                                             />
                                         </div>
-                                        <div className="d-flex justify-content-between">
+
+                                        {/* Remolque */}
+                                        <hr />
+                                        <p>Remolque: </p>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_eco">ECO</label>
+                                            <input
+                                                id="remolque_eco"
+                                                type="text"
+                                                value={formData.remolque.eco}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_placa">Placa</label>
+                                            <input
+                                                id="remolque_placa"
+                                                type="text"
+                                                value={formData.remolque.placa}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_color">Color</label>
+                                            <input
+                                                id="remolque_color"
+                                                type="text"
+                                                value={formData.remolque.color}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_capacidad">Capacidad</label>
+                                            <input
+                                                id="remolque_capacidad"
+                                                type="text"
+                                                value={formData.remolque.capacidad}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_sello">Sello </label>
+                                            <input
+                                                id="remolque_sello"
+                                                type="text"
+                                                value={formData.remolque.sello}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+
+                                        <hr />
+                                        <p>Tracto: </p>
+                                        {/* Tracto */}
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="tracto_eco">ECO </label>
+                                            <input
+                                                id="tracto_eco"
+                                                type="text"
+                                                value={formData.tracto.eco}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="tracto_placa">Placa </label>
+                                            <input
+                                                id="tracto_placa"
+                                                type="text"
+                                                value={formData.tracto.placa}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="tracto_marca">Marca </label>
+                                            <input
+                                                id="tracto_marca"
+                                                type="text"
+                                                value={formData.tracto.marca}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="tracto_modelo">Modelo </label>
+                                            <input
+                                                id="tracto_modelo"
+                                                type="text"
+                                                value={formData.tracto.modelo}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="tracto_color">Color </label>
+                                            <input
+                                                id="tracto_color"
+                                                type="text"
+                                                value={formData.tracto.color}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="tracto_tipo">Tipo</label>
+                                            <input
+                                                id="tracto_tipo"
+                                                type="text"
+                                                value={formData.tracto.tipo}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <hr />
+                                        <div className="d-flex justify-content-end">
                                             <button
                                                 type="button"
-                                                className="btn btn-secondary"
+                                                className="btn btn-danger me-3"
                                                 onClick={handleModalToggle}>
                                                 Cancelar
                                             </button>
                                             <button type="submit" className="btn btn-primary">
-                                                Crear Bitácora
+                                                Crear
                                             </button>
                                         </div>
                                     </form>
