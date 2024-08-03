@@ -374,7 +374,15 @@ app.get("/bitacora/:id", async (req, res) => {
 
 app.patch("/bitacora/:id/event", async (req, res) => {
     const {id} = req.params;
-    const {name, descripcion, ubicacion, duracion, distancia} = req.body;
+    const {
+        nombre,
+        descripcion,
+        ubicacion,
+        ultimo_posicionamiento,
+        velocidad,
+        coordenadas,
+        registrado_por,
+    } = req.body;
 
     try {
         // Find the bitacora by its ID
@@ -385,11 +393,13 @@ app.patch("/bitacora/:id/event", async (req, res) => {
 
         // Create a new event
         const newEvent = {
-            name,
-            description: descripcion, // Make sure this matches what is expected
+            nombre,
+            descripcion, // Make sure this matches what is expected
             ubicacion,
-            duracion,
-            distancia,
+            ultimo_posicionamiento,
+            velocidad,
+            coordenadas,
+            registrado_por,
         };
 
         // Add the new event to the bitacora's eventos array

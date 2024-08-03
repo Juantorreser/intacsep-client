@@ -2,12 +2,13 @@ import mongoose from "mongoose";
 
 const EventoSchema = new mongoose.Schema(
     {
-        name: {type: String, required: true},
+        nombre: {type: String, required: true},
         descripcion: {type: String, required: true},
         ubicacion: {type: String, default: ""},
         ultimo_posicionamiento: {type: String, default: ""},
         velocidad: {type: String, default: ""},
         coordenadas: {type: String, default: ""},
+        registrado_por: {type: String, default: "Nombre Usuario"},
     },
     {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`
 );

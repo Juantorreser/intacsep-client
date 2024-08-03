@@ -6,19 +6,21 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Footer from "../Footer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown, faChevronUp, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {useAuth} from "../../context/AuthContext";
 
 const BitacoraDetail = () => {
     const {id} = useParams();
+    const {user} = useAuth();
     const [bitacora, setBitacora] = useState(null);
     const [isEventStarted, setIsEventStarted] = useState(false);
     const [finishButtonDisabled, setFinishButtonDisabled] = useState(true);
-    const [isCollapsed, setIsCollapsed] = useState(true);
     const [newEvent, setNewEvent] = useState({
-        name: "",
-        details: "",
+        nombre: "",
+        descripcion: "",
         ubicacion: "",
-        duracion: "",
-        distancia: "",
+        ultimo_posicionamiento: "",
+        velocidad: "",
+        coordenadas: "",
     });
 
     const [eventTypes, setEventTypes] = useState([]);
@@ -41,6 +43,8 @@ const BitacoraDetail = () => {
     };
 
     useEffect(() => {
+        console.log(user);
+        
         const fetchEventTypes = async () => {
             try {
                 const response = await fetch(`${baseUrl}/event_types`);
@@ -179,11 +183,13 @@ const BitacoraDetail = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    name: newEvent.name, // Ensure this matches the backend field
-                    descripcion: newEvent.details,
+                    nombre: newEvent.nombre, // Ensure this matches the backend field
+                    descripcion: newEvent.descripcion,
                     ubicacion: newEvent.ubicacion,
-                    duracion: newEvent.duracion,
-                    distancia: newEvent.distancia,
+                    ultimo_posicionamiento: newEvent.ultimo_posicionamiento,
+                    velocidad: newEvent.velocidad,
+                    coordenadas: newEvent.coordenadas,
+                    registrado_por: "Usuario",
                 }),
                 credentials: "include",
             });
@@ -191,11 +197,12 @@ const BitacoraDetail = () => {
                 const updatedBitacora = await response.json();
                 setBitacora(updatedBitacora);
                 setNewEvent({
-                    name: "",
-                    details: "",
+                    nombre: "",
+                    descripcion: "",
                     ubicacion: "",
-                    duracion: "",
-                    distancia: "",
+                    ultimo_posicionamiento: "",
+                    velocidad: "",
+                    coordenadas: "",
                 });
                 window.bootstrap.Modal.getInstance(document.getElementById("eventModal")).hide();
             } else {
@@ -227,14 +234,26 @@ const BitacoraDetail = () => {
         return <div>Loading...</div>;
     }
 
-    const EventCard = ({name, details, ubicacion, duracion, distancia, createdAt}) => (
+    const EventCard = ({
+        nombre,
+        descripcion,
+        ubicacion,
+        ultimo_posicionamiento,
+        velocidad,
+        coordenadas,
+        createdAt,
+        registrado_por,
+    }) => (
         <div className="card mb-3">
             <div className="card-body">
                 <div className="row">
                     <div className="col-md-6">
-                        <h5 className="card-title">{name}</h5>
+                        <h5 className="card-title fw-semibold">{nombre}</h5>
                         <p className="card-text">
-                            <strong>Detalles:</strong> {details}
+                            <strong>Registrado por:</strong> {registrado_por}
+                        </p>
+                        <p className="card-text">
+                            <strong>Descripción:</strong> {descripcion}
                         </p>
                         <p className="card-text">
                             <strong>Fecha:</strong> {new Date(createdAt).toLocaleDateString()}
@@ -248,10 +267,13 @@ const BitacoraDetail = () => {
                             <strong>Ubicación:</strong> {ubicacion}
                         </p>
                         <p className="card-text">
-                            <strong>Duración:</strong> {duracion}
+                            <strong>Último Posicionamiento:</strong> {ultimo_posicionamiento}
                         </p>
                         <p className="card-text">
-                            <strong>Distancia:</strong> {distancia}
+                            <strong>Velocidad:</strong> {velocidad}
+                        </p>
+                        <p className="card-text">
+                            <strong>Coordenadas:</strong> {coordenadas}
                         </p>
                     </div>
                 </div>
@@ -450,14 +472,14 @@ const BitacoraDetail = () => {
                         <div className="modal-body">
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
-                                    <label htmlFor="name" className="form-label">
+                                    <label htmlFor="nombre" className="form-label">
                                         Tipo de Evento
                                     </label>
                                     <select
-                                        id="name"
-                                        name="name"
+                                        id="nombre"
+                                        name="nombre"
                                         className="form-select"
-                                        value={newEvent.name}
+                                        value={newEvent.nombre}
                                         onChange={handleChange}
                                         required>
                                         <option value="">Seleccionar tipo de evento</option>
@@ -469,14 +491,14 @@ const BitacoraDetail = () => {
                                     </select>
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="details" className="form-label">
-                                        Detalles
+                                    <label htmlFor="descripcion" className="form-label">
+                                        Descripcion
                                     </label>
                                     <textarea
-                                        id="details"
-                                        name="details"
+                                        id="descripcion"
+                                        name="descripcion"
                                         className="form-control"
-                                        value={newEvent.details}
+                                        value={newEvent.descripcion}
                                         onChange={handleChange}
                                         required
                                     />
@@ -510,28 +532,60 @@ const BitacoraDetail = () => {
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="distancia" className="form-label">
-                                        Distancia
+                                    <label htmlFor="ultimo_posicionamiento" className="form-label">
+                                        Último Posicionamiento
                                     </label>
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="distancia"
-                                        name="distancia"
-                                        value={newEvent.distancia}
+                                        id="ultimo_posicionamiento"
+                                        name="ultimo_posicionamiento"
+                                        value={newEvent.ultimo_posicionamiento}
                                         onChange={handleChange}
                                         required
                                     />
                                 </div>
-                                <div className="text-center">
-                                    <button type="submit" className="btn btn-primary">
-                                        Añadir Evento
-                                    </button>
+                                <div className="mb-3">
+                                    <label htmlFor="velocidad" className="form-label">
+                                        Velocidad
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="velocidad"
+                                        name="velocidad"
+                                        value={newEvent.velocidad}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="coordenadas" className="form-label">
+                                        Coordenadas
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="coordenadas"
+                                        name="coordenadas"
+                                        value={newEvent.coordenadas}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="text-end">
                                     <button
                                         type="button"
-                                        className="btn btn-secondary ms-2"
+                                        className="btn btn-danger m-2"
                                         data-bs-dismiss="modal">
                                         Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-success"
+                                        data-bs-dismiss="modal">
+                                        Registrar
                                     </button>
                                 </div>
                             </form>

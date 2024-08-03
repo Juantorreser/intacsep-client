@@ -323,7 +323,7 @@ const BitacorasPage = () => {
                                         <th>Operador</th>
                                         <th>Fecha Creación</th>
                                         <th>Status</th>
-                                        <th>
+                                        <th className="text-center">
                                             <i className="fa fa-download"></i>
                                         </th>
                                     </tr>
@@ -343,12 +343,12 @@ const BitacorasPage = () => {
                                             <td>{bitacora.operador}</td>
                                             <td>{formatDate(bitacora.createdAt)}</td>
                                             <td>{bitacora.status}</td>
-                                            <td>
+                                            <td className="text-center">
                                                 <button
-                                                    className="btn btn-secondary"
+                                                    className="btn btn-primary"
                                                     onClick={() => generatePDF(bitacora)}
                                                     disabled={bitacora.status !== "finalizada"}>
-                                                    <i className="fa fa-download"></i>
+                                                    <i className="fa fa-file-pdf"></i>
                                                 </button>
                                             </td>
                                         </tr>

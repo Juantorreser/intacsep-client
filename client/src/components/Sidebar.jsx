@@ -12,7 +12,6 @@ const Sidebar = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
-        console.log(baseUrl);
         const init = async () => {
             try {
                 // if (!user) {
