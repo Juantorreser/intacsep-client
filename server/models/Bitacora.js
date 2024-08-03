@@ -40,6 +40,7 @@ const BitSchema = new mongoose.Schema(
             tipo: String,
         },
         operador: {type: String, required: true},
+        telefono: {type: String, required: true},
         inicioMonitoreo: {type: Date},
         finalMonitoreo: {type: Date},
         status: {type: String, default: "creada", required: true},

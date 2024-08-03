@@ -345,6 +345,7 @@ app.post("/bitacora", async (req, res) => {
                 tipo: data.tracto?.tipo,
             },
             operador: data.operador,
+            telefono: data.telefono,
             inicioMonitoreo: data.inicioMonitoreo ? new Date(data.inicioMonitoreo) : null,
             finalMonitoreo: data.finalMonitoreo ? new Date(data.finalMonitoreo) : null,
             status: data.status || "creada",
@@ -358,7 +359,6 @@ app.post("/bitacora", async (req, res) => {
         res.status(500).send("Error creating bitacora");
     }
 });
-
 
 app.get("/bitacora/:id", async (req, res) => {
     try {
@@ -776,42 +776,42 @@ app.get("/origenes", async (req, res) => {
         const origenes = await Origen.find();
         res.json(origenes);
     } catch (e) {
-        res.status(500).json({ message: "Failed to fetch origenes", error: e.message });
+        res.status(500).json({message: "Failed to fetch origenes", error: e.message});
     }
 });
 
 // Create a new origen
 app.post("/origenes", async (req, res) => {
     try {
-        const { name } = req.body;
-        const newOrigen = new Origen({ name });
+        const {name} = req.body;
+        const newOrigen = new Origen({name});
         const savedOrigen = await newOrigen.save();
         res.status(201).json(savedOrigen);
     } catch (e) {
-        res.status(500).json({ message: "Failed to create origen", error: e.message });
+        res.status(500).json({message: "Failed to create origen", error: e.message});
     }
 });
 
 // Edit an existing origen
 app.put("/origenes/:id", async (req, res) => {
     try {
-        const { id } = req.params;
-        const { name } = req.body;
-        const updatedOrigen = await Origen.findByIdAndUpdate(id, { name }, { new: true });
+        const {id} = req.params;
+        const {name} = req.body;
+        const updatedOrigen = await Origen.findByIdAndUpdate(id, {name}, {new: true});
         res.json(updatedOrigen);
     } catch (e) {
-        res.status(500).json({ message: "Failed to edit origen", error: e.message });
+        res.status(500).json({message: "Failed to edit origen", error: e.message});
     }
 });
 
 // Delete an origen
 app.delete("/origenes/:id", async (req, res) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
         await Origen.findByIdAndDelete(id);
         res.status(204).end();
     } catch (e) {
-        res.status(500).json({ message: "Failed to delete origen", error: e.message });
+        res.status(500).json({message: "Failed to delete origen", error: e.message});
     }
 });
 
@@ -867,28 +867,32 @@ app.get("/operadores", async (req, res) => {
         const operadores = await Operador.find();
         res.status(200).json(operadores);
     } catch (e) {
-        res.status(500).json({ message: "Error fetching operadores", error: e.message });
+        res.status(500).json({message: "Error fetching operadores", error: e.message});
     }
 });
 
 // Create a new operador
 app.post("/operadores", async (req, res) => {
     try {
-        const newOperador = new Operador({ name: req.body.name });
+        const newOperador = new Operador({name: req.body.name});
         const savedOperador = await newOperador.save();
         res.status(201).json(savedOperador);
     } catch (e) {
-        res.status(500).json({ message: "Error creating operador", error: e.message });
+        res.status(500).json({message: "Error creating operador", error: e.message});
     }
 });
 
 // Edit an operador
 app.put("/operadores/:id", async (req, res) => {
     try {
-        const updatedOperador = await Operador.findByIdAndUpdate(req.params.id, { name: req.body.name }, { new: true });
+        const updatedOperador = await Operador.findByIdAndUpdate(
+            req.params.id,
+            {name: req.body.name},
+            {new: true}
+        );
         res.status(200).json(updatedOperador);
     } catch (e) {
-        res.status(500).json({ message: "Error updating operador", error: e.message });
+        res.status(500).json({message: "Error updating operador", error: e.message});
     }
 });
 
@@ -896,9 +900,9 @@ app.put("/operadores/:id", async (req, res) => {
 app.delete("/operadores/:id", async (req, res) => {
     try {
         await Operador.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: "Operador deleted successfully" });
+        res.status(200).json({message: "Operador deleted successfully"});
     } catch (e) {
-        res.status(500).json({ message: "Error deleting operador", error: e.message });
+        res.status(500).json({message: "Error deleting operador", error: e.message});
     }
 });
 

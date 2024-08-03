@@ -294,20 +294,19 @@ const BitacoraDetail = () => {
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Tipo Monitoreo:</strong> {bitacora.monitoreo}
                                 </h6>
-                            </div>
-
-                            {/* Column 2 */}
-                            <div className="col-md-4">
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Operador:</strong> {bitacora.operador}
                                 </h6>
-                                {/* <h6 className="card-subtitle mb-2">
+                                <h6 className="card-subtitle mb-2">
                                     <strong>Teléfono:</strong> {bitacora.telefono}
-                                </h6> */}
+                                </h6>
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Linea Servicio:</strong> {bitacora.linea_transporte}
                                 </h6>
-                                <hr />
+                            </div>
+
+                            {/* Column 2 */}
+                            <div className="col-md-2">
                                 <h5 className="card-subtitle mb-2 fw-semibold">Tracto:</h5>
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Eco:</strong> {bitacora.tracto.eco}
@@ -327,8 +326,9 @@ const BitacoraDetail = () => {
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Tipo:</strong> {bitacora.tracto.tipo}
                                 </h6>
-
-                                <hr />
+                            </div>
+                            {/* Column 3 */}
+                            <div className="col-md-3">
                                 <h5 className="card-subtitle mb-2 fw-semibold">Remolque:</h5>
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Eco:</strong> {bitacora.remolque.eco}
@@ -347,8 +347,8 @@ const BitacoraDetail = () => {
                                 </h6>
                             </div>
 
-                            {/* Column 3 */}
-                            <div className="col-md-4">
+                            {/* Column 4 */}
+                            <div className="col-md-3">
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Origen:</strong> {bitacora.origen}
                                 </h6>

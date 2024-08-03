@@ -49,6 +49,7 @@ const BitacorasPage = () => {
             tipo: "",
         },
         operador: "",
+        telefono: "",
         inicioMonitoreo: "",
         finalMonitoreo: "",
         status: "creada",
@@ -510,6 +511,18 @@ const BitacorasPage = () => {
                                         </div>
 
                                         <div className="form-group mb-3">
+                                            <label htmlFor="telefono">Telefono</label>
+                                            <input
+                                                id="telefono"
+                                                type="tel"
+                                                value={formData.telefono}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="form-group mb-3">
                                             <label htmlFor="enlace">Enlace</label>
                                             <input
                                                 id="enlace"
@@ -544,61 +557,6 @@ const BitacorasPage = () => {
                                                 required
                                             />
                                         </div>
-
-                                        {/* Remolque */}
-                                        <hr />
-                                        <p>Remolque: </p>
-                                        <div className="form-group mb-3">
-                                            <label htmlFor="remolque_eco">ECO</label>
-                                            <input
-                                                id="remolque_eco"
-                                                type="text"
-                                                value={formData.remolque.eco}
-                                                onChange={handleChange}
-                                                className="form-control"
-                                            />
-                                        </div>
-                                        <div className="form-group mb-3">
-                                            <label htmlFor="remolque_placa">Placa</label>
-                                            <input
-                                                id="remolque_placa"
-                                                type="text"
-                                                value={formData.remolque.placa}
-                                                onChange={handleChange}
-                                                className="form-control"
-                                            />
-                                        </div>
-                                        <div className="form-group mb-3">
-                                            <label htmlFor="remolque_color">Color</label>
-                                            <input
-                                                id="remolque_color"
-                                                type="text"
-                                                value={formData.remolque.color}
-                                                onChange={handleChange}
-                                                className="form-control"
-                                            />
-                                        </div>
-                                        <div className="form-group mb-3">
-                                            <label htmlFor="remolque_capacidad">Capacidad</label>
-                                            <input
-                                                id="remolque_capacidad"
-                                                type="text"
-                                                value={formData.remolque.capacidad}
-                                                onChange={handleChange}
-                                                className="form-control"
-                                            />
-                                        </div>
-                                        <div className="form-group mb-3">
-                                            <label htmlFor="remolque_sello">Sello </label>
-                                            <input
-                                                id="remolque_sello"
-                                                type="text"
-                                                value={formData.remolque.sello}
-                                                onChange={handleChange}
-                                                className="form-control"
-                                            />
-                                        </div>
-
                                         <hr />
                                         <p>Tracto: </p>
                                         {/* Tracto */}
@@ -662,7 +620,63 @@ const BitacorasPage = () => {
                                                 className="form-control"
                                             />
                                         </div>
-                                                <hr />
+
+                                        {/* Remolque */}
+                                        <hr />
+                                        <p>Remolque: </p>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_eco">ECO</label>
+                                            <input
+                                                id="remolque_eco"
+                                                type="text"
+                                                value={formData.remolque.eco}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_placa">Placa</label>
+                                            <input
+                                                id="remolque_placa"
+                                                type="text"
+                                                value={formData.remolque.placa}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_color">Color</label>
+                                            <input
+                                                id="remolque_color"
+                                                type="text"
+                                                value={formData.remolque.color}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_capacidad">Capacidad</label>
+                                            <input
+                                                id="remolque_capacidad"
+                                                type="text"
+                                                value={formData.remolque.capacidad}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="remolque_sello">Sello </label>
+                                            <input
+                                                id="remolque_sello"
+                                                type="text"
+                                                value={formData.remolque.sello}
+                                                onChange={handleChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+
+                                        <hr />
+
                                         <div className="d-flex justify-content-end">
                                             <button
                                                 type="button"
