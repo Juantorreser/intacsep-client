@@ -7,7 +7,6 @@ import Footer from "../Footer";
 import {formatDate} from "../../utils/dateUtils"; // Ensure you have a utility to format dates
 import jsPDF from "jspdf";
 import "jspdf-autotable"; // For table support in jsPDF
-import {Cookies} from "react-cookie";
 
 const BitacorasPage = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;

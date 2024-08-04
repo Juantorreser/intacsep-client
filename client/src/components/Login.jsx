@@ -25,10 +25,6 @@ const Login = () => {
         }));
     };
 
-    useEffect(() => {
-        console.log(user);
-        console.log(isRegistered);
-    }, []);
 
     const registerUser = async (e) => {
         e.preventDefault();

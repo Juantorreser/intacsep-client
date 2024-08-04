@@ -43,8 +43,7 @@ const BitacoraDetail = () => {
     };
 
     useEffect(() => {
-        console.log(user);
-        
+
         const fetchEventTypes = async () => {
             try {
                 const response = await fetch(`${baseUrl}/event_types`);
@@ -189,7 +188,7 @@ const BitacoraDetail = () => {
                     ultimo_posicionamiento: newEvent.ultimo_posicionamiento,
                     velocidad: newEvent.velocidad,
                     coordenadas: newEvent.coordenadas,
-                    registrado_por: "Usuario",
+                    registrado_por: `${user.firstName} ${user.lastName}`,
                 }),
                 credentials: "include",
             });

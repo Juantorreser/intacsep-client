@@ -11,20 +11,20 @@ const AuthProvider = ({children}) => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchUserFromToken = async () => {
-            if (cookies.access_token) {
-                try {
-                    await verifyToken();
-                } catch (error) {
-                    console.error("Token verification failed:", error);
-                    setUser(null); // Set user to null only if token verification fails
-                }
-            }
-        };
+    // useEffect(() => {
+    //     const fetchUserFromToken = async () => {
+    //         if (cookies.access_token) {
+    //             try {
+    //                 await verifyToken();
+    //             } catch (error) {
+    //                 console.error("Token verification failed:", error);
+    //                 setUser(null); // Set user to null only if token verification fails
+    //             }
+    //         }
+    //     };
 
-        fetchUserFromToken();
-    }, [cookies.access_token]); // Add cookies.access_token as a dependency
+    //     fetchUserFromToken();
+    // }, [cookies.access_token]); // Add cookies.access_token as a dependency
 
     const verifyToken = async () => {
         try {
@@ -36,16 +36,17 @@ const AuthProvider = ({children}) => {
 
             if (response.status === 401) {
                 // Attempt to refresh token if unauthorized
+
                 await refreshToken();
                 return; // Do not set user here; refreshToken will handle it
             }
 
             const data = await response.json();
-            console.log("Verified user data:", data.user);
-            setUser(data.user); // Update user if verification is successful
+            // setUser(data.user);
+            return data.user;
         } catch (e) {
             console.error("Error verifying token:", e);
-            setUser(null); // Set user to null if there's an error
+            // setUser(null); // Set user to null if there's an error
         }
     };
 
@@ -54,6 +55,7 @@ const AuthProvider = ({children}) => {
             const response = await fetch(`${baseUrl}/refresh_token`, {
                 method: "POST",
                 credentials: "include",
+                headers: {"Content-Type": "application/json"},
             });
 
             if (!response.ok) {
@@ -64,7 +66,6 @@ const AuthProvider = ({children}) => {
             await verifyToken(); // Verify the token again after refreshing
         } catch (e) {
             console.error("Error refreshing token:", e);
-            setUser(null); // Set user to null if refresh fails
             logout(); // Optionally, navigate to login or home
         }
     };
@@ -87,7 +88,6 @@ const AuthProvider = ({children}) => {
             setUser(data.user);
         } catch (e) {
             console.error("Error during login: a", e);
-            setUser(null); // Clear user state upon logout
             navigate("/");
         }
     };
@@ -97,7 +97,6 @@ const AuthProvider = ({children}) => {
             const response = await fetch(`${baseUrl}/logout`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({message: "logout"}),
                 credentials: "include",
             });
 
@@ -106,8 +105,6 @@ const AuthProvider = ({children}) => {
             }
 
             setUser(null); // Clear user state upon logout
-            // removeCookie("access_token", {path: "/"});
-            // removeCookie("refresh_token", {path: "/"});
             navigate("/"); // Navigate to the home or login page
         } catch (e) {
             console.error("Error during logout:", e);
@@ -115,7 +112,7 @@ const AuthProvider = ({children}) => {
     };
 
     return (
-        <AuthContext.Provider value={{user, login, logout, verifyToken, refreshToken}}>
+        <AuthContext.Provider value={{user, login, logout, verifyToken, refreshToken, setUser}}>
             {children}
         </AuthContext.Provider>
     );

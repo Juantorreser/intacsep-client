@@ -16,6 +16,7 @@ import ClientSequence from "./models/ClientSequence.js";
 import Destino from "./models/Destino.js";
 import Origen from "./models/Origen.js";
 import Operador from "./models/Operador.js";
+import session from "express-session";
 
 dotenv.config();
 
@@ -46,40 +47,49 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET, // Replace with your actual secret
+        resave: false,
+        saveUninitialized: true,
+        cookie: {secure: false}, // Set to true if using HTTPS
+    })
+);
 
-// //Create Custom Middleware to retreive Token Data
-// app.use((req, res, next) => {
-//     // Skip requests for login, logout, and refresh_token
-//     if (
-//         req.path === "/login" ||
-//         req.path === "/logout" ||
-//         req.path === "/refresh_token" ||
-//         req.path === "/register" ||
-//         (req.method === "GET" && req.path != "/user")
-//     ) {
-//         return next();
-//     }
+//Create Custom Middleware to retreive Token Data
+app.use((req, res, next) => {
+    // Skip requests for login, logout, and refresh_token
+    if (
+        req.path === "/login" ||
+        req.path === "/logout" ||
+        req.path === "/refresh_token" ||
+        req.path === "/register" ||
+        (req.method === "GET" && req.path != "/user")
+    ) {
+        return next();
+    }
 
-//     const token = req.cookies.access_token; // Retrieve token after the path check
-//     req.session = {user: null}; // Initialize session
+    const token = req.cookies.access_token; // Retrieve token after the path check
+    console.log(` token: ${token}`);
 
-//     // Check if the token exists
-//     if (!token) {
-//         console.log("Token is undefined");
-//         return res.status(401).json({message: "Unauthorized: Token missing"});
-//     }
+    // Check if the token exists
+    if (!token) {
+        console.log("Token is undefined");
+        return res.status(401).json({message: "Unauthorized: Token missing"});
+    }
 
-//     try {
-//         const data = jwt.verify(token, JWT_SECRET); // Verify the token
-//         req.session.user = data.user; // Store user data in session
-//     } catch (e) {
-//         console.log(e);
-//         req.session.user = null;
-//         return res.status(401).json({message: "Unauthorized: Invalid token"}); // Return response on error
-//     }
+    try {
+        const data = jwt.verify(token, JWT_SECRET); // Verify the token
+        console.log(data.user);
+        req.session.user = data.user; // Store user data in session
+    } catch (e) {
+        console.log(e);
+        req.session.user = null;
+        return res.status(401).json({message: "Unauthorized: Invalid token"}); // Return response on error
+    }
 
-//     next(); // Proceed to the next middleware
-// });
+    next(); // Proceed to the next middleware
+});
 
 //mongoose connection
 mongoose.connect(process.env.MONGO_URI);
@@ -119,21 +129,21 @@ app.post("/login", async (req, res) => {
         });
 
         // Create Refresh Token
-        const refreshToken = jwt.sign({id: user.id, email: user.email}, JWT_SECRET_REFRESH, {
+        const refreshToken = jwt.sign({id: user._id, email: user.email}, JWT_SECRET_REFRESH, {
             expiresIn: "5d",
         });
 
         // Save tokens in cookies
         res.cookie("access_token", accessToken, {
             httpOnly: true,
-            sameSite: "Strict", // or "Lax" depending on your needs
-            // secure: true, // Uncomment this line when using HTTPS
+            sameSite: "none", // or "Lax" depending on your needs
+            secure: process.env.NODE_ENV === "production",
         });
 
         res.cookie("refresh_token", refreshToken, {
             httpOnly: true,
-            sameSite: "Strict", // or "Lax" depending on your needs
-            // secure: true, // Uncomment this line when using HTTPS
+            sameSite: "none", // or "Lax" depending on your needs
+            secure: process.env.NODE_ENV === "production",
         });
 
         user.refresh_token = refreshToken;
@@ -170,13 +180,22 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-    res.clearCookie("access_token");
-    res.clearCookie("refresh_token");
-    res.send("Successfull").status(200);
+    res.clearCookie("access_token", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+    });
+    res.clearCookie("refresh_token", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+    });
+    res.status(200).send("Successful");
 });
-
 app.post("/protected", (req, res) => {
     const {user} = req.session;
+    console.log(user);
+
     if (!user) return res.send("Access Denied").status(401);
     res.json({user: user}).status(200);
 });

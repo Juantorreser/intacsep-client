@@ -3,34 +3,49 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import {useAuth} from "../context/AuthContext";
 import {useNavigate} from "react-router-dom";
-import {Cookies} from "react-cookie";
 
 const Sidebar = () => {
-    const {user, verifyToken} = useAuth();
+    const {user, verifyToken, setUser} = useAuth();
     const navigate = useNavigate();
     const [roleData, setRoleData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [initialized, setInitialized] = useState(false); // Track initialization
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
         const init = async () => {
             try {
-                // if (!user) {
-                //     navigate("/");
-                // }
-
-                if (user) {
-                    const response = await fetch(`${baseUrl}/roles/${user.role}`);
-                    const data = await response.json();
-                    console.log("Role Data:", data); // Log role data for debugging
-                    setRoleData(data);
-                }
+                const data = await verifyToken(); // Ensure user is verified
+                setUser(data);
+                setInitialized(true); // Set initialization as complete
             } catch (e) {
-                // navigate("/login");
+                console.log("Error verifying token or fetching user:", e);
+                navigate("/login");
+            } finally {
+                setLoading(false); // Set loading to false once initialization is done
             }
         };
 
         init();
-    }, []);
+    }, []); // Run only on mount
+
+    useEffect(() => {
+        const fetchRolePermissions = async () => {
+            if (!user) return; // Ensure user is available before fetching role data
+
+            try {
+                const response = await fetch(`${baseUrl}/roles/${user.role}`);
+                const data = await response.json();
+                setRoleData(data);
+            } catch (e) {
+                console.log("Error fetching role permissions:", e);
+            }
+        };
+
+        if (initialized) {
+            fetchRolePermissions();
+        }
+    }, [initialized, user, baseUrl]);
 
     const [collapsedItems, setCollapsedItems] = useState({
         dashboardCollapse: false,
@@ -45,6 +60,10 @@ const Sidebar = () => {
             [item]: !prevState[item],
         }));
     };
+
+    if (loading) {
+        return <div>Loading...</div>; // Add a loading indicator
+    }
 
     return (
         <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 h-100">
