@@ -214,7 +214,6 @@ const BitacorasPage = () => {
     };
 
     const handleSubmit = async (e) => {
-        await verifyToken();
         e.preventDefault();
         try {
             const response = await fetch(`${baseUrl}/bitacora`, {

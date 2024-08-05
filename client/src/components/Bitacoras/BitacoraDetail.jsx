@@ -43,7 +43,6 @@ const BitacoraDetail = () => {
     };
 
     useEffect(() => {
-
         const fetchEventTypes = async () => {
             try {
                 const response = await fetch(`${baseUrl}/event_types`);
@@ -244,21 +243,17 @@ const BitacoraDetail = () => {
         registrado_por,
     }) => (
         <div className="card mb-3">
+            <div className="card-header text-center">
+                <h5 className="card-title fw-semibold">{nombre}</h5>
+            </div>
             <div className="card-body">
                 <div className="row">
                     <div className="col-md-6">
-                        <h5 className="card-title fw-semibold">{nombre}</h5>
                         <p className="card-text">
                             <strong>Registrado por:</strong> {registrado_por}
                         </p>
                         <p className="card-text">
                             <strong>Descripción:</strong> {descripcion}
-                        </p>
-                        <p className="card-text">
-                            <strong>Fecha:</strong> {new Date(createdAt).toLocaleDateString()}
-                        </p>
-                        <p className="card-text">
-                            <strong>Hora:</strong> {new Date(createdAt).toLocaleTimeString()}
                         </p>
                     </div>
                     <div className="col-md-6">
@@ -274,6 +269,12 @@ const BitacoraDetail = () => {
                         <p className="card-text">
                             <strong>Coordenadas:</strong> {coordenadas}
                         </p>
+                        <p className="card-text">
+                            <strong>Fecha:</strong> {new Date(createdAt).toLocaleDateString()}
+                        </p>
+                        <p className="card-text">
+                            <strong>Hora:</strong> {new Date(createdAt).toLocaleTimeString()}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -281,6 +282,46 @@ const BitacoraDetail = () => {
     );
 
     const events = Array.isArray(bitacora.eventos) ? bitacora.eventos : [];
+
+    const getButtonClass = (status) => {
+        switch (status) {
+            case "creada":
+                return "btn btn-success"; // Style for "creada"
+            case "iniciada":
+                return "btn btn-danger"; // Style for "iniciada"
+            case "finalizada":
+                return "btn btn-secondary"; // Style for "finalizada"
+            case "archivada":
+                return "btn btn-dark"; // Style for "archivada"
+            default:
+                return "btn btn-secondary"; // Default style
+        }
+    };
+
+    const getButtonText = (status) => {
+        switch (status) {
+            case "creada":
+                return "Iniciar";
+            case "iniciada":
+                return "Finalizar";
+            case "finalizada":
+                return "Cerrada";
+            default:
+                return "Iniciar"; // Default text
+        }
+    };
+
+    const hasEventWithName = () => {
+        const eventToStart = "Validación";
+        const eventToFinish = "Cierre de servicio";
+        console.log(events);
+        if (bitacora.status === "creada") {
+            return events.some((event) => event.nombre === eventToStart);
+        } else if (bitacora.status === "iniciada") {
+            return events.some((event) => event.nombre === eventToFinish);
+        }
+        return false;
+    };
 
     return (
         <section id="bitacoraDetail">
@@ -304,7 +345,7 @@ const BitacoraDetail = () => {
                                     <strong>Folio Servicio:</strong> {bitacora.folio_servicio}
                                 </h6>
                                 <h6 className="card-subtitle mb-2">
-                                    <strong># Bitácora:</strong> {bitacora.bitacora_id}
+                                    <strong>No. Bitácora:</strong> {bitacora.bitacora_id}
                                 </h6>
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Cliente:</strong> {bitacora.cliente}
@@ -322,7 +363,7 @@ const BitacoraDetail = () => {
                                     <strong>Teléfono:</strong> {bitacora.telefono}
                                 </h6>
                                 <h6 className="card-subtitle mb-2">
-                                    <strong>Linea Servicio:</strong> {bitacora.linea_transporte}
+                                    <strong>Linea Transporte:</strong> {bitacora.linea_transporte}
                                 </h6>
                             </div>
 
@@ -408,16 +449,13 @@ const BitacoraDetail = () => {
                             </div>
                             <div className="col-md-2 d-flex justify-content-end align-items-center">
                                 <button
-                                    className={`btn ${
-                                        bitacora.status === "iniciada"
-                                            ? "btn-danger"
-                                            : "btn-success"
-                                    } ${finishButtonDisabled ? "disabled" : ""}`}
+                                    id="iniciarBtn"
+                                    className={getButtonClass(bitacora.status)}
                                     onClick={
                                         bitacora.status === "iniciada" ? handleFinish : handleStart
                                     }
-                                    disabled={finishButtonDisabled}>
-                                    {bitacora.status === "iniciada" ? "Finalizar" : "Iniciar"}
+                                    disabled={!hasEventWithName()}>
+                                    {getButtonText(bitacora.status)}
                                 </button>
                             </div>
                         </div>
@@ -431,10 +469,15 @@ const BitacoraDetail = () => {
                                 <button
                                     className="btn btn-primary rounded-5"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#eventModal">
+                                    data-bs-target="#eventModal"
+                                    disabled={
+                                        bitacora.status === "finalizada" ||
+                                        bitacora.status === "archivada"
+                                    }>
                                     <FontAwesomeIcon icon={faPlus} />
                                 </button>
-                                <h1 className="text-center fs-3 fw-semibold text-black flex-grow-1">
+
+                                <h1 className="text-center fs-3 fw-semibold text-black flex-grow-1 me-5">
                                     Eventos
                                 </h1>
                             </div>
@@ -482,11 +525,17 @@ const BitacoraDetail = () => {
                                         onChange={handleChange}
                                         required>
                                         <option value="">Seleccionar tipo de evento</option>
-                                        {eventTypes.map((eventType) => (
-                                            <option key={eventType._id} value={eventType.eventType}>
-                                                {eventType.eventType}
-                                            </option>
-                                        ))}
+                                        {bitacora.status === "creada" ? (
+                                            <option value="Validación">Validación</option>
+                                        ) : (
+                                            eventTypes.map((eventType) => (
+                                                <option
+                                                    key={eventType._id}
+                                                    value={eventType.eventType}>
+                                                    {eventType.eventType}
+                                                </option>
+                                            ))
+                                        )}
                                     </select>
                                 </div>
                                 <div className="mb-3">
