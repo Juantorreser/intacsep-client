@@ -6,9 +6,9 @@ import Sidebar from "./Sidebar";
 
 const Header = () => {
     const {logout, verifyToken} = useAuth();
-    // useEffect(() => {
-    //     verifyToken();
-    // }, []);
+    useEffect(() => {
+        verifyToken();
+    }, []);
 
     return (
         <>

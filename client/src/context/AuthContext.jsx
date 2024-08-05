@@ -28,6 +28,8 @@ const AuthProvider = ({children}) => {
 
     const verifyToken = async () => {
         try {
+            console.log("VERIFIED");
+
             const response = await fetch(`${baseUrl}/protected`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -36,7 +38,6 @@ const AuthProvider = ({children}) => {
 
             if (response.status === 401) {
                 // Attempt to refresh token if unauthorized
-
                 await refreshToken();
                 return; // Do not set user here; refreshToken will handle it
             }
@@ -108,6 +109,8 @@ const AuthProvider = ({children}) => {
             navigate("/"); // Navigate to the home or login page
         } catch (e) {
             console.error("Error during logout:", e);
+            setUser(null); // Clear user state upon logout
+            navigate("/"); // Navigate to the home or login page
         }
     };
 
