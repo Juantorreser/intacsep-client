@@ -7,10 +7,11 @@ import Footer from "../Footer";
 import {formatDate} from "../../utils/dateUtils"; // Ensure you have a utility to format dates
 import jsPDF from "jspdf";
 import "jspdf-autotable"; // For table support in jsPDF
+import useInactivityTimeout from "../../utils/useInactivityTimeout";
 
 const BitacorasPage = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
-    const {user, verifyToken} = useAuth();
+    const {user, verifyToken, logout} = useAuth();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [bitacoras, setBitacoras] = useState([]);
@@ -20,6 +21,8 @@ const BitacorasPage = () => {
     const [origenes, setOrigenes] = useState([]);
     const [destinos, setDestinos] = useState([]);
     const [operadores, setOperadores] = useState([]);
+
+    useInactivityTimeout(120000, logout); // 120000 ms = 2 minutes
 
     const [formData, setFormData] = useState({
         bitacora_id: "",

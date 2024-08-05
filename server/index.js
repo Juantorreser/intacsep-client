@@ -70,7 +70,6 @@ app.use((req, res, next) => {
     }
 
     const token = req.cookies.access_token; // Retrieve token after the path check
-    console.log(` token: ${token}`);
 
     // Check if the token exists
     if (!token) {
@@ -80,7 +79,6 @@ app.use((req, res, next) => {
 
     try {
         const data = jwt.verify(token, JWT_SECRET); // Verify the token
-        console.log(data.user);
         req.session.user = data.user; // Store user data in session
     } catch (e) {
         console.log(e);
@@ -125,7 +123,7 @@ app.post("/login", async (req, res) => {
 
         // Create Access Token
         const accessToken = jwt.sign({user: publicUser}, JWT_SECRET, {
-            expiresIn: "15m",
+            expiresIn: "60m",
         });
 
         // Create Refresh Token
