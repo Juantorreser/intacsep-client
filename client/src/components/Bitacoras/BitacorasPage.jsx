@@ -13,72 +13,176 @@ import html2canvas from "html2canvas";
 import {Container, Row, Col, Card} from "react-bootstrap";
 
 const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
-    <Container ref={ref}>
-        <Card className="my-4">
-            <Card.Header className="bg-primary text-white">
-                <h3>Bitácora de Monitoreo: {bitacora.id}</h3>
-            </Card.Header>
-            <Card.Body>
+    <Container ref={ref} id="pdfBitacora">
+        <Container className="my-4">
+            <Container className="header">
+                <Row className="flex-center">
+                    <img src="/intacespTextLogo.jpeg" alt="IntacsepLogo" />
+                </Row>
                 <Row>
-                    <Col md={6}>
+                    <h1>Bitácora de monitoreo {bitacora.id}</h1>
+                </Row>
+                <Row>
+                    <Col>
                         <p>
-                            <strong>Descripción:</strong> {bitacora.descripcion}
+                            <strong>Inicio Monitoreo:</strong>{" "}
+                            {`${formatDate(bitacora.inicioMonitoreo)}, ${new Date(
+                                bitacora.inicioMonitoreo
+                            ).toLocaleTimeString("es-MX", {timeZone: "America/Mexico_City"})}`}
                         </p>
+                    </Col>
+                    <Col>
                         <p>
-                            <strong>Inicio:</strong> {bitacora.inicio}
-                        </p>
-                        <p>
-                            <strong>Fecha Inicio:</strong> {bitacora.fecha_inicio}
-                        </p>
-                        <p>
-                            <strong>Fecha Final:</strong> {bitacora.fecha_final}
-                        </p>
-                        <p>
-                            <strong>Tránsito lento:</strong> {bitacora.transito_lento}
-                        </p>
-                        <p>
-                            <strong>Seguimiento:</strong> {bitacora.seguimiento}
-                        </p>
-                        <p>
-                            <strong>Validación:</strong> {bitacora.validacion}
+                            <strong>Final Monitoreo:</strong>{" "}
+                            {`${formatDate(bitacora.finalMonitoreo)}, ${new Date(
+                                bitacora.finalMonitoreo
+                            ).toLocaleTimeString("es-MX", {timeZone: "America/Mexico_City"})}`}
                         </p>
                     </Col>
                 </Row>
-            </Card.Body>
-        </Card>
-        <h4>Eventos</h4>
-        <Row>
+            </Container>
+            <Container className="body">
+                <Row>
+                    <div className="card-body">
+                        <div className="row ms-1">
+                            {/* Column 1 */}
+                            <div className="col-md-4">
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Folio Servicio:</strong> {bitacora.folio_servicio}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>No. Bitácora:</strong> {bitacora.bitacora_id}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Cliente:</strong> {bitacora.cliente}
+                                </h6>
+                                {/* <h6 className="card-subtitle mb-2">
+                                    <strong>ID Cliente:</strong> {cliente.ID_Cliente}
+                                </h6> */}
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Tipo Monitoreo:</strong> {bitacora.monitoreo}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Operador:</strong> {bitacora.operador}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Teléfono:</strong> {bitacora.telefono}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Linea Transporte:</strong> {bitacora.linea_transporte}
+                                </h6>
+                            </div>
+
+                            {/* Column 2 */}
+                            <div className="col-md-2">
+                                <h5 className="card-subtitle mb-2 fw-semibold">Tracto:</h5>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Eco:</strong> {bitacora.tracto.eco}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Placa:</strong> {bitacora.tracto.placa}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Marca:</strong> {bitacora.tracto.marca}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Modelo:</strong> {bitacora.tracto.modelo}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Color:</strong> {bitacora.tracto.color}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Tipo:</strong> {bitacora.tracto.tipo}
+                                </h6>
+                            </div>
+                            {/* Column 3 */}
+                            <div className="col-md-3">
+                                <h5 className="card-subtitle mb-2 fw-semibold">Remolque:</h5>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Eco:</strong> {bitacora.remolque.eco}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Placa:</strong> {bitacora.remolque.placa}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Color:</strong> {bitacora.remolque.color}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Capacidad:</strong> {bitacora.remolque.capacidad}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Sello:</strong> {bitacora.remolque.sello}
+                                </h6>
+                            </div>
+
+                            {/* Column 4 */}
+                            <div className="col-md-3">
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Origen:</strong> {bitacora.origen}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Destino:</strong> {bitacora.destino}
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                </Row>
+            </Container>
+        </Container>
+        <Col>
             {bitacora.eventos.map((evento, index) => (
-                <Col md={4} key={index}>
-                    <Card className="mb-4">
-                        <Card.Body className="border-left border-primary">
-                            <p>
-                                <strong>Descripción:</strong> {evento.descripcion}
-                            </p>
-                            <p>
-                                <strong>Validación:</strong> {evento.validacion}
-                            </p>
-                            <p>
-                                <strong>Inicio de recorrido:</strong> {evento.inicio_recorrido}
-                            </p>
-                            <p>
-                                <strong>Tránsito lento:</strong> {evento.transito_lento}
-                            </p>
-                            <p>
-                                <strong>Seguimiento al cliente:</strong>{" "}
-                                {evento.seguimiento_cliente}
-                            </p>
-                            <p>
-                                <strong>Fecha Inicio:</strong> {evento.fecha_inicio}
-                            </p>
-                            <p>
-                                <strong>Fecha Final:</strong> {evento.fecha_final}
-                            </p>
-                        </Card.Body>
-                    </Card>
-                </Col>
+                <Row md={12} key={index}>
+                    <Container className="mb-4 event-card">
+                        <Row>
+                            <Col md={6} className="title">
+                                <h3>{evento.nombre}</h3>
+                                <p>
+                                    <strong>Descripción:</strong>
+                                </p>
+                                <p>{evento.descripcion}</p>
+                                <p className="mt-4">
+                                    <strong>Registrado por: </strong> {evento.registrado_por}
+                                </p>
+                                <p className="mt-4">
+                                    <strong>Frecuencia: </strong> {evento.frecuencia}
+                                </p>
+                            </Col>
+                            <Col md={1} className="line">
+                                <div className="circle"></div>
+                                <div className="line"></div>
+                            </Col>
+                            <Col md={5} className="fields">
+                                <p className="mt-4">
+                                    <strong>Ubicación: </strong> {evento.ubicacion}
+                                </p>
+                                <p className="mt-4">
+                                    <strong>Último Posicionamiento: </strong>{" "}
+                                    {evento.ultimo_posicionamiento}
+                                </p>
+                                <p className="mt-4">
+                                    <strong>Velocidad: </strong> {evento.velocidad}
+                                </p>
+                                <p className="mt-4">
+                                    <strong>Coordenadas: </strong> {evento.coordenadas}
+                                </p>
+                                <p className="mt-4">
+                                    <strong>Fecha:</strong>{" "}
+                                    {new Date(evento.createdAt).toLocaleDateString("es-MX", {
+                                        timeZone: "America/Mexico_City",
+                                    })}
+                                </p>
+                                <p className="mt-4">
+                                    <strong>Hora:</strong>{" "}
+                                    {new Date(evento.createdAt).toLocaleTimeString("es-MX", {
+                                        timeZone: "America/Mexico_City",
+                                    })}
+                                </p>
+                            </Col>
+                        </Row>
+                    </Container>
+                </Row>
             ))}
-        </Row>
+        </Col>
     </Container>
 ));
 
@@ -333,117 +437,118 @@ const BitacorasPage = () => {
         fetchBitacoras(currentPage, newLimit);
     };
 
-    // const generatePDF = async (bitacora) => {
-    //     const tempContainer = document.createElement("div");
-    //     document.body.appendChild(tempContainer);
+    const generatePDF = async (bitacora) => {
+        const tempContainer = document.createElement("div");
+        tempContainer.style.position = "absolute";
+        tempContainer.style.top = "-9999px";
+        document.body.appendChild(tempContainer);
 
-    //     const root = createRoot(tempContainer);
-    //     const component = <BitacoraDetail bitacora={bitacora} ref={tempContainer} />;
+        const root = createRoot(tempContainer);
+        root.render(<BitacoraDetail bitacora={bitacora} />);
 
-    //     root.render(component);
+        setTimeout(() => {
+            html2canvas(tempContainer, {scale: 2}).then((canvas) => {
+                const imgData = canvas.toDataURL("image/png");
+                const pdf = new jsPDF({
+                    orientation: "portrait",
+                    unit: "px",
+                    format: [canvas.width, canvas.height],
+                    compress: true,
+                });
 
-    //     // Ensure you clean up after rendering
-    //     setTimeout(() => {
-    //         html2canvas(tempContainer).then((canvas) => {
-    //             const imgData = canvas.toDataURL("image/png");
-    //             const pdf = new jsPDF({
-    //                 orientation: "portrait",
-    //                 unit: "px",
-    //                 format: [canvas.width, canvas.height],
-    //             });
-    //             pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
-    //             pdf.save(`bitacora_${bitacora.id}.pdf`);
-    //             document.body.removeChild(tempContainer);
-    //         });
-    //     }, 0);
-    // };
-
-    const generatePDF = (bitacora) => {
-        const doc = new jsPDF({orientation: "portrait", unit: "mm", format: "a4"});
-
-        // Add custom title with geometric shapes for corporate style
-        doc.setFontSize(22);
-        doc.setTextColor(255, 255, 255);
-        doc.setFillColor(0, 0, 0); // Black background for title
-        doc.rect(0, 0, 210, 20, "F"); // Full width rectangle
-        doc.text("Bitácora de Monitoreo", 105, 12, null, null, "center");
-
-        // Table for Bitácora Details
-        doc.setTextColor(0, 0, 0); // Set text color to black
-        doc.setFontSize(14);
-        doc.text("Detalles de la Bitácora", 14, 30); // Section heading
-        doc.autoTable({
-            startY: 35,
-            margin: {left: 14, right: 14},
-            headStyles: {fillColor: [0, 0, 0], textColor: [255, 255, 255]},
-            bodyStyles: {fontSize: 12},
-            head: [["Campo", "Valor"]],
-            body: [
-                ["Bitácora ID", bitacora.bitacora_id],
-                ["Cliente", bitacora.cliente],
-                ["Tipo de Monitoreo", bitacora.monitoreo],
-                ["Operador", bitacora.operador],
-                ["Teléfono", bitacora.telefono],
-                ["Fecha Creación", formatDate(bitacora.createdAt)],
-                ["Status", bitacora.status],
-                ["Origen", bitacora.origen],
-                ["Destino", bitacora.destino],
-                ["ECO Tracto", bitacora.tracto.eco],
-                ["Placa Tracto", bitacora.tracto.placa],
-                ["Marca Tracto", bitacora.tracto.marca],
-                ["Modelo Tracto", bitacora.tracto.modelo],
-                ["Color Tracto", bitacora.tracto.color],
-                ["Tipo Tracto", bitacora.tracto.tipo],
-                ["ECO Remolque", bitacora.remolque.eco],
-                ["Placa Remolque", bitacora.remolque.placa],
-                ["Color Remolque", bitacora.remolque.color],
-                ["Capacidad Remolque", bitacora.remolque.capacidad],
-                ["Sello Remolque", bitacora.remolque.sello],
-                ["Inicio de Monitoreo", formatDate(bitacora.inicioMonitoreo)],
-                ["Final de Monitoreo", formatDate(bitacora.finalMonitoreo)],
-            ],
-        });
-
-        // Add space before the next table
-        let finalY = doc.lastAutoTable.finalY + 15;
-
-        // Table for Events
-        doc.setFontSize(14);
-        doc.text("Eventos Registrados", 14, finalY); // Section heading
-        doc.autoTable({
-            startY: finalY + 5,
-            margin: {left: 14, right: 14},
-            headStyles: {fillColor: [0, 0, 0], textColor: [255, 255, 255]},
-            bodyStyles: {fontSize: 12},
-            head: [
-                [
-                    "Nombre del Evento",
-                    "Registrado Por",
-                    "Descripción",
-                    "Ubicacion",
-                    "Último Posicionamiento",
-                    "Velocidad",
-                    "Coordenadas",
-                    "Fecha de Creación",
-                ],
-            ],
-            body: bitacora.eventos.map((evento) => [
-                evento.nombre,
-                evento.registrado_por,
-                evento.descripcion,
-                evento.ubicacion,
-                evento.ultimo_posicionamiento,
-                evento.velocidad,
-                evento.coordenadas,
-                `${new Date(evento.createdAt).toLocaleDateString()}, ${new Date(
-                    evento.createdAt
-                ).toLocaleTimeString()}`,
-            ]),
-        });
-
-        // Save the PDF
-        doc.save(`Bitacora_${bitacora.bitacora_id}.pdf`);
+                pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height, undefined, "FAST");
+                pdf.save(`bitacora_${bitacora.id}.pdf`);
+                document.body.removeChild(tempContainer);
+            });
+        }, 0);
     };
+
+    // const generatePDF = (bitacora) => {
+    //     const doc = new jsPDF({orientation: "portrait", unit: "mm", format: "a4"});
+
+    //     // Add custom title with geometric shapes for corporate style
+    //     doc.setFontSize(22);
+    //     doc.setTextColor(255, 255, 255);
+    //     doc.setFillColor(0, 0, 0); // Black background for title
+    //     doc.rect(0, 0, 210, 20, "F"); // Full width rectangle
+    //     doc.text("Bitácora de Monitoreo", 105, 12, null, null, "center");
+
+    //     // Table for Bitácora Details
+    //     doc.setTextColor(0, 0, 0); // Set text color to black
+    //     doc.setFontSize(14);
+    //     doc.text("Detalles de la Bitácora", 14, 30); // Section heading
+    //     doc.autoTable({
+    //         startY: 35,
+    //         margin: {left: 14, right: 14},
+    //         headStyles: {fillColor: [0, 0, 0], textColor: [255, 255, 255]},
+    //         bodyStyles: {fontSize: 12},
+    //         head: [["Campo", "Valor"]],
+    //         body: [
+    //             ["Bitácora ID", bitacora.bitacora_id],
+    //             ["Cliente", bitacora.cliente],
+    //             ["Tipo de Monitoreo", bitacora.monitoreo],
+    //             ["Operador", bitacora.operador],
+    //             ["Teléfono", bitacora.telefono],
+    //             ["Fecha Creación", formatDate(bitacora.createdAt)],
+    //             ["Status", bitacora.status],
+    //             ["Origen", bitacora.origen],
+    //             ["Destino", bitacora.destino],
+    //             ["ECO Tracto", bitacora.tracto.eco],
+    //             ["Placa Tracto", bitacora.tracto.placa],
+    //             ["Marca Tracto", bitacora.tracto.marca],
+    //             ["Modelo Tracto", bitacora.tracto.modelo],
+    //             ["Color Tracto", bitacora.tracto.color],
+    //             ["Tipo Tracto", bitacora.tracto.tipo],
+    //             ["ECO Remolque", bitacora.remolque.eco],
+    //             ["Placa Remolque", bitacora.remolque.placa],
+    //             ["Color Remolque", bitacora.remolque.color],
+    //             ["Capacidad Remolque", bitacora.remolque.capacidad],
+    //             ["Sello Remolque", bitacora.remolque.sello],
+    //             ["Inicio de Monitoreo", formatDate(bitacora.inicioMonitoreo)],
+    //             ["Final de Monitoreo", formatDate(bitacora.finalMonitoreo)],
+    //         ],
+    //     });
+
+    //     // Add space before the next table
+    //     let finalY = doc.lastAutoTable.finalY + 15;
+
+    //     // Table for Events
+    //     doc.setFontSize(14);
+    //     doc.text("Eventos Registrados", 14, finalY); // Section heading
+    //     doc.autoTable({
+    //         startY: finalY + 5,
+    //         margin: {left: 14, right: 14},
+    //         headStyles: {fillColor: [0, 0, 0], textColor: [255, 255, 255]},
+    //         bodyStyles: {fontSize: 12},
+    //         head: [
+    //             [
+    //                 "Nombre del Evento",
+    //                 "Registrado Por",
+    //                 "Descripción",
+    //                 "Ubicacion",
+    //                 "Último Posicionamiento",
+    //                 "Velocidad",
+    //                 "Coordenadas",
+    //                 "Fecha de Creación",
+    //             ],
+    //         ],
+    //         body: bitacora.eventos.map((evento) => [
+    //             evento.nombre,
+    //             evento.registrado_por,
+    //             evento.descripcion,
+    //             evento.ubicacion,
+    //             evento.ultimo_posicionamiento,
+    //             evento.velocidad,
+    //             evento.coordenadas,
+    //             `${new Date(evento.createdAt).toLocaleDateString()}, ${new Date(
+    //                 evento.createdAt
+    //             ).toLocaleTimeString()}`,
+    //         ]),
+    //     });
+
+    //     // Save the PDF
+    //     doc.save(`Bitacora_${bitacora.bitacora_id}.pdf`);
+    // };
 
     return (
         <section id="activeBits">
@@ -893,6 +998,7 @@ const BitacorasPage = () => {
                     <div className="modal-backdrop fade show"></div>
                 </>
             )}
+
             <Footer />
         </section>
     );
