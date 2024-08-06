@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import {createRoot} from "react-dom/client";
 import {useAuth} from "../../context/AuthContext";
 import {useNavigate} from "react-router-dom";
 import Header from "../Header";
@@ -8,6 +9,78 @@ import {formatDate} from "../../utils/dateUtils"; // Ensure you have a utility t
 import jsPDF from "jspdf";
 import "jspdf-autotable"; // For table support in jsPDF
 import useInactivityTimeout from "../../utils/useInactivityTimeout";
+import html2canvas from "html2canvas";
+import {Container, Row, Col, Card} from "react-bootstrap";
+
+const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
+    <Container ref={ref}>
+        <Card className="my-4">
+            <Card.Header className="bg-primary text-white">
+                <h3>Bitácora de Monitoreo: {bitacora.id}</h3>
+            </Card.Header>
+            <Card.Body>
+                <Row>
+                    <Col md={6}>
+                        <p>
+                            <strong>Descripción:</strong> {bitacora.descripcion}
+                        </p>
+                        <p>
+                            <strong>Inicio:</strong> {bitacora.inicio}
+                        </p>
+                        <p>
+                            <strong>Fecha Inicio:</strong> {bitacora.fecha_inicio}
+                        </p>
+                        <p>
+                            <strong>Fecha Final:</strong> {bitacora.fecha_final}
+                        </p>
+                        <p>
+                            <strong>Tránsito lento:</strong> {bitacora.transito_lento}
+                        </p>
+                        <p>
+                            <strong>Seguimiento:</strong> {bitacora.seguimiento}
+                        </p>
+                        <p>
+                            <strong>Validación:</strong> {bitacora.validacion}
+                        </p>
+                    </Col>
+                </Row>
+            </Card.Body>
+        </Card>
+        <h4>Eventos</h4>
+        <Row>
+            {bitacora.eventos.map((evento, index) => (
+                <Col md={4} key={index}>
+                    <Card className="mb-4">
+                        <Card.Body className="border-left border-primary">
+                            <p>
+                                <strong>Descripción:</strong> {evento.descripcion}
+                            </p>
+                            <p>
+                                <strong>Validación:</strong> {evento.validacion}
+                            </p>
+                            <p>
+                                <strong>Inicio de recorrido:</strong> {evento.inicio_recorrido}
+                            </p>
+                            <p>
+                                <strong>Tránsito lento:</strong> {evento.transito_lento}
+                            </p>
+                            <p>
+                                <strong>Seguimiento al cliente:</strong>{" "}
+                                {evento.seguimiento_cliente}
+                            </p>
+                            <p>
+                                <strong>Fecha Inicio:</strong> {evento.fecha_inicio}
+                            </p>
+                            <p>
+                                <strong>Fecha Final:</strong> {evento.fecha_final}
+                            </p>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            ))}
+        </Row>
+    </Container>
+));
 
 const BitacorasPage = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -15,6 +88,10 @@ const BitacorasPage = () => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [bitacoras, setBitacoras] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(25);
+    const [totalPages, setTotalPages] = useState(1); // Track total pages
+    const [totalItems, setTotalItems] = useState(25);
     const [clients, setClients] = useState([]);
     const [monitoreos, setMonitoreos] = useState([]);
     const [users, setUsers] = useState([]);
@@ -61,7 +138,7 @@ const BitacorasPage = () => {
     useEffect(() => {
         const initialize = async () => {
             try {
-                fetchBitacoras();
+                fetchBitacoras(currentPage, itemsPerPage);
                 fetchClients();
                 fetchMonitoreos();
                 fetchUsers();
@@ -75,7 +152,7 @@ const BitacorasPage = () => {
         };
 
         initialize();
-    }, [user]);
+    }, [user, currentPage, itemsPerPage]);
 
     const fetchOrigenes = async () => {
         try {
@@ -134,16 +211,21 @@ const BitacorasPage = () => {
         }
     };
 
-    const fetchBitacoras = async () => {
+    const fetchBitacoras = async (page = 1, limit = 25) => {
         try {
             const response = await fetch(`${baseUrl}/bitacoras`);
             if (response.ok) {
                 const data = await response.json();
-                // Sort bitacoras by createdAt in descending order
+
+                const itemsPerPage = Number(limit) || 25;
+                // Sort bitacoras by createdAt in descending order (newest first)
                 const sortedData = data.sort(
                     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
                 );
                 setBitacoras(sortedData);
+                setTotalItems(data.length); // Update total items
+
+                setTotalPages(Math.ceil(totalItems / itemsPerPage)); // Calculate total pages
             } else {
                 console.error("Failed to fetch bitácoras:", response.statusText);
             }
@@ -234,15 +316,67 @@ const BitacorasPage = () => {
         }
     };
 
-    const generatePDF = (bitacora) => {
-        const doc = new jsPDF();
+    const getPaginatedBitacoras = (bitacoras, page = 1, limit = 25) => {
+        const startIndex = (page - 1) * limit;
+        const endIndex = Math.min(startIndex + limit, bitacoras.length);
+        return bitacoras.slice(startIndex, endIndex);
+    };
 
-        // Add a title
-        doc.text(`Bitácora Report`, 105, 10, null, null, "center");
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+        fetchBitacoras(newPage, itemsPerPage);
+    };
+
+    const handleItemsPerPageChange = (event) => {
+        const newLimit = Number(event.target.value);
+        setItemsPerPage(newLimit);
+        fetchBitacoras(currentPage, newLimit);
+    };
+
+    // const generatePDF = async (bitacora) => {
+    //     const tempContainer = document.createElement("div");
+    //     document.body.appendChild(tempContainer);
+
+    //     const root = createRoot(tempContainer);
+    //     const component = <BitacoraDetail bitacora={bitacora} ref={tempContainer} />;
+
+    //     root.render(component);
+
+    //     // Ensure you clean up after rendering
+    //     setTimeout(() => {
+    //         html2canvas(tempContainer).then((canvas) => {
+    //             const imgData = canvas.toDataURL("image/png");
+    //             const pdf = new jsPDF({
+    //                 orientation: "portrait",
+    //                 unit: "px",
+    //                 format: [canvas.width, canvas.height],
+    //             });
+    //             pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+    //             pdf.save(`bitacora_${bitacora.id}.pdf`);
+    //             document.body.removeChild(tempContainer);
+    //         });
+    //     }, 0);
+    // };
+
+    const generatePDF = (bitacora) => {
+        const doc = new jsPDF({orientation: "portrait", unit: "mm", format: "a4"});
+
+        // Add custom title with geometric shapes for corporate style
+        doc.setFontSize(22);
+        doc.setTextColor(255, 255, 255);
+        doc.setFillColor(0, 0, 0); // Black background for title
+        doc.rect(0, 0, 210, 20, "F"); // Full width rectangle
+        doc.text("Bitácora de Monitoreo", 105, 12, null, null, "center");
 
         // Table for Bitácora Details
+        doc.setTextColor(0, 0, 0); // Set text color to black
+        doc.setFontSize(14);
+        doc.text("Detalles de la Bitácora", 14, 30); // Section heading
         doc.autoTable({
-            startY: 20,
+            startY: 35,
+            margin: {left: 14, right: 14},
+            headStyles: {fillColor: [0, 0, 0], textColor: [255, 255, 255]},
+            bodyStyles: {fontSize: 12},
             head: [["Campo", "Valor"]],
             body: [
                 ["Bitácora ID", bitacora.bitacora_id],
@@ -254,9 +388,6 @@ const BitacorasPage = () => {
                 ["Status", bitacora.status],
                 ["Origen", bitacora.origen],
                 ["Destino", bitacora.destino],
-                ["Enlace de Rastreo", bitacora.enlace],
-                ["ID de Acceso", bitacora.id_acceso],
-                ["Contraseña de Acceso", bitacora.contra_acceso],
                 ["ECO Tracto", bitacora.tracto.eco],
                 ["Placa Tracto", bitacora.tracto.placa],
                 ["Marca Tracto", bitacora.tracto.marca],
@@ -273,12 +404,17 @@ const BitacorasPage = () => {
             ],
         });
 
-        // Add some space before the next table
-        let finalY = doc.lastAutoTable.finalY + 10;
+        // Add space before the next table
+        let finalY = doc.lastAutoTable.finalY + 15;
 
         // Table for Events
+        doc.setFontSize(14);
+        doc.text("Eventos Registrados", 14, finalY); // Section heading
         doc.autoTable({
-            startY: finalY,
+            startY: finalY + 5,
+            margin: {left: 14, right: 14},
+            headStyles: {fillColor: [0, 0, 0], textColor: [255, 255, 255]},
+            bodyStyles: {fontSize: 12},
             head: [
                 [
                     "Nombre del Evento",
@@ -301,7 +437,7 @@ const BitacorasPage = () => {
                 evento.coordenadas,
                 `${new Date(evento.createdAt).toLocaleDateString()}, ${new Date(
                     evento.createdAt
-                ).toLocaleString()}`,
+                ).toLocaleTimeString()}`,
             ]),
         });
 
@@ -344,7 +480,11 @@ const BitacorasPage = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {bitacoras.map((bitacora) => (
+                                    {getPaginatedBitacoras(
+                                        bitacoras,
+                                        currentPage,
+                                        itemsPerPage
+                                    ).map((bitacora) => (
                                         <tr key={bitacora._id}>
                                             <td>
                                                 <a
@@ -356,11 +496,17 @@ const BitacorasPage = () => {
                                             <td>{bitacora.cliente}</td>
                                             <td>{bitacora.monitoreo}</td>
                                             <td>{bitacora.operador}</td>
-                                            <td>{formatDate(bitacora.createdAt)}</td>
+                                            <td>
+                                                {new Date(bitacora.createdAt).toLocaleDateString()}
+                                            </td>
                                             <td>{bitacora.status}</td>
                                             <td className="text-center">
                                                 <button
-                                                    className="btn btn-primary"
+                                                    className={
+                                                        bitacora.status !== "finalizada"
+                                                            ? "btn btn-secondary"
+                                                            : "btn btn-danger"
+                                                    }
                                                     onClick={() => generatePDF(bitacora)}
                                                     disabled={bitacora.status !== "finalizada"}>
                                                     <i className="fa fa-file-pdf"></i>
@@ -370,6 +516,42 @@ const BitacorasPage = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    {/* Pagination Controls */}
+                    <div className="d-flex justify-content-between align-items-center mx-3 my-4">
+                        <div>
+                            <label htmlFor="itemsPerPage" className="form-label">
+                                Items Por Página:
+                            </label>
+                            <select
+                                id="itemsPerPage"
+                                className="form-select"
+                                value={itemsPerPage}
+                                onChange={handleItemsPerPageChange}>
+                                <option value={25}>25</option>
+                                <option value={50}>50</option>
+                                <option value={100}>100</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <button
+                                className="btn btn-primary"
+                                disabled={currentPage === 1}
+                                onClick={() => handlePageChange(currentPage - 1)}>
+                                <i className="fa fa-chevron-left"></i>
+                            </button>
+                            <span className="mx-2">
+                                Página {currentPage} de {totalPages}
+                            </span>
+                            <button
+                                className="btn btn-primary"
+                                disabled={currentPage === totalPages}
+                                onClick={() => handlePageChange(currentPage + 1)}>
+                                <i className="fa fa-chevron-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>

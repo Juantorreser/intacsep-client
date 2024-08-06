@@ -111,7 +111,7 @@ const Sidebar = () => {
                     </li>
 
                     {/* Dashboard Menu */}
-                    <li className="nav-item ms-3">
+                    {/* <li className="nav-item ms-3">
                         <p className="">
                             <a
                                 className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
@@ -133,7 +133,7 @@ const Sidebar = () => {
                                 <li className="text-white-50 cursor-pointer">dashboard 2</li>
                             </ul>
                         </div>
-                    </li>
+                    </li> */}
 
                     {/* Monitoreo Menu */}
                     {roleData && roleData.bitacoras && (
@@ -249,7 +249,7 @@ const Sidebar = () => {
                     )}
 
                     {/* Integraciones Menu */}
-                    <li className="nav-item ms-3">
+                    {/* <li className="nav-item ms-3">
                         <p className="">
                             <a
                                 className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
@@ -271,7 +271,7 @@ const Sidebar = () => {
                                 <li className="text-white-50 cursor-pointer">Integraciones 2</li>
                             </ul>
                         </div>
-                    </li>
+                    </li> */}
                 </ul>
                 {/* #Menu */}
             </div>

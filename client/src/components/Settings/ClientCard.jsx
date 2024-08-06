@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css"; // Make sure to import Bootstrap 
 import {Modal, Button} from "react-bootstrap";
 
 const ClientCard = ({client, onDelete, fetchClients}) => {
+
     const [formData, setFormData] = useState({
         ...client,
         contacto: {

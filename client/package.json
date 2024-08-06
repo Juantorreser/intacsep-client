@@ -1,7 +1,7 @@
 {
   "name": "intacsep",
   "private": true,
-  "homepage" : "https://intacsep.spotynet.com/",
+  "homepage": "https://intacsep.spotynet.com/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -15,6 +15,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "bootstrap": "^5.3.3",
+    "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
     "react": "^18.3.1",

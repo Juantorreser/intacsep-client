@@ -14,6 +14,9 @@ const RolePage = () => {
         clientes: false,
         usuarios: false,
         roles: false,
+        origenes: false,
+        destinos:false,
+        operadores: false
     });
     const [editRole, setEditRole] = useState(null);
     const [editRoleData, setEditRoleData] = useState({
@@ -24,6 +27,9 @@ const RolePage = () => {
         clientes: false,
         usuarios: false,
         roles: false,
+        origenes: false,
+        destinos: false,
+        operadores: false,
     });
     const [showModal, setShowModal] = useState(false);
     const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -92,6 +98,9 @@ const RolePage = () => {
                     clientes: false,
                     usuarios: false,
                     roles: false,
+                    origenes: false,
+                    destinos: false,
+                    operadores: false,
                 }); // Clear the form
                 setShowModal(false); // Close the modal
             } else {
@@ -132,6 +141,9 @@ const RolePage = () => {
                     clientes: false,
                     usuarios: false,
                     roles: false,
+                    origenes: false,
+                    destinos: false,
+                    operadores: false,
                 });
             } else {
                 console.error("Failed to update role:", response.statusText);
@@ -152,6 +164,9 @@ const RolePage = () => {
             clientes: false,
             usuarios: false,
             roles: false,
+            origenes: false,
+            destinos: false,
+            operadores: false,
         });
     };
 
@@ -312,6 +327,45 @@ const RolePage = () => {
                                     />
                                     <label htmlFor="roles" className="form-check-label">
                                         Roles
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="origenes"
+                                        name="origenes"
+                                        className="form-check-input"
+                                        checked={newRole.origenes}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="origenes" className="form-check-label">
+                                        Origenes
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="destinos"
+                                        name="destinos"
+                                        className="form-check-input"
+                                        checked={newRole.destinos}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="destinos" className="form-check-label">
+                                        Destinos
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="operadores"
+                                        name="operadores"
+                                        className="form-check-input"
+                                        checked={newRole.operadores}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="operadores" className="form-check-label">
+                                        Operadores
                                     </label>
                                 </div>
                             </div>
