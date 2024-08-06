@@ -144,7 +144,7 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
                                     <strong>Registrado por: </strong> {evento.registrado_por}
                                 </p>
                                 <p className="mt-4">
-                                    <strong>Frecuencia: </strong> {evento.frecuencia}
+                                    <strong>Frecuencia: </strong> {`${evento.frecuencia} min`}
                                 </p>
                             </Col>
                             <Col md={1} className="line">

@@ -73,7 +73,6 @@ const UsersPage = () => {
         setEditingUserId(user._id);
         setFormData({
             ...user,
-            password: "", // Reset password field when editing
         });
         setModalVisible(true);
     };
@@ -362,15 +361,15 @@ const UsersPage = () => {
                                                 <div className="modal-footer">
                                                     <button
                                                         type="button"
-                                                        className="btn btn-secondary"
+                                                        className="btn btn-danger"
                                                         onClick={closeModal}>
                                                         Cancelar
                                                     </button>
                                                     <button
                                                         type="submit"
-                                                        className="btn btn-primary">
+                                                        className="btn btn-success">
                                                         {editingUserId
-                                                            ? "Guardar cambios"
+                                                            ? "Guardar"
                                                             : "Crear"}
                                                     </button>
                                                 </div>

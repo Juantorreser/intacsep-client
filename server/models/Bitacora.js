@@ -8,6 +8,7 @@ const EventoSchema = new mongoose.Schema(
         ultimo_posicionamiento: {type: String, default: ""},
         velocidad: {type: String, default: ""},
         coordenadas: {type: String, default: ""},
+        frecuencia: {type: Number, defaul: 0},
         registrado_por: {type: String, default: "Nombre Usuario"},
     },
     {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`

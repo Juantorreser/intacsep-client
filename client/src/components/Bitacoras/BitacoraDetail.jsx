@@ -21,6 +21,7 @@ const BitacoraDetail = () => {
         ultimo_posicionamiento: "",
         velocidad: "",
         coordenadas: "",
+        frecuencia: 0,
     });
 
     const [eventTypes, setEventTypes] = useState([]);
@@ -188,6 +189,7 @@ const BitacoraDetail = () => {
                     velocidad: newEvent.velocidad,
                     coordenadas: newEvent.coordenadas,
                     registrado_por: `${user.firstName} ${user.lastName}`,
+                    frecuencia: newEvent.frecuencia,
                 }),
                 credentials: "include",
             });
@@ -241,6 +243,7 @@ const BitacoraDetail = () => {
         coordenadas,
         createdAt,
         registrado_por,
+        frecuencia,
     }) => (
         <div className="card mb-3">
             <div className="card-header text-center">
@@ -254,6 +257,9 @@ const BitacoraDetail = () => {
                         </p>
                         <p className="card-text">
                             <strong>Descripción:</strong> {descripcion}
+                        </p>
+                        <p className="card-text">
+                            <strong>Frecuencia:</strong> {`${frecuencia} min`}
                         </p>
                     </div>
                     <div className="col-md-6">
@@ -617,6 +623,20 @@ const BitacoraDetail = () => {
                                         id="coordenadas"
                                         name="coordenadas"
                                         value={newEvent.coordenadas}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="frecuencia" className="form-label">
+                                        Frecuencia
+                                    </label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        id="frecuencia"
+                                        name="frecuencia"
+                                        value={newEvent.frecuencia}
                                         onChange={handleChange}
                                         required
                                     />

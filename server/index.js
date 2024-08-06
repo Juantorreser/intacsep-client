@@ -401,6 +401,7 @@ app.patch("/bitacora/:id/event", async (req, res) => {
         velocidad,
         coordenadas,
         registrado_por,
+        frecuencia
     } = req.body;
 
     try {
@@ -419,6 +420,7 @@ app.patch("/bitacora/:id/event", async (req, res) => {
             velocidad,
             coordenadas,
             registrado_por,
+            frecuencia
         };
 
         // Add the new event to the bitacora's eventos array
