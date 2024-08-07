@@ -17,6 +17,8 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
     });
 
     const [showModal, setShowModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
 
     useEffect(() => {
         setFormData({
@@ -80,13 +82,23 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
         }
     };
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
+        setShowDeleteModal(true);
+    };
+
+    const handleCloseDeleteModal = () => {
+        setShowDeleteModal(false);
+    };
+
+
+    const handleConfirmDelete = async () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clients/${client._id}`, {
                 method: "DELETE",
                 credentials: "include",
             });
             if (response.ok) {
+                setShowDeleteModal(false);
                 await onDelete(client._id);
                 await fetchClients();
             } else {
@@ -96,6 +108,8 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
             console.error("Error deleting client:", e);
         }
     };
+
+
 
     // Helper function to format ID
     const formatID = (id) => {
@@ -401,6 +415,20 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
                     </Button>
                     <Button variant="success" onClick={handleConfirm}>
                         Confirmar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Eliminación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Está seguro de que desea eliminar este cliente?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseDeleteModal}>
+                        Cancelar
+                    </Button>
+                    <Button variant="danger" onClick={handleConfirmDelete}>
+                        Eliminar
                     </Button>
                 </Modal.Footer>
             </Modal>

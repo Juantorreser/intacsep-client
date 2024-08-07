@@ -14,6 +14,9 @@ const BitacoraDetail = () => {
     const [bitacora, setBitacora] = useState(null);
     const [isEventStarted, setIsEventStarted] = useState(false);
     const [finishButtonDisabled, setFinishButtonDisabled] = useState(true);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [editedBitacora, setEditedBitacora] = useState({});
+
     const [newEvent, setNewEvent] = useState({
         nombre: "",
         descripcion: "",
@@ -329,6 +332,35 @@ const BitacoraDetail = () => {
         return false;
     };
 
+    const handleEditChange = (e) => {
+        const {name, value} = e.target;
+        setEditedBitacora((prev) => ({...prev, [name]: value}));
+    };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(`${baseUrl}/bitacora/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(editedBitacora),
+                credentials: "include",
+            });
+            if (response.ok) {
+                const updatedBitacora = await response.json();
+                setBitacora(updatedBitacora);
+                setEditModalVisible(false);
+            } else {
+                console.error("Failed to edit bitácora:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error editing bitácora:", e);
+        }
+    };
+
+
     return (
         <section id="bitacoraDetail">
             <Header />
@@ -337,10 +369,19 @@ const BitacoraDetail = () => {
                     <Sidebar />
                 </div>
                 <div className="w-100 h-100 col mt-4">
-                    <div className="d-flex justify-content-center align-items-center mb-3">
+                    <div className="d-flex justify-content-center align-items-center mb-3 ms-5">
+                        {/* <div></div> */}
                         <h1 className="fs-3 fw-semibold text-black d-flex align-items-center">
                             Detalles
                         </h1>
+                        {/* <button
+                            className="btn btn-primary me-5"
+                            onClick={() => {
+                                setEditedBitacora(bitacora);
+                                setEditModalVisible(true);
+                            }}>
+                            <i className="fa fa-edit"></i>
+                        </button> */}
                     </div>
 
                     <div className="card-body">
@@ -661,6 +702,41 @@ const BitacoraDetail = () => {
                     </div>
                 </div>
             </div>
+            {editModalVisible && (
+                <div className="modal show" tabIndex="-1" style={{display: "block"}}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Edit Bitácora</h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => setEditModalVisible(false)}></button>
+                            </div>
+                            <div className="modal-body">
+                                <form onSubmit={handleEditSubmit}>
+                                    <div className="mb-3">
+                                        <label htmlFor="telefono" className="form-label">
+                                            Telefono
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="telefono"
+                                            name="telefono"
+                                            value={editedBitacora.telefono}
+                                            onChange={handleEditChange}
+                                        />
+                                    </div>
+                                    <button type="submit" className="btn btn-success">
+                                        Guardar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

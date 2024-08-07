@@ -9,8 +9,10 @@ import Form from "react-bootstrap/Form";
 const DestinoPage = () => {
     const [destinos, setDestinos] = useState([]);
     const [newDestino, setNewDestino] = useState("");
+    const [idToDelete, setIdToDelete] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [currentDestino, setCurrentDestino] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
@@ -31,7 +33,7 @@ const DestinoPage = () => {
         fetchDestinos();
     }, [baseUrl]);
 
-    const handleDelete = async (id) => {
+    const handleConfirmDelete = async (id) => {
         try {
             const response = await fetch(`${baseUrl}/destinos/${id}`, {
                 method: "DELETE",
@@ -39,12 +41,21 @@ const DestinoPage = () => {
             });
             if (response.ok) {
                 setDestinos(destinos.filter((destino) => destino._id !== id));
+                setShowDeleteModal(false);
             } else {
                 console.error("Failed to delete destino:", response.statusText);
             }
         } catch (e) {
             console.error("Error deleting destino:", e);
         }
+    };
+
+    const handleDelete = (id) => {
+        setIdToDelete(id);
+        setShowDeleteModal(true);
+    };
+    const handleCloseDeleteModal = () => {
+        setShowDeleteModal(false);
     };
 
     const handleCreate = async (e) => {
@@ -203,6 +214,20 @@ const DestinoPage = () => {
                     </Button>
                     <Button variant="primary" onClick={handleSaveEdit}>
                         Guardar Cambios
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Eliminación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Está seguro de que desea eliminar este destino?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseDeleteModal}>
+                        Cancelar
+                    </Button>
+                    <Button variant="danger" onClick={() => handleConfirmDelete(idToDelete)}>
+                        Eliminar
                     </Button>
                 </Modal.Footer>
             </Modal>

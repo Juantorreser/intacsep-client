@@ -437,6 +437,24 @@ app.patch("/bitacora/:id/event", async (req, res) => {
     }
 });
 
+//Update Bitacora
+app.patch("/bitacora/:id", async (req, res) => {
+    const {id} = req.params;
+    const updatedData = req.body;
+
+    try {
+        const bitacora = await Bitacora.findByIdAndUpdate(id, updatedData);
+        if (!bitacora) {
+            return res.status(404).json({message: "Bitacora not found"});
+        }
+        res.json(bitacora);
+    } catch (error) {
+        console.error("Error updating bitacora:", error);
+        res.status(500).json({message: "Internal server error"});
+    }
+});
+
+
 // Endpoint to start a bitacora
 app.patch("/bitacora/:id/start", async (req, res) => {
     try {
@@ -490,6 +508,8 @@ app.patch("/bitacora/:id/status", async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
+
+
 
 //Monitoreos
 app.get("/monitoreos", async (req, res) => {
@@ -749,6 +769,7 @@ app.post("/roles", async (req, res) => {
     const role = new Role({
         name: req.body.name,
         bitacoras: req.body.bitacoras,
+        edit_bitacora: req.body.edit_bitacora,
         tipos_de_monitoreo: req.body.tipos_de_monitoreo,
         eventos: req.body.eventos,
         clientes: req.body.clientes,

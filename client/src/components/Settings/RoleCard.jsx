@@ -47,6 +47,21 @@ const RoleCard = ({
                                     />
                                     <label className="form-check-label">Bitacoras</label>
                                 </div>
+                                <div className="form-check me-3">
+                                    <input
+                                        type="checkbox"
+                                        name="edit_bitacora"
+                                        className="form-check-input"
+                                        checked={
+                                            editRole && role._id === editRole._id
+                                                ? editRoleData.edit_bitacora
+                                                : role.edit_bitacora
+                                        }
+                                        onChange={handleInputChange}
+                                        disabled={editRole && role._id !== editRole._id}
+                                    />
+                                    <label className="form-check-label">Editar Bitacoras</label>
+                                </div>
                             </div>
                             <hr className="d-md-none w-100" />
                             <div>
