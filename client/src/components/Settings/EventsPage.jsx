@@ -2,6 +2,8 @@ import React, {useState, useEffect} from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 
 const EventsPage = () => {
     const [events, setEvents] = useState([]);
@@ -9,6 +11,8 @@ const EventsPage = () => {
     const [editEvent, setEditEvent] = useState(null);
     const [editEventName, setEditEventName] = useState("");
     const baseUrl = import.meta.env.VITE_BASE_URL;
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [idToDelete, setIdToDelete] = useState("");
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -28,7 +32,7 @@ const EventsPage = () => {
         fetchEvents();
     }, [baseUrl]);
 
-    const handleDelete = async (id) => {
+    const handleConfirmDelete = async (id) => {
         try {
             const response = await fetch(`${baseUrl}/event_types/${id}`, {
                 method: "DELETE",
@@ -36,12 +40,20 @@ const EventsPage = () => {
             });
             if (response.ok) {
                 setEvents(events.filter((event) => event._id !== id));
+                setShowDeleteModal(false);
             } else {
                 console.error("Failed to delete event:", response.statusText);
             }
         } catch (e) {
             console.error("Error deleting event:", e);
         }
+    };
+    const handleDelete = (id) => {
+        setIdToDelete(id);
+        setShowDeleteModal(true);
+    };
+    const handleCloseDeleteModal = () => {
+        setShowDeleteModal(false);
     };
 
     const handleCreate = async (e) => {
@@ -69,7 +81,6 @@ const EventsPage = () => {
             console.error("Error creating event:", e);
         }
     };
-
 
     const handleEditClick = (event) => {
         setEditEvent(event);
@@ -191,6 +202,21 @@ const EventsPage = () => {
                     </div>
                 </div>
             </div>
+            {/* Delete Modal */}
+            <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Eliminación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Está seguro de que desea eliminar este evento?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseDeleteModal}>
+                        Cancelar
+                    </Button>
+                    <Button variant="danger" onClick={() => handleConfirmDelete(idToDelete)}>
+                        Eliminar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Footer />
         </section>
     );

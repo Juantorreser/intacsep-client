@@ -2,6 +2,8 @@ import React, {useState, useEffect} from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 
 const UsersPage = () => {
     const [users, setUsers] = useState([]);
@@ -17,7 +19,8 @@ const UsersPage = () => {
         role: "",
     });
     const [isModalVisible, setModalVisible] = useState(false);
-
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [idToDelete, setIdToDelete] = useState("");
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
@@ -53,7 +56,7 @@ const UsersPage = () => {
         fetchRoles();
     }, [baseUrl]);
 
-    const handleDelete = async (id) => {
+    const handleConfirmDelete = async (id) => {
         try {
             const response = await fetch(`${baseUrl}/users/${id}`, {
                 method: "DELETE",
@@ -61,12 +64,21 @@ const UsersPage = () => {
             });
             if (response.ok) {
                 setUsers(users.filter((user) => user._id !== id));
+                setShowDeleteModal(false);
             } else {
                 console.error("Failed to delete user:", response.statusText);
             }
         } catch (e) {
             console.error("Error deleting user:", e);
         }
+    };
+
+    const handleDelete = (id) => {
+        setIdToDelete(id);
+        setShowDeleteModal(true);
+    };
+    const handleCloseDeleteModal = () => {
+        setShowDeleteModal(false);
     };
 
     const handleEdit = (user) => {
@@ -196,9 +208,9 @@ const UsersPage = () => {
                                             <td>{user.role}</td>
                                             <td className="text-end">
                                                 <button
-                                                    className="btn btn-warning me-2"
+                                                    className="btn btn-primary me-2"
                                                     onClick={() => handleEdit(user)}>
-                                                    <i className="fas fa-pencil-alt"></i>
+                                                    <i className="fas fa-edit"></i>
                                                 </button>
                                                 <button
                                                     className="btn btn-danger"
@@ -368,9 +380,7 @@ const UsersPage = () => {
                                                     <button
                                                         type="submit"
                                                         className="btn btn-success">
-                                                        {editingUserId
-                                                            ? "Guardar"
-                                                            : "Crear"}
+                                                        {editingUserId ? "Guardar" : "Crear"}
                                                     </button>
                                                 </div>
                                             </form>
@@ -383,6 +393,21 @@ const UsersPage = () => {
                     )}
                 </div>
             </div>
+            {/* Delete Modal */}
+            <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Eliminación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Está seguro de que desea eliminar este usuario?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseDeleteModal}>
+                        Cancelar
+                    </Button>
+                    <Button variant="danger" onClick={() => handleConfirmDelete(idToDelete)}>
+                        Eliminar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Footer />
         </section>
     );

@@ -3,6 +3,8 @@ import RoleCard from "./RoleCard"; // Adjust path as needed
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 
 const RolePage = () => {
     const [roles, setRoles] = useState([]);
@@ -16,8 +18,8 @@ const RolePage = () => {
         usuarios: false,
         roles: false,
         origenes: false,
-        destinos:false,
-        operadores: false
+        destinos: false,
+        operadores: false,
     });
     const [editRole, setEditRole] = useState(null);
     const [editRoleData, setEditRoleData] = useState({
@@ -35,6 +37,8 @@ const RolePage = () => {
     });
     const [showModal, setShowModal] = useState(false);
     const baseUrl = import.meta.env.VITE_BASE_URL;
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [idToDelete, setIdToDelete] = useState("");
 
     // Fetch roles from API
     useEffect(() => {
@@ -59,7 +63,7 @@ const RolePage = () => {
     }, [baseUrl]);
 
     // Handle role deletion
-    const handleDelete = async (id) => {
+    const handleConfirmDelete = async (id) => {
         try {
             const response = await fetch(`${baseUrl}/roles/${id}`, {
                 method: "DELETE",
@@ -67,12 +71,21 @@ const RolePage = () => {
             });
             if (response.ok) {
                 setRoles(roles.filter((role) => role._id !== id));
+                setShowDeleteModal(false);
             } else {
                 console.error("Failed to delete role:", response.statusText);
             }
         } catch (e) {
             console.error("Error deleting role:", e);
         }
+    };
+
+    const handleDelete = (id) => {
+        setIdToDelete(id);
+        setShowDeleteModal(true);
+    };
+    const handleCloseDeleteModal = () => {
+        setShowDeleteModal(false);
     };
 
     // Handle new role creation
@@ -402,7 +415,21 @@ const RolePage = () => {
                     </div>
                 </div>
             </div>
-
+            {/* Delete Modal */}
+            <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Eliminación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Está seguro de que desea eliminar este rol?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseDeleteModal}>
+                        Cancelar
+                    </Button>
+                    <Button variant="danger" onClick={() => handleConfirmDelete(idToDelete)}>
+                        Eliminar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Footer />
         </section>
     );

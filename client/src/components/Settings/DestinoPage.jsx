@@ -217,6 +217,8 @@ const DestinoPage = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            
+            {/* Delete Modal */}
             <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar Eliminación</Modal.Title>

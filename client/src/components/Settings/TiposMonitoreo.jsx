@@ -2,11 +2,15 @@ import React, {useState, useEffect} from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 
 const TiposMonitoreo = () => {
     const [monitoreos, setMonitoreos] = useState([]);
     const [newMonitoreo, setNewMonitoreo] = useState("");
     const baseUrl = import.meta.env.VITE_BASE_URL;
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [idToDelete, setIdToDelete] = useState("");
 
     useEffect(() => {
         const fetchMonitoreos = async () => {
@@ -26,7 +30,7 @@ const TiposMonitoreo = () => {
         fetchMonitoreos();
     }, [baseUrl]);
 
-    const handleDelete = async (id) => {
+    const handleConfirmDelete = async (id) => {
         try {
             const response = await fetch(`${baseUrl}/monitoreos/${id}`, {
                 method: "DELETE",
@@ -34,12 +38,21 @@ const TiposMonitoreo = () => {
             });
             if (response.ok) {
                 setMonitoreos(monitoreos.filter((monitoreo) => monitoreo._id !== id));
+                setShowDeleteModal(false);
             } else {
                 console.error("Failed to delete monitoreo:", response.statusText);
             }
         } catch (e) {
             console.error("Error deleting monitoreo:", e);
         }
+    };
+
+    const handleDelete = (id) => {
+        setIdToDelete(id);
+        setShowDeleteModal(true);
+    };
+    const handleCloseDeleteModal = () => {
+        setShowDeleteModal(false);
     };
 
     const handleCreate = async (e) => {
@@ -132,6 +145,21 @@ const TiposMonitoreo = () => {
                     </div>
                 </div>
             </div>
+            {/* Delete Modal */}
+            <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Eliminación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Está seguro de que desea eliminar este tipo de monitoreo?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseDeleteModal}>
+                        Cancelar
+                    </Button>
+                    <Button variant="danger" onClick={() => handleConfirmDelete(idToDelete)}>
+                        Eliminar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Footer />
         </section>
     );

@@ -13,6 +13,8 @@ const OrigenPage = () => {
     const [currentOrigen, setCurrentOrigen] = useState(null);
     const [editingName, setEditingName] = useState("");
     const baseUrl = import.meta.env.VITE_BASE_URL;
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [idToDelete, setIdToDelete] = useState("");
 
     useEffect(() => {
         const fetchOrigenes = async () => {
@@ -32,7 +34,7 @@ const OrigenPage = () => {
         fetchOrigenes();
     }, [baseUrl]);
 
-    const handleDelete = async (id) => {
+    const handleConfirmDelete = async (id) => {
         try {
             const response = await fetch(`${baseUrl}/origenes/${id}`, {
                 method: "DELETE",
@@ -40,12 +42,21 @@ const OrigenPage = () => {
             });
             if (response.ok) {
                 setOrigenes(origenes.filter((origen) => origen._id !== id));
+                setShowDeleteModal(false);
             } else {
                 console.error("Failed to delete origen:", response.statusText);
             }
         } catch (e) {
             console.error("Error deleting origen:", e);
         }
+    };
+
+    const handleDelete = (id) => {
+        setIdToDelete(id);
+        setShowDeleteModal(true);
+    };
+    const handleCloseDeleteModal = () => {
+        setShowDeleteModal(false);
     };
 
     const handleCreate = async (e) => {
@@ -205,7 +216,21 @@ const OrigenPage = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
+            {/* Delete Modal */}
+            <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Eliminación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Está seguro de que desea eliminar este origen?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseDeleteModal}>
+                        Cancelar
+                    </Button>
+                    <Button variant="danger" onClick={() => handleConfirmDelete(idToDelete)}>
+                        Eliminar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Footer />
         </section>
     );

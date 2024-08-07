@@ -1,5 +1,6 @@
 import React from "react";
 
+
 const RoleCard = ({
     role,
     onEditClick,
@@ -99,9 +100,9 @@ const RoleCard = ({
                         {!editRole || role._id !== editRole._id ? (
                             <>
                                 <button
-                                    className="btn btn-warning rounded-circle mb-2"
+                                    className="btn btn-primary rounded-circle mb-2"
                                     onClick={() => onEditClick(role)}>
-                                    <i className="fas fa-pencil-alt"></i>
+                                    <i className="fas fa-edit"></i>
                                 </button>
                                 <button
                                     className="btn btn-danger rounded-circle"

@@ -100,7 +100,6 @@ const ClientCard = ({client, onDelete, fetchClients}) => {
             if (response.ok) {
                 setShowDeleteModal(false);
                 await onDelete(client._id);
-                await fetchClients();
             } else {
                 console.error("Failed to delete client:", response.statusText);
             }
