@@ -457,7 +457,7 @@ const BitacorasPage = () => {
                 });
 
                 pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height, undefined, "FAST");
-                pdf.save(`bitacora_${bitacora.id}.pdf`);
+                pdf.save(`Bitácora No.${bitacora.bitacora_id}, ${bitacora.cliente}.pdf`);
                 document.body.removeChild(tempContainer);
             });
         }, 0);

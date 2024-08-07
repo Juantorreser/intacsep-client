@@ -369,19 +369,18 @@ const BitacoraDetail = () => {
                     <Sidebar />
                 </div>
                 <div className="w-100 h-100 col mt-4">
-                    <div className="d-flex justify-content-center align-items-center mb-3 ms-5">
-                        {/* <div></div> */}
-                        <h1 className="fs-3 fw-semibold text-black d-flex align-items-center">
+                    <div className="d-flex justify-content-center align-items-center mb-3 ms-5 position-relative">
+                        <h1 className="fs-3 fw-semibold text-black text-center position-relative">
                             Detalles
                         </h1>
-                        {/* <button
-                            className="btn btn-primary me-5"
+                        <button
+                            className="btn btn-primary position-absolute end-0 me-3"
                             onClick={() => {
                                 setEditedBitacora(bitacora);
                                 setEditModalVisible(true);
                             }}>
                             <i className="fa fa-edit"></i>
-                        </button> */}
+                        </button>
                     </div>
 
                     <div className="card-body">
