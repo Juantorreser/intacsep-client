@@ -21,6 +21,11 @@ const BitacoraDetail = () => {
     const [edited_bitacora, setEditedBitacora] = useState({});
     const [roleData, setRoleData] = useState(null);
     const [initialized, setInitialized] = useState(false); // Track initialization
+    const [origenes, setOrigenes] = useState([]);
+    const [destinos, setDestinos] = useState([]);
+    const [operadores, setOperadores] = useState([]);
+    const [clients, setClients] = useState([]);
+    const [monitoreos, setMonitoreos] = useState([]);
     const navigate = useNavigate();
 
     const [newEvent, setNewEvent] = useState({
@@ -35,6 +40,76 @@ const BitacoraDetail = () => {
 
     const [eventTypes, setEventTypes] = useState([]);
     const baseUrl = import.meta.env.VITE_BASE_URL;
+
+    const fetchClients = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/clients`);
+            if (response.ok) {
+                const data = await response.json();
+                setClients(data);
+            } else {
+                console.error("Failed to fetch clients:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching clients:", e);
+        }
+    };
+
+    const fetchMonitoreos = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/monitoreos`);
+            if (response.ok) {
+                const data = await response.json();
+                setMonitoreos(data);
+            } else {
+                console.error("Failed to fetch monitoreos:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching monitoreos:", e);
+        }
+    };
+
+    const fetchOrigenes = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/origenes`);
+            if (response.ok) {
+                const data = await response.json();
+                setOrigenes(data);
+            } else {
+                console.error("Failed to fetch origenes:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching origenes:", e);
+        }
+    };
+
+    const fetchDestinos = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/destinos`);
+            if (response.ok) {
+                const data = await response.json();
+                setDestinos(data);
+            } else {
+                console.error("Failed to fetch destinos:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching destinos:", e);
+        }
+    };
+
+    const fetchOperadores = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/operadores`);
+            if (response.ok) {
+                const data = await response.json();
+                setOperadores(data);
+            } else {
+                console.error("Failed to fetch operadores:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error fetching operadores:", e);
+        }
+    };
 
     const fetchBitacora = async () => {
         try {
@@ -77,6 +152,11 @@ const BitacoraDetail = () => {
             }
         };
 
+        fetchClients();
+        fetchOperadores();
+        fetchOrigenes();
+        fetchMonitoreos();
+        fetchDestinos();
         fetchBitacora();
         fetchEventTypes();
         init();
@@ -367,29 +447,39 @@ const BitacoraDetail = () => {
     };
 
     const handleEditChange = (e) => {
-        const {name, value} = e.target;
-        const [mainKey, subKey] = name.split(".");
+        const {name, value, type} = e.target;
 
-        setEditedBitacora((prev) => {
-            if (subKey) {
-                return {
-                    ...prev,
-                    [mainKey]: {
-                        ...prev[mainKey],
-                        [subKey]: value,
-                    },
-                };
-            } else {
-                return {
-                    ...prev,
-                    [name]: value,
-                };
-            }
-        });
+        // Handle change for select fields
+        if (type === "select-one") {
+            setEditedBitacora((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        } else {
+            // Handle change for input fields
+            const [mainKey, subKey] = name.split(".");
+            setEditedBitacora((prev) => {
+                if (subKey) {
+                    return {
+                        ...prev,
+                        [mainKey]: {
+                            ...prev[mainKey],
+                            [subKey]: value,
+                        },
+                    };
+                } else {
+                    return {
+                        ...prev,
+                        [name]: value,
+                    };
+                }
+            });
+        }
     };
 
     const handleEditSubmit = async (e) => {
         e.preventDefault();
+        console.log(edited_bitacora);
 
         try {
             const response = await fetch(`${baseUrl}/bitacora/${id}`, {
@@ -402,6 +492,8 @@ const BitacoraDetail = () => {
             });
             if (response.ok) {
                 const updatedBitacora = await response.json();
+                console.log(updatedBitacora);
+
                 setBitacora(updatedBitacora);
                 setIsEdited(!isEdited);
                 setEditModalVisible(false);
@@ -426,7 +518,7 @@ const BitacoraDetail = () => {
                             Detalles
                         </h1>
 
-                        {roleData && roleData.edit_bitacora && (
+                        {roleData && roleData.edit_bitacora_cerrada && (
                             <button
                                 className="btn btn-primary position-absolute end-0 me-3"
                                 onClick={() => {
@@ -782,9 +874,84 @@ const BitacoraDetail = () => {
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="folio_servicio">No. Bitacora</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="bitacora_id"
+                                        name="bitacora_id"
+                                        value={edited_bitacora.bitacora_id}
+                                        onChange={handleEditChange}
+                                        disabled
+                                    />
+                                </Form.Group>
                                 {/* cliente */}
+                                <div className="mb-3">
+                                    <label htmlFor="cliente" className="form-label">
+                                        Cliente
+                                    </label>
+                                    <select
+                                        className="form-select"
+                                        id="cliente"
+                                        name="cliente"
+                                        aria-label="cliente"
+                                        value={edited_bitacora.cliente}
+                                        onChange={handleEditChange}
+                                        required>
+                                        <option value="">Selecciona una opción</option>
+                                        {clients.map((cliente) => (
+                                            <option key={cliente._id} value={cliente.razon_social}>
+                                                {cliente.razon_social}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                                 {/* monitoreo */}
+                                {/* Tipo de Monitoreo */}
+                                <div className="mb-3">
+                                    <label htmlFor="monitoreo" className="form-label">
+                                        Tipo de Monitoreo
+                                    </label>
+                                    <select
+                                        className="form-select"
+                                        id="monitoreo"
+                                        name="monitoreo"
+                                        aria-label="Tipo de Monitoreo"
+                                        value={edited_bitacora.monitoreo}
+                                        onChange={handleEditChange}
+                                        required>
+                                        <option value="">Selecciona una opción</option>
+                                        {monitoreos.map((monitoreo) => (
+                                            <option
+                                                key={monitoreo._id}
+                                                value={monitoreo.tipoMonitoreo}>
+                                                {monitoreo.tipoMonitoreo}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                                 {/* operador */}
+                                <div className="mb-3">
+                                    <label htmlFor="operador" className="form-label">
+                                        Operador
+                                    </label>
+                                    <select
+                                        className="form-select"
+                                        id="operador"
+                                        aria-label="operador"
+                                        name="operador"
+                                        value={edited_bitacora.operador}
+                                        onChange={handleEditChange}
+                                        required>
+                                        <option value="">Selecciona una opción</option>
+                                        {operadores.map((operador) => (
+                                            <option key={operador._id} value={operador.name}>
+                                                {operador.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
                                 <Form.Group className="mb-3">
                                     <Form.Label htmlFor="telefono">Telefono</Form.Label>
                                     <Form.Control
@@ -808,7 +975,47 @@ const BitacoraDetail = () => {
                                     />
                                 </Form.Group>
                                 {/* origen */}
+                                <div className="mb-3">
+                                    <label htmlFor="origen" className="form-label">
+                                        Origen
+                                    </label>
+                                    <select
+                                        className="form-select"
+                                        id="origen"
+                                        name="origen"
+                                        aria-label="origen"
+                                        value={edited_bitacora.origen}
+                                        onChange={handleEditChange}
+                                        required>
+                                        <option value="">Selecciona una opción</option>
+                                        {origenes.map((origen) => (
+                                            <option key={origen._id} value={origen.name}>
+                                                {origen.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                                 {/* destino */}
+                                <div className="mb-3">
+                                    <label htmlFor="destino" className="form-label">
+                                        Destino
+                                    </label>
+                                    <select
+                                        className="form-select"
+                                        id="destino"
+                                        name="destino"
+                                        aria-label="destino"
+                                        value={edited_bitacora.destino}
+                                        onChange={handleEditChange}
+                                        required>
+                                        <option value="">Selecciona una opción</option>
+                                        {destinos.map((destino) => (
+                                            <option key={destino._id} value={destino.name}>
+                                                {destino.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                                 <Form.Group className="mb-3">
                                     <Form.Label htmlFor="enlace">Enlace</Form.Label>
                                     <Form.Control

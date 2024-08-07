@@ -192,7 +192,6 @@ app.post("/logout", (req, res) => {
 });
 app.post("/protected", (req, res) => {
     const {user} = req.session;
-    console.log(user);
 
     if (!user) return res.send("Access Denied").status(401);
     res.json({user: user}).status(200);
@@ -440,19 +439,18 @@ app.patch("/bitacora/:id/event", async (req, res) => {
 //Update Bitacora
 app.patch("/bitacora/:id", async (req, res) => {
     const {id} = req.params;
-    const {edited_bitacora} = req.body; // Assuming `edited_bitacora` is sent in the request body
+    const edited_bitacora = req.body;
+
+    console.log("Received edited_bitacora:", edited_bitacora); // Add this line to debug
 
     try {
-        // Find the Bitacora document by its ID
         const bitacora = await Bitacora.findById(id);
         if (!bitacora) {
             return res.status(404).json({message: "Bitacora not found"});
         }
 
-        // Update the `edited_bitacora` field
         bitacora.edited_bitacora = edited_bitacora;
 
-        // Save the updated Bitacora document
         const updatedBitacora = await bitacora.save();
         res.json(updatedBitacora);
     } catch (error) {
@@ -460,6 +458,7 @@ app.patch("/bitacora/:id", async (req, res) => {
         res.status(500).json({message: "Internal server error"});
     }
 });
+
 
 
 // Endpoint to start a bitacora
@@ -805,7 +804,6 @@ app.put("/roles/:id", async (req, res) => {
 app.get("/roles/:roleName", async (req, res) => {
     try {
         const roleName = req.params.roleName;
-        console.log(roleName);
         const role = await Role.findOne({name: roleName});
 
         if (!role) {

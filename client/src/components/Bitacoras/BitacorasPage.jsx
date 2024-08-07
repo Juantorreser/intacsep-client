@@ -536,12 +536,12 @@ const BitacorasPage = () => {
                                             <td className="text-center">
                                                 <button
                                                     className={
-                                                        bitacora.edited_bitacora !== null
+                                                        bitacora.edited_bitacora == null
                                                             ? "btn btn-secondary"
                                                             : "btn btn-primary"
                                                     }
                                                     onClick={() => generatePDF(bitacora.edited_bitacora)}
-                                                    disabled={bitacora.edited_bitacora !== null}>
+                                                    disabled={bitacora.edited_bitacora == null}>
                                                     <i className="fa fa-file-pdf"></i>
                                                 </button>
                                             </td>
