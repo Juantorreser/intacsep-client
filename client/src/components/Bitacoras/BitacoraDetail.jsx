@@ -675,6 +675,8 @@ const BitacoraDetail = () => {
                                     <input
                                         type="number"
                                         className="form-control"
+                                        min="0"
+                                        max="99"
                                         id="frecuencia"
                                         name="frecuencia"
                                         value={newEvent.frecuencia}
