@@ -463,93 +463,6 @@ const BitacorasPage = () => {
         }, 0);
     };
 
-    // const generatePDF = (bitacora) => {
-    //     const doc = new jsPDF({orientation: "portrait", unit: "mm", format: "a4"});
-
-    //     // Add custom title with geometric shapes for corporate style
-    //     doc.setFontSize(22);
-    //     doc.setTextColor(255, 255, 255);
-    //     doc.setFillColor(0, 0, 0); // Black background for title
-    //     doc.rect(0, 0, 210, 20, "F"); // Full width rectangle
-    //     doc.text("Bitácora de Monitoreo", 105, 12, null, null, "center");
-
-    //     // Table for Bitácora Details
-    //     doc.setTextColor(0, 0, 0); // Set text color to black
-    //     doc.setFontSize(14);
-    //     doc.text("Detalles de la Bitácora", 14, 30); // Section heading
-    //     doc.autoTable({
-    //         startY: 35,
-    //         margin: {left: 14, right: 14},
-    //         headStyles: {fillColor: [0, 0, 0], textColor: [255, 255, 255]},
-    //         bodyStyles: {fontSize: 12},
-    //         head: [["Campo", "Valor"]],
-    //         body: [
-    //             ["Bitácora ID", bitacora.bitacora_id],
-    //             ["Cliente", bitacora.cliente],
-    //             ["Tipo de Monitoreo", bitacora.monitoreo],
-    //             ["Operador", bitacora.operador],
-    //             ["Teléfono", bitacora.telefono],
-    //             ["Fecha Creación", formatDate(bitacora.createdAt)],
-    //             ["Status", bitacora.status],
-    //             ["Origen", bitacora.origen],
-    //             ["Destino", bitacora.destino],
-    //             ["ECO Tracto", bitacora.tracto.eco],
-    //             ["Placa Tracto", bitacora.tracto.placa],
-    //             ["Marca Tracto", bitacora.tracto.marca],
-    //             ["Modelo Tracto", bitacora.tracto.modelo],
-    //             ["Color Tracto", bitacora.tracto.color],
-    //             ["Tipo Tracto", bitacora.tracto.tipo],
-    //             ["ECO Remolque", bitacora.remolque.eco],
-    //             ["Placa Remolque", bitacora.remolque.placa],
-    //             ["Color Remolque", bitacora.remolque.color],
-    //             ["Capacidad Remolque", bitacora.remolque.capacidad],
-    //             ["Sello Remolque", bitacora.remolque.sello],
-    //             ["Inicio de Monitoreo", formatDate(bitacora.inicioMonitoreo)],
-    //             ["Final de Monitoreo", formatDate(bitacora.finalMonitoreo)],
-    //         ],
-    //     });
-
-    //     // Add space before the next table
-    //     let finalY = doc.lastAutoTable.finalY + 15;
-
-    //     // Table for Events
-    //     doc.setFontSize(14);
-    //     doc.text("Eventos Registrados", 14, finalY); // Section heading
-    //     doc.autoTable({
-    //         startY: finalY + 5,
-    //         margin: {left: 14, right: 14},
-    //         headStyles: {fillColor: [0, 0, 0], textColor: [255, 255, 255]},
-    //         bodyStyles: {fontSize: 12},
-    //         head: [
-    //             [
-    //                 "Nombre del Evento",
-    //                 "Registrado Por",
-    //                 "Descripción",
-    //                 "Ubicacion",
-    //                 "Último Posicionamiento",
-    //                 "Velocidad",
-    //                 "Coordenadas",
-    //                 "Fecha de Creación",
-    //             ],
-    //         ],
-    //         body: bitacora.eventos.map((evento) => [
-    //             evento.nombre,
-    //             evento.registrado_por,
-    //             evento.descripcion,
-    //             evento.ubicacion,
-    //             evento.ultimo_posicionamiento,
-    //             evento.velocidad,
-    //             evento.coordenadas,
-    //             `${new Date(evento.createdAt).toLocaleDateString()}, ${new Date(
-    //                 evento.createdAt
-    //             ).toLocaleTimeString()}`,
-    //         ]),
-    //     });
-
-    //     // Save the PDF
-    //     doc.save(`Bitacora_${bitacora.bitacora_id}.pdf`);
-    // };
-
     return (
         <section id="activeBits">
             <Header />
@@ -581,6 +494,9 @@ const BitacorasPage = () => {
                                         <th>Status</th>
                                         <th className="text-center">
                                             <i className="fa fa-download"></i>
+                                        </th>
+                                        <th className="text-center">
+                                            <i className="fa fa-clipboard-check"></i>
                                         </th>
                                     </tr>
                                 </thead>
@@ -614,6 +530,18 @@ const BitacorasPage = () => {
                                                     }
                                                     onClick={() => generatePDF(bitacora)}
                                                     disabled={bitacora.status !== "finalizada"}>
+                                                    <i className="fa fa-file-pdf"></i>
+                                                </button>
+                                            </td>
+                                            <td className="text-center">
+                                                <button
+                                                    className={
+                                                        bitacora.edited_bitacora !== null
+                                                            ? "btn btn-secondary"
+                                                            : "btn btn-primary"
+                                                    }
+                                                    onClick={() => generatePDF(bitacora.edited_bitacora)}
+                                                    disabled={bitacora.edited_bitacora !== null}>
                                                     <i className="fa fa-file-pdf"></i>
                                                 </button>
                                             </td>
