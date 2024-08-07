@@ -8,7 +8,17 @@ const RoleSchema = new mongoose.Schema(
             required: true,
             default: false,
         },
-        edit_bitacora: {
+        edit_bitacora_abierta: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
+        edit_bitacora_cerrada: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
+        edit_eventos: {
             type: Boolean,
             required: true,
             default: false,

@@ -48,6 +48,7 @@ const AuthProvider = ({children}) => {
         } catch (e) {
             console.error("Error verifying token:", e);
             // setUser(null); // Set user to null if there's an error
+            navigate("/login");
         }
     };
 

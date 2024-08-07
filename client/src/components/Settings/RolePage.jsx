@@ -11,7 +11,9 @@ const RolePage = () => {
     const [newRole, setNewRole] = useState({
         name: "",
         bitacoras: false,
-        edit_bitacora: false,
+        edit_bitacora_abierta: false,
+        edit_bitacora_cerrada: false,
+        edit_eventos: false,
         tipos_de_monitoreo: false,
         eventos: false,
         clientes: false,
@@ -25,7 +27,9 @@ const RolePage = () => {
     const [editRoleData, setEditRoleData] = useState({
         name: "",
         bitacoras: false,
-        edit_bitacora: false,
+        edit_bitacora_abierta: false,
+        edit_bitacora_cerrada: false,
+        edit_eventos: false,
         tipos_de_monitoreo: false,
         eventos: false,
         clientes: false,
@@ -108,7 +112,9 @@ const RolePage = () => {
                 setNewRole({
                     name: "",
                     bitacoras: false,
-                    edit_bitacora: false,
+                    edit_bitacora_abierta: false,
+                    edit_bitacora_cerrada: false,
+                    edit_eventos: false,
                     tipos_de_monitoreo: false,
                     eventos: false,
                     clientes: false,
@@ -152,7 +158,9 @@ const RolePage = () => {
                 setEditRoleData({
                     name: "",
                     bitacoras: false,
-                    edit_bitacora: false,
+                    edit_bitacora_abierta: false,
+                    edit_bitacora_cerrada: false,
+                    edit_eventos: false,
                     tipos_de_monitoreo: false,
                     eventos: false,
                     clientes: false,
@@ -176,7 +184,9 @@ const RolePage = () => {
         setEditRoleData({
             name: "",
             bitacoras: false,
-            edit_bitacora: false,
+            edit_bitacora_abierta: false,
+            edit_bitacora_cerrada: false,
+            edit_eventos: false,
             tipos_de_monitoreo: false,
             eventos: false,
             clientes: false,
@@ -283,14 +293,40 @@ const RolePage = () => {
                                 <div className="form-check">
                                     <input
                                         type="checkbox"
-                                        id="edit_bitacora"
-                                        name="edit_bitacora"
+                                        id="edit_bitacora_abierta"
+                                        name="edit_bitacora_abierta"
                                         className="form-check-input"
-                                        checked={newRole.edit_bitacora}
+                                        checked={newRole.edit_bitacora_abierta}
                                         onChange={(e) => handleInputChange(e, setNewRole)}
                                     />
                                     <label htmlFor="edit_bitacora" className="form-check-label">
-                                        Editar Bitacoras
+                                        Editar Bitacoras Abiertas
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="edit_bitacora_cerrada"
+                                        name="edit_bitacora_cerrada"
+                                        className="form-check-input"
+                                        checked={newRole.edit_bitacora_cerrada}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="edit_bitacora" className="form-check-label">
+                                        Editar Bitacoras Cerradas
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="edit_eventos"
+                                        name="edit_eventos"
+                                        className="form-check-input"
+                                        checked={newRole.edit_eventos}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="edit_bitacora" className="form-check-label">
+                                        Editar Eventos
                                     </label>
                                 </div>
                                 <div className="form-check">

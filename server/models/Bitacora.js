@@ -47,6 +47,7 @@ const BitSchema = new mongoose.Schema(
         finalMonitoreo: {type: Date},
         status: {type: String, default: "creada", required: true},
         eventos: [EventoSchema],
+        edited_bitacora: {type: Bitacora},
     },
     {timestamps: true}
 );

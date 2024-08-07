@@ -7,15 +7,21 @@ import Footer from "../Footer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown, faChevronUp, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../../context/AuthContext";
+import {useNavigate} from "react-router-dom";
+import {Modal, Button, Form} from "react-bootstrap";
 
 const BitacoraDetail = () => {
     const {id} = useParams();
-    const {user} = useAuth();
+    const {user, verifyToken, setUser} = useAuth();
     const [bitacora, setBitacora] = useState(null);
     const [isEventStarted, setIsEventStarted] = useState(false);
     const [finishButtonDisabled, setFinishButtonDisabled] = useState(true);
+    const [isEdited, setIsEdited] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [editedBitacora, setEditedBitacora] = useState({});
+    const [roleData, setRoleData] = useState(null);
+    const [initialized, setInitialized] = useState(false); // Track initialization
+    const navigate = useNavigate();
 
     const [newEvent, setNewEvent] = useState({
         nombre: "",
@@ -47,6 +53,16 @@ const BitacoraDetail = () => {
     };
 
     useEffect(() => {
+        const init = async () => {
+            try {
+                const data = await verifyToken(); // Ensure user is verified
+                setUser(data);
+                setInitialized(true); // Set initialization as complete
+            } catch (e) {
+                console.log("Error verifying token or fetching user:", e);
+                navigate("/login");
+            }
+        };
         const fetchEventTypes = async () => {
             try {
                 const response = await fetch(`${baseUrl}/event_types`);
@@ -63,7 +79,26 @@ const BitacoraDetail = () => {
 
         fetchBitacora();
         fetchEventTypes();
-    }, []);
+        init();
+    }, [isEdited]);
+
+    useEffect(() => {
+        const fetchRolePermissions = async () => {
+            if (!user) return; // Ensure user is available before fetching role data
+
+            try {
+                const response = await fetch(`${baseUrl}/roles/${user.role}`);
+                const data = await response.json();
+                setRoleData(data);
+            } catch (e) {
+                console.log("Error fetching role permissions:", e);
+            }
+        };
+
+        if (initialized) {
+            fetchRolePermissions();
+        }
+    }, [initialized, user]);
 
     const handleStart = async () => {
         if (bitacora.status === "creada") {
@@ -323,7 +358,6 @@ const BitacoraDetail = () => {
     const hasEventWithName = () => {
         const eventToStart = "Validación";
         const eventToFinish = "Cierre de servicio";
-        console.log(events);
         if (bitacora.status === "creada") {
             return events.some((event) => event.nombre === eventToStart);
         } else if (bitacora.status === "iniciada") {
@@ -334,11 +368,29 @@ const BitacoraDetail = () => {
 
     const handleEditChange = (e) => {
         const {name, value} = e.target;
-        setEditedBitacora((prev) => ({...prev, [name]: value}));
+        const [mainKey, subKey] = name.split(".");
+
+        setEditedBitacora((prev) => {
+            if (subKey) {
+                return {
+                    ...prev,
+                    [mainKey]: {
+                        ...prev[mainKey],
+                        [subKey]: value,
+                    },
+                };
+            } else {
+                return {
+                    ...prev,
+                    [name]: value,
+                };
+            }
+        });
     };
 
     const handleEditSubmit = async (e) => {
         e.preventDefault();
+
         try {
             const response = await fetch(`${baseUrl}/bitacora/${id}`, {
                 method: "PATCH",
@@ -351,6 +403,7 @@ const BitacoraDetail = () => {
             if (response.ok) {
                 const updatedBitacora = await response.json();
                 setBitacora(updatedBitacora);
+                setIsEdited(!isEdited);
                 setEditModalVisible(false);
             } else {
                 console.error("Failed to edit bitácora:", response.statusText);
@@ -359,7 +412,6 @@ const BitacoraDetail = () => {
             console.error("Error editing bitácora:", e);
         }
     };
-
 
     return (
         <section id="bitacoraDetail">
@@ -373,14 +425,17 @@ const BitacoraDetail = () => {
                         <h1 className="fs-3 fw-semibold text-black text-center position-relative">
                             Detalles
                         </h1>
-                        <button
-                            className="btn btn-primary position-absolute end-0 me-3"
-                            onClick={() => {
-                                setEditedBitacora(bitacora);
-                                setEditModalVisible(true);
-                            }}>
-                            <i className="fa fa-edit"></i>
-                        </button>
+
+                        {roleData && roleData.edit_bitacora && (
+                            <button
+                                className="btn btn-primary position-absolute end-0 me-3"
+                                onClick={() => {
+                                    setEditedBitacora(bitacora);
+                                    setEditModalVisible(true);
+                                }}>
+                                <i className="fa fa-edit"></i>
+                            </button>
+                        )}
                     </div>
 
                     <div className="card-body">
@@ -704,39 +759,213 @@ const BitacoraDetail = () => {
                 </div>
             </div>
             {editModalVisible && (
-                <div className="modal show" tabIndex="-1" style={{display: "block"}}>
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Edit Bitácora</h5>
-                                <button
-                                    type="button"
-                                    className="btn-close"
-                                    onClick={() => setEditModalVisible(false)}></button>
-                            </div>
-                            <div className="modal-body">
-                                <form onSubmit={handleEditSubmit}>
-                                    <div className="mb-3">
-                                        <label htmlFor="telefono" className="form-label">
-                                            Telefono
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="telefono"
-                                            name="telefono"
-                                            value={editedBitacora.telefono}
-                                            onChange={handleEditChange}
-                                        />
-                                    </div>
-                                    <button type="submit" className="btn btn-success">
+                <>
+                    <Modal
+                        show={editModalVisible}
+                        onHide={() => setEditModalVisible(false)}
+                        backdrop="static"
+                        keyboard={false}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Editar Bitácora</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form onSubmit={handleEditSubmit}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="folio_servicio">
+                                        Folio de servicio
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="folio_servicio"
+                                        name="folio_servicio"
+                                        value={editedBitacora.folio_servicio}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                {/* cliente */}
+                                {/* monitoreo */}
+                                {/* operador */}
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="telefono">Telefono</Form.Label>
+                                    <Form.Control
+                                        type="tel"
+                                        id="telefono"
+                                        name="telefono"
+                                        value={editedBitacora.telefono}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="linea_transporte">
+                                        Línea de transporte
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="linea_transporte"
+                                        name="linea_transporte"
+                                        value={editedBitacora.linea_transporte}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                {/* origen */}
+                                {/* destino */}
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="enlace">Enlace</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="enlace"
+                                        name="enlace"
+                                        value={editedBitacora.enlace}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="id_acceso">ID acceso</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="id_acceso"
+                                        name="id_acceso"
+                                        value={editedBitacora.id_acceso}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="contra_acceso">
+                                        Contraseña acceso
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="contra_acceso"
+                                        name="contra_acceso"
+                                        value={editedBitacora.contra_acceso}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                {/* TRACTO */}
+                                <hr />
+                                <h5 className="mb-2">Tracto</h5>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="tracto.eco">ECO</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="tracto.eco"
+                                        name="tracto.eco"
+                                        value={editedBitacora.tracto.eco}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="tracto.placa">Placa</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="tracto.placa"
+                                        name="tracto.placa"
+                                        value={editedBitacora.tracto.placa}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="tracto.marca">Marca</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="tracto.marca"
+                                        name="tracto.marca"
+                                        value={editedBitacora.tracto.marca}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="tracto.modelo">Modelo</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="tracto.modelo"
+                                        name="tracto.modelo"
+                                        value={editedBitacora.tracto.modelo}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="tracto.color">Color</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="tracto.color"
+                                        name="tracto.color"
+                                        value={editedBitacora.tracto.color}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="tracto.tipo">Tipo</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="tracto.tipo"
+                                        name="tracto.tipo"
+                                        value={editedBitacora.tracto.tipo}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                {/* REMOLQUE */}
+                                <hr />
+                                <h5 className="mb-2">Remolque</h5>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="remolque.eco">ECO</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="remolque.eco"
+                                        name="remolque.eco"
+                                        value={editedBitacora.remolque.eco}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="remolque.placa">Placa</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="remolque.placa"
+                                        name="remolque.placa"
+                                        value={editedBitacora.remolque.placa}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="remolque.color">Color</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="remolque.color"
+                                        name="remolque.color"
+                                        value={editedBitacora.remolque.color}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="remolque.capacidad">Capacidad</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="remolque.capacidad"
+                                        name="remolque.capacidad"
+                                        value={editedBitacora.remolque.capacidad}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="remolque.sello">Sello</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="remolque.sello"
+                                        name="remolque.sello"
+                                        value={editedBitacora.remolque.sello}
+                                        onChange={handleEditChange}
+                                    />
+                                </Form.Group>
+                                <div className="w-100 d-flex flex-row justify-content-end">
+                                    <Button type="submit" variant="success" className="ms-auto">
                                         Guardar
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                    </Button>
+                                </div>
+                            </Form>
+                        </Modal.Body>
+                    </Modal>
+                </>
             )}
         </section>
     );

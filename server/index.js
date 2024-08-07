@@ -769,7 +769,9 @@ app.post("/roles", async (req, res) => {
     const role = new Role({
         name: req.body.name,
         bitacoras: req.body.bitacoras,
-        edit_bitacora: req.body.edit_bitacora,
+        edit_bitacora_abierta: req.body.edit_bitacora_abierta,
+        edit_bitacora_cerrada: req.body.edit_bitacora_cerrada,
+        edit_eventos: req.body.edit_eventos,
         tipos_de_monitoreo: req.body.tipos_de_monitoreo,
         eventos: req.body.eventos,
         clientes: req.body.clientes,

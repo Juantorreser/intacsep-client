@@ -1,6 +1,5 @@
 import React from "react";
 
-
 const RoleCard = ({
     role,
     onEditClick,
@@ -33,36 +32,34 @@ const RoleCard = ({
                         <div className="d-flex flex-wrap">
                             <div>
                                 <h6 className="font-weight-bold">Monitoreo</h6>
-                                <div className="form-check me-3">
-                                    <input
-                                        type="checkbox"
-                                        name="bitacoras"
-                                        className="form-check-input"
-                                        checked={
-                                            editRole && role._id === editRole._id
-                                                ? editRoleData.bitacoras
-                                                : role.bitacoras
-                                        }
-                                        onChange={handleInputChange}
-                                        disabled={editRole && role._id !== editRole._id}
-                                    />
-                                    <label className="form-check-label">Bitacoras</label>
-                                </div>
-                                <div className="form-check me-3">
-                                    <input
-                                        type="checkbox"
-                                        name="edit_bitacora"
-                                        className="form-check-input"
-                                        checked={
-                                            editRole && role._id === editRole._id
-                                                ? editRoleData.edit_bitacora
-                                                : role.edit_bitacora
-                                        }
-                                        onChange={handleInputChange}
-                                        disabled={editRole && role._id !== editRole._id}
-                                    />
-                                    <label className="form-check-label">Editar Bitacoras</label>
-                                </div>
+                                {[
+                                    {name: "bitacoras", label: "Bitacoras"},
+                                    {
+                                        name: "edit_bitacora_abierta",
+                                        label: "Editar Bitacoras Abiertas",
+                                    },
+                                    {
+                                        name: "edit_bitacora_cerrada",
+                                        label: "Editar Bitacoras Cerradas",
+                                    },
+                                    {name: "edit_eventos", label: "Editar Eventos"},
+                                ].map(({name, label}) => (
+                                    <div key={name} className="form-check me-3">
+                                        <input
+                                            type="checkbox"
+                                            name={name}
+                                            className="form-check-input"
+                                            checked={
+                                                editRole && role._id === editRole._id
+                                                    ? editRoleData[name]
+                                                    : role[name]
+                                            }
+                                            onChange={handleInputChange}
+                                            disabled={editRole && role._id !== editRole._id}
+                                        />
+                                        <label className="form-check-label">{label}</label>
+                                    </div>
+                                ))}
                             </div>
                             <hr className="d-md-none w-100" />
                             <div>
