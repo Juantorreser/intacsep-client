@@ -18,7 +18,7 @@ const BitacoraDetail = () => {
     const [finishButtonDisabled, setFinishButtonDisabled] = useState(true);
     const [isEdited, setIsEdited] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
-    const [editedBitacora, setEditedBitacora] = useState({});
+    const [edited_bitacora, setEditedBitacora] = useState({});
     const [roleData, setRoleData] = useState(null);
     const [initialized, setInitialized] = useState(false); // Track initialization
     const navigate = useNavigate();
@@ -397,7 +397,7 @@ const BitacoraDetail = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(editedBitacora),
+                body: JSON.stringify(edited_bitacora),
                 credentials: "include",
             });
             if (response.ok) {
@@ -778,7 +778,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="folio_servicio"
                                         name="folio_servicio"
-                                        value={editedBitacora.folio_servicio}
+                                        value={edited_bitacora.folio_servicio}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -791,7 +791,7 @@ const BitacoraDetail = () => {
                                         type="tel"
                                         id="telefono"
                                         name="telefono"
-                                        value={editedBitacora.telefono}
+                                        value={edited_bitacora.telefono}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -803,7 +803,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="linea_transporte"
                                         name="linea_transporte"
-                                        value={editedBitacora.linea_transporte}
+                                        value={edited_bitacora.linea_transporte}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -815,7 +815,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="enlace"
                                         name="enlace"
-                                        value={editedBitacora.enlace}
+                                        value={edited_bitacora.enlace}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -825,7 +825,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="id_acceso"
                                         name="id_acceso"
-                                        value={editedBitacora.id_acceso}
+                                        value={edited_bitacora.id_acceso}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -837,7 +837,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="contra_acceso"
                                         name="contra_acceso"
-                                        value={editedBitacora.contra_acceso}
+                                        value={edited_bitacora.contra_acceso}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -850,7 +850,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="tracto.eco"
                                         name="tracto.eco"
-                                        value={editedBitacora.tracto.eco}
+                                        value={edited_bitacora.tracto.eco}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -860,7 +860,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="tracto.placa"
                                         name="tracto.placa"
-                                        value={editedBitacora.tracto.placa}
+                                        value={edited_bitacora.tracto.placa}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -870,7 +870,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="tracto.marca"
                                         name="tracto.marca"
-                                        value={editedBitacora.tracto.marca}
+                                        value={edited_bitacora.tracto.marca}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -880,7 +880,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="tracto.modelo"
                                         name="tracto.modelo"
-                                        value={editedBitacora.tracto.modelo}
+                                        value={edited_bitacora.tracto.modelo}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -890,7 +890,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="tracto.color"
                                         name="tracto.color"
-                                        value={editedBitacora.tracto.color}
+                                        value={edited_bitacora.tracto.color}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -900,7 +900,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="tracto.tipo"
                                         name="tracto.tipo"
-                                        value={editedBitacora.tracto.tipo}
+                                        value={edited_bitacora.tracto.tipo}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -913,7 +913,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="remolque.eco"
                                         name="remolque.eco"
-                                        value={editedBitacora.remolque.eco}
+                                        value={edited_bitacora.remolque.eco}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -923,7 +923,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="remolque.placa"
                                         name="remolque.placa"
-                                        value={editedBitacora.remolque.placa}
+                                        value={edited_bitacora.remolque.placa}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -933,7 +933,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="remolque.color"
                                         name="remolque.color"
-                                        value={editedBitacora.remolque.color}
+                                        value={edited_bitacora.remolque.color}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -943,7 +943,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="remolque.capacidad"
                                         name="remolque.capacidad"
-                                        value={editedBitacora.remolque.capacidad}
+                                        value={edited_bitacora.remolque.capacidad}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>
@@ -953,7 +953,7 @@ const BitacoraDetail = () => {
                                         type="text"
                                         id="remolque.sello"
                                         name="remolque.sello"
-                                        value={editedBitacora.remolque.sello}
+                                        value={edited_bitacora.remolque.sello}
                                         onChange={handleEditChange}
                                     />
                                 </Form.Group>

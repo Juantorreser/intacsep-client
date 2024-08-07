@@ -401,7 +401,7 @@ app.patch("/bitacora/:id/event", async (req, res) => {
         velocidad,
         coordenadas,
         registrado_por,
-        frecuencia
+        frecuencia,
     } = req.body;
 
     try {
@@ -420,7 +420,7 @@ app.patch("/bitacora/:id/event", async (req, res) => {
             velocidad,
             coordenadas,
             registrado_por,
-            frecuencia
+            frecuencia,
         };
 
         // Add the new event to the bitacora's eventos array
@@ -440,14 +440,21 @@ app.patch("/bitacora/:id/event", async (req, res) => {
 //Update Bitacora
 app.patch("/bitacora/:id", async (req, res) => {
     const {id} = req.params;
-    const updatedData = req.body;
+    const {edited_bitacora} = req.body; // Assuming `edited_bitacora` is sent in the request body
 
     try {
-        const bitacora = await Bitacora.findByIdAndUpdate(id, updatedData);
+        // Find the Bitacora document by its ID
+        const bitacora = await Bitacora.findById(id);
         if (!bitacora) {
             return res.status(404).json({message: "Bitacora not found"});
         }
-        res.json(bitacora);
+
+        // Update the `edited_bitacora` field
+        bitacora.edited_bitacora = edited_bitacora;
+
+        // Save the updated Bitacora document
+        const updatedBitacora = await bitacora.save();
+        res.json(updatedBitacora);
     } catch (error) {
         console.error("Error updating bitacora:", error);
         res.status(500).json({message: "Internal server error"});
@@ -508,8 +515,6 @@ app.patch("/bitacora/:id/status", async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
-
-
 
 //Monitoreos
 app.get("/monitoreos", async (req, res) => {
