@@ -454,10 +454,6 @@ const BitacorasPage = () => {
                 const letterWidth = 8.5 * 72;
                 const letterHeight = 11 * 72;
 
-                // Define bottom margin (e.g., 0.5 inches)
-                const bottomMargin = 0.5 * 72;
-                const contentHeight = letterHeight - bottomMargin;
-
                 // Create PDF with letter size
                 const pdf = new jsPDF({
                     orientation: "portrait",
@@ -468,7 +464,7 @@ const BitacorasPage = () => {
 
                 const imgWidth = letterWidth;
                 const imgHeight = canvas.height * (letterWidth / canvas.width);
-                const pageHeight = contentHeight;
+                const pageHeight = letterHeight;
                 const pageWidth = letterWidth;
 
                 let heightLeft = imgHeight;

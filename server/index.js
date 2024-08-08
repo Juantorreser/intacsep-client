@@ -28,7 +28,8 @@ const JWT_SECRET_REFRESH = process.env.JWT_SECRET_REFRESH;
 //midleware
 const allowedOrigins = [
     "https://intacsep.spotynet.com", // Production
-    "http://localhost:5173", // Development
+    "http://localhost:5173", // Development,
+    "https://intacsep-client-8z0b.onrender.com",
 ];
 
 app.use(
@@ -484,8 +485,6 @@ app.patch("/bitacora/:id", async (req, res) => {
         res.status(500).json({message: "Internal server error"});
     }
 });
-
-
 
 // Endpoint to start a bitacora
 app.patch("/bitacora/:id/start", async (req, res) => {
