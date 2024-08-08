@@ -13,7 +13,8 @@ const RolePage = () => {
         bitacoras: false,
         edit_bitacora_abierta: false,
         edit_bitacora_cerrada: false,
-        edit_eventos: false,
+        edit_eventos_a: false,
+        edit_eventos_c: false,
         tipos_de_monitoreo: false,
         eventos: false,
         clientes: false,
@@ -29,7 +30,8 @@ const RolePage = () => {
         bitacoras: false,
         edit_bitacora_abierta: false,
         edit_bitacora_cerrada: false,
-        edit_eventos: false,
+        edit_eventos_a: false,
+        edit_eventos_c: false,
         tipos_de_monitoreo: false,
         eventos: false,
         clientes: false,
@@ -114,7 +116,8 @@ const RolePage = () => {
                     bitacoras: false,
                     edit_bitacora_abierta: false,
                     edit_bitacora_cerrada: false,
-                    edit_eventos: false,
+                    edit_eventos_a: false,
+                    edit_eventos_c: false,
                     tipos_de_monitoreo: false,
                     eventos: false,
                     clientes: false,
@@ -160,7 +163,8 @@ const RolePage = () => {
                     bitacoras: false,
                     edit_bitacora_abierta: false,
                     edit_bitacora_cerrada: false,
-                    edit_eventos: false,
+                    edit_eventos_a: false,
+                    edit_eventos_c: false,
                     tipos_de_monitoreo: false,
                     eventos: false,
                     clientes: false,
@@ -186,7 +190,8 @@ const RolePage = () => {
             bitacoras: false,
             edit_bitacora_abierta: false,
             edit_bitacora_cerrada: false,
-            edit_eventos: false,
+            edit_eventos_a: false,
+            edit_eventos_c: false,
             tipos_de_monitoreo: false,
             eventos: false,
             clientes: false,
@@ -322,11 +327,24 @@ const RolePage = () => {
                                         id="edit_eventos"
                                         name="edit_eventos"
                                         className="form-check-input"
-                                        checked={newRole.edit_eventos}
+                                        checked={newRole.edit_eventos_a}
                                         onChange={(e) => handleInputChange(e, setNewRole)}
                                     />
                                     <label htmlFor="edit_bitacora" className="form-check-label">
-                                        Editar Eventos
+                                        Editar Eventos (Bitacora Abierta)
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="edit_eventos"
+                                        name="edit_eventos"
+                                        className="form-check-input"
+                                        checked={newRole.edit_eventos_c}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="edit_bitacora" className="form-check-label">
+                                        Editar Eventos (Bitacora Cerrada)
                                     </label>
                                 </div>
                                 <div className="form-check">

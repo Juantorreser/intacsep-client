@@ -18,7 +18,12 @@ const RoleSchema = new mongoose.Schema(
             required: true,
             default: false,
         },
-        edit_eventos: {
+        edit_eventos_a: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
+        edit_eventos_c: {
             type: Boolean,
             required: true,
             default: false,
