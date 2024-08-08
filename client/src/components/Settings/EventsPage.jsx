@@ -115,10 +115,10 @@ const EventsPage = () => {
         <section id="eventsPage">
             <Header />
             <div className="w-100 d-flex">
-                <div className="d-none d-lg-flex w-[15%]">
+                <div className="sidebar-wrapper">
                     <Sidebar />
                 </div>
-                <div className="w-100 h-100 col mt-4">
+                <div className="content-wrapper">
                     <div className="d-flex justify-content-center align-items-center mb-4">
                         <h1 className="fs-3 fw-semibold text-black m-0">Eventos</h1>
                     </div>

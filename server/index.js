@@ -244,6 +244,16 @@ app.get("/user", async (req, res) => {
     }
 });
 
+app.get("/user/:id", async (req, res) => {
+    const {id} = req.params;
+    try {
+        const users = await User.findById(id);
+        res.status(200).json(users);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 app.post("/user/:id", async (req, res) => {
     const {id} = req.params;
     const data = req.body;
@@ -295,6 +305,22 @@ app.patch("/user/:id", async (req, res) => {
         res.send(user);
     } catch (error) {
         res.status(400).send({error: error.message});
+    }
+});
+
+app.patch("/profile/:id", async (req, res) => {
+    const {id} = req.params;
+    const updatedData = req.body;
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(id, updatedData, {new: true});
+        if (!updatedUser) {
+            return res.status(404).json({message: "User not found"});
+        }
+        res.json(updatedUser);
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({message: "Internal server error"});
     }
 });
 

@@ -181,7 +181,7 @@ const BitacoraDetail = () => {
     }, [initialized, user]);
 
     const handleStart = async () => {
-        if (bitacora.status === "creada") {
+        if (bitacora.status === "nueva") {
             try {
                 const response = await fetch(`${baseUrl}/bitacora/${id}/start`, {
                     method: "PATCH",
@@ -205,7 +205,7 @@ const BitacoraDetail = () => {
                 console.error("Error starting bitácora:", e);
             }
         }
-        if (bitacora.status === "creada") {
+        if (bitacora.status === "nueva") {
             try {
                 const response = await fetch(`${baseUrl}/bitacora/${id}/status`, {
                     method: "PATCH",
@@ -409,7 +409,7 @@ const BitacoraDetail = () => {
 
     const getButtonClass = (status) => {
         switch (status) {
-            case "creada":
+            case "nueva":
                 return "btn btn-success"; // Style for "creada"
             case "iniciada":
                 return "btn btn-danger"; // Style for "iniciada"
@@ -424,7 +424,7 @@ const BitacoraDetail = () => {
 
     const getButtonText = (status) => {
         switch (status) {
-            case "creada":
+            case "nueva":
                 return "Iniciar";
             case "iniciada":
                 return "Finalizar";
@@ -438,7 +438,7 @@ const BitacoraDetail = () => {
     const hasEventWithName = () => {
         const eventToStart = "Validación";
         const eventToFinish = "Cierre de servicio";
-        if (bitacora.status === "creada") {
+        if (bitacora.status === "nueva") {
             return events.some((event) => event.nombre === eventToStart);
         } else if (bitacora.status === "iniciada") {
             return events.some((event) => event.nombre === eventToFinish);
@@ -509,10 +509,10 @@ const BitacoraDetail = () => {
         <section id="bitacoraDetail">
             <Header />
             <div className="w-100 d-flex">
-                <div className="d-none d-lg-flex w-[15%]">
+                <div className="sidebar-wrapper">
                     <Sidebar />
                 </div>
-                <div className="w-100 h-100 col mt-4">
+                <div className="content-wrapper">
                     <div className="d-flex justify-content-center align-items-center mb-3 ms-5 position-relative">
                         <h1 className="fs-3 fw-semibold text-black text-center position-relative">
                             Detalles
@@ -718,7 +718,7 @@ const BitacoraDetail = () => {
                                         onChange={handleChange}
                                         required>
                                         <option value="">Seleccionar tipo de evento</option>
-                                        {bitacora.status === "creada" ? (
+                                        {bitacora.status === "nueva" ? (
                                             <option value="Validación">Validación</option>
                                         ) : (
                                             eventTypes.map((eventType) => (

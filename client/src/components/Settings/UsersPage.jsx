@@ -171,11 +171,11 @@ const UsersPage = () => {
         <section id="usersPage">
             <Header />
             <div className="w-100 d-flex">
-                <div className="d-none d-lg-flex w-[15%]">
+                <div className="sidebar-wrapper">
                     <Sidebar />
                 </div>
 
-                <div className="w-100 h-100 col mt-4">
+                <div className="content-wrapper">
                     <div className="position-relative mb-4">
                         <h1 className="fs-3 fw-semibold text-black text-center m-0">Usuarios</h1>
                         <button

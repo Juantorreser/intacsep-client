@@ -95,6 +95,35 @@ $gray: #30373e;
         }
     }
 
+    .sidebar-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 20%; /* Adjust based on your preference */
+        height: 100%;
+        z-index: 1000;
+        background-color: #f8f9fa; /* or any background color */
+        margin-top: 4%;
+        
+    }
+
+    .content-wrapper {
+        margin-left: 20%; /* Same as the sidebar width */
+        margin-top: 6%;
+        width: 85%; /* Adjust based on your sidebar width */
+        padding: 0;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar-wrapper {
+            display: none; /* Hide sidebar on smaller screens */
+        }
+        .content-wrapper {
+            margin-left: 0;
+            width: 100%;
+        }
+    }
+
     #leftsidebar {
         /* CSS to handle icon change based on collapse state */
         .icon-toggle {
@@ -177,15 +206,15 @@ $gray: #30373e;
     .event-card {
         width: 95%;
         .title {
-            h3{ 
+            h3 {
                 width: fit-content;
-                font-weight:700;
+                font-weight: 700;
                 background-color: $pdfBlue;
                 padding: 5px 10px;
                 border-radius: 10px;
                 color: rgb(238, 238, 238);
             }
-            p{
+            p {
                 margin-bottom: 2px;
             }
         }
@@ -208,6 +237,5 @@ $gray: #30373e;
                 background-color: $pdfBlack;
             }
         }
-
     }
 }

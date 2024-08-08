@@ -235,7 +235,7 @@ const BitacorasPage = () => {
         telefono: "",
         inicioMonitoreo: "",
         finalMonitoreo: "",
-        status: "creada",
+        status: "nueva",
         eventos: [],
     });
 
@@ -467,10 +467,11 @@ const BitacorasPage = () => {
         <section id="activeBits">
             <Header />
             <div className="w-100 d-flex">
-                <div className="d-none d-lg-flex w-[15%]">
+                {/* Sidebar */}
+                <div className="sidebar-wrapper">
                     <Sidebar />
                 </div>
-                <div className="w-100 h-100 col mt-4">
+                <div className="content-wrapper">
                     <div className="d-flex justify-content-between align-items-center mx-3">
                         <h1 className="text-center flex-grow-1 fs-3 fw-semibold text-black">
                             Bitácoras
@@ -540,7 +541,9 @@ const BitacorasPage = () => {
                                                             ? "btn btn-secondary"
                                                             : "btn btn-primary"
                                                     }
-                                                    onClick={() => generatePDF(bitacora.edited_bitacora)}
+                                                    onClick={() =>
+                                                        generatePDF(bitacora.edited_bitacora)
+                                                    }
                                                     disabled={bitacora.edited_bitacora == null}>
                                                     <i className="fa fa-file-pdf"></i>
                                                 </button>

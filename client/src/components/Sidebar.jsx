@@ -72,7 +72,7 @@ const Sidebar = () => {
                 <div
                     className="d-flex align-items-center text-white-50 w-100 justify-content-start cursor-pointer"
                     style={{height: "100px"}}
-                    // onClick={() => navigate("/bitacoras")}
+                    onClick={() => navigate("/perfil")}
                 >
                     <div className="d-flex justify-content-center align-items-center w-25 h-100">
                         <i className="fa fa-user" style={{fontSize: "3em"}}></i>

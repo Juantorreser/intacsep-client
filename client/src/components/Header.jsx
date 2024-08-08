@@ -12,7 +12,7 @@ const Header = () => {
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg bg-body-tertiary ps-3 pe-3 pt-2 pb-2">
+            <nav className="navbar navbar-expand-lg bg-body-tertiary ps-3 pe-3 pt-2 pb-2 fixed-top">
                 <div className="container-fluid">
                     <button
                         className="btn d-md-block d-lg-none"

@@ -122,10 +122,10 @@ const DestinoPage = () => {
         <section id="destinos">
             <Header />
             <div className="w-100 d-flex">
-                <div className="d-none d-lg-flex w-[15%]">
+                <div className="sidebar-wrapper">
                     <Sidebar />
                 </div>
-                <div className="w-100 h-100 col mt-4">
+                <div className="content-wrapper">
                     <h1 className="text-center fs-3 fw-semibold text-black">Destinos</h1>
 
                     {/* Create New Destino Form */}
@@ -217,7 +217,7 @@ const DestinoPage = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            
+
             {/* Delete Modal */}
             <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
                 <Modal.Header closeButton>
