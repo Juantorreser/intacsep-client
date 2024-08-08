@@ -109,7 +109,7 @@ $gray: #30373e;
 
     .content-wrapper {
         margin-left: 20%; /* Same as the sidebar width */
-        margin-top: 6%;
+        margin-top: 80px;
         width: 85%; /* Adjust based on your sidebar width */
         padding: 0;
     }
@@ -122,6 +122,9 @@ $gray: #30373e;
             margin-left: 0;
             width: 100%;
         }
+    }
+    .navbar{
+        height: 60px;
     }
 
     #leftsidebar {
