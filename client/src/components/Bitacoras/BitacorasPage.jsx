@@ -449,20 +449,48 @@ const BitacorasPage = () => {
         setTimeout(() => {
             html2canvas(tempContainer, {scale: 2}).then((canvas) => {
                 const imgData = canvas.toDataURL("image/png");
+
+                // Letter size dimensions in points (1 inch = 72 points)
+                const letterWidth = 8.5 * 72;
+                const letterHeight = 11 * 72;
+
+                // Define bottom margin (e.g., 0.5 inches)
+                const bottomMargin = 0.5 * 72;
+                const contentHeight = letterHeight - bottomMargin;
+
+                // Create PDF with letter size
                 const pdf = new jsPDF({
                     orientation: "portrait",
-                    unit: "px",
-                    format: [canvas.width, canvas.height],
+                    unit: "pt",
+                    format: [letterWidth, letterHeight],
                     compress: true,
                 });
 
-                pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height, undefined, "FAST");
+                const imgWidth = letterWidth;
+                const imgHeight = canvas.height * (letterWidth / canvas.width);
+                const pageHeight = contentHeight;
+                const pageWidth = letterWidth;
+
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                // Save PDF
                 pdf.save(`Bitácora No.${bitacora.bitacora_id}, ${bitacora.cliente}.pdf`);
                 document.body.removeChild(tempContainer);
             });
         }, 0);
     };
-
     return (
         <section id="activeBits">
             <Header />

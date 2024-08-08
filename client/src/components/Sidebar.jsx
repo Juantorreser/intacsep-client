@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import {useAuth} from "../context/AuthContext";
 import {useNavigate} from "react-router-dom";
+import {faL} from "@fortawesome/free-solid-svg-icons";
 
 const Sidebar = () => {
     const {user, verifyToken, setUser} = useAuth();
@@ -52,6 +53,8 @@ const Sidebar = () => {
         bitacorasCollapse: false,
         settingsCollapse: false,
         integrationsCollapse: false,
+        catalogosCollapse: false,
+        sistemaCollapse: false,
     });
 
     const toggleCollapse = (item) => {
@@ -72,8 +75,7 @@ const Sidebar = () => {
                 <div
                     className="d-flex align-items-center text-white-50 w-100 justify-content-start cursor-pointer"
                     style={{height: "100px"}}
-                    onClick={() => navigate("/perfil")}
-                >
+                    onClick={() => navigate("/perfil")}>
                     <div className="d-flex justify-content-center align-items-center w-25 h-100">
                         <i className="fa fa-user" style={{fontSize: "3em"}}></i>
                     </div>
@@ -109,31 +111,6 @@ const Sidebar = () => {
                         </span>
                         <hr className="my-1 text-white" />
                     </li>
-
-                    {/* Dashboard Menu */}
-                    {/* <li className="nav-item ms-3">
-                        <p className="">
-                            <a
-                                className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
-                                role="button"
-                                onClick={() => toggleCollapse("dashboardCollapse")}>
-                                Dashboard
-                                <i
-                                    className={`fa ${
-                                        collapsedItems.dashboardCollapse ? "fa-minus" : "fa-plus"
-                                    } text-white-50 my-auto icon-toggle`}></i>
-                            </a>
-                        </p>
-                        <div
-                            className={`collapse ${
-                                collapsedItems.dashboardCollapse ? "show" : ""
-                            }`}>
-                            <ul className="nav flex-column w-75 ms-4 gap-2">
-                                <li className="text-white-50 cursor-pointer">dashboard 1</li>
-                                <li className="text-white-50 cursor-pointer">dashboard 2</li>
-                            </ul>
-                        </div>
-                    </li> */}
 
                     {/* Monitoreo Menu */}
                     {roleData && roleData.bitacoras && (
@@ -183,95 +160,114 @@ const Sidebar = () => {
                                 </a>
                             </p>
                             <div
-                                className={`collapse ${
+                                className={`collapse ms-3 ${
                                     collapsedItems.settingsCollapse ? "show" : ""
                                 }`}>
-                                <ul className="nav flex-column w-75 ms-4 gap-2">
-                                    {roleData.tipos_de_monitoreo && (
-                                        <li
-                                            className="text-white-50 cursor-pointer"
-                                            onClick={() => navigate("/tipos_monitoreo")}>
-                                            Tipos Monitoreo
-                                        </li>
-                                    )}
-                                    {roleData.eventos && (
-                                        <li
-                                            className="text-white-50 cursor-pointer"
-                                            onClick={() => navigate("/eventos")}>
-                                            Eventos
-                                        </li>
-                                    )}
-                                    {roleData.clientes && (
-                                        <li
-                                            className="text-white-50 cursor-pointer"
-                                            onClick={() => navigate("/clientes")}>
-                                            Clientes
-                                        </li>
-                                    )}
-                                    {roleData.usuarios && (
-                                        <li
-                                            className="text-white-50 cursor-pointer"
-                                            onClick={() => navigate("/usuarios")}>
-                                            Usuarios
-                                        </li>
-                                    )}
-                                    {roleData.roles && (
-                                        <li
-                                            className="text-white-50 cursor-pointer"
-                                            onClick={() => navigate("/roles")}>
-                                            Roles
-                                        </li>
-                                    )}
-                                    {roleData.origenes && (
-                                        <li
-                                            className="text-white-50 cursor-pointer"
-                                            onClick={() => navigate("/origenes")}>
-                                            Origenes
-                                        </li>
-                                    )}
-                                    {roleData.destinos && (
-                                        <li
-                                            className="text-white-50 cursor-pointer"
-                                            onClick={() => navigate("/destinos")}>
-                                            Destinos
-                                        </li>
-                                    )}
-                                    {roleData.operadores && (
-                                        <li
-                                            className="text-white-50 cursor-pointer"
-                                            onClick={() => navigate("/operadores")}>
-                                            Operadores
-                                        </li>
-                                    )}
-                                </ul>
+                                {/* Catálogos Collapsible */}
+                                <p className="mb-2">
+                                    <a
+                                        className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2 itemLine"
+                                        role="button"
+                                        onClick={() => toggleCollapse("catalogosCollapse")}>
+                                        Catálogos
+                                        <i
+                                            className={`fa ${
+                                                collapsedItems.catalogosCollapse
+                                                    ? "fa-minus"
+                                                    : "fa-plus"
+                                            } text-white-50 my-auto icon-toggle`}></i>
+                                    </a>
+                                </p>
+                                <div
+                                    className={`collapse ${
+                                        collapsedItems.catalogosCollapse ? "show" : ""
+                                    }`}>
+                                    <ul className="nav flex-column w-75 ms-4 gap-2">
+                                        {roleData.tipos_de_monitoreo && (
+                                            <li
+                                                className="text-white-50 cursor-pointer itemLine2"
+                                                onClick={() => navigate("/tipos_monitoreo")}>
+                                                Tipos Monitoreo
+                                            </li>
+                                        )}
+                                        {roleData.eventos && (
+                                            <li
+                                                className="text-white-50 cursor-pointer itemLine2"
+                                                onClick={() => navigate("/eventos")}>
+                                                Eventos
+                                            </li>
+                                        )}
+                                        {roleData.clientes && (
+                                            <li
+                                                className="text-white-50 cursor-pointer itemLine2"
+                                                onClick={() => navigate("/clientes")}>
+                                                Clientes
+                                            </li>
+                                        )}
+
+                                        {roleData.origenes && (
+                                            <li
+                                                className="text-white-50 cursor-pointer itemLine2"
+                                                onClick={() => navigate("/origenes")}>
+                                                Origenes
+                                            </li>
+                                        )}
+                                        {roleData.destinos && (
+                                            <li
+                                                className="text-white-50 cursor-pointer itemLine2"
+                                                onClick={() => navigate("/destinos")}>
+                                                Destinos
+                                            </li>
+                                        )}
+                                        {roleData.operadores && (
+                                            <li
+                                                className="text-white-50 cursor-pointer mb-3 itemLine2"
+                                                onClick={() => navigate("/operadores")}>
+                                                Operadores
+                                            </li>
+                                        )}
+                                    </ul>
+                                </div>
+
+                                {/* Sistema Collapsible */}
+                                <p className="">
+                                    <a
+                                        className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2 itemLine"
+                                        role="button"
+                                        onClick={() => toggleCollapse("sistemaCollapse")}>
+                                        Sistema
+                                        <i
+                                            className={`fa ${
+                                                collapsedItems.sistemaCollapse
+                                                    ? "fa-minus"
+                                                    : "fa-plus"
+                                            } text-white-50 my-auto icon-toggle`}></i>
+                                    </a>
+                                </p>
+                                <div
+                                    className={`collapse ${
+                                        collapsedItems.sistemaCollapse ? "show" : ""
+                                    }`}>
+                                    <ul className="nav flex-column w-75 ms-4 gap-2 itemLine2">
+                                        {roleData.usuarios && (
+                                            <li
+                                                className="text-white-50 cursor-pointer"
+                                                onClick={() => navigate("/usuarios")}>
+                                                Usuarios
+                                            </li>
+                                        )}
+                                        {roleData.roles && (
+                                            <li
+                                                className="text-white-50 cursor-pointer itemLine2"
+                                                onClick={() => navigate("/roles")}>
+                                                Roles
+                                            </li>
+                                        )}
+                                    </ul>
+                                </div>
                             </div>
                         </li>
                     )}
-
-                    {/* Integraciones Menu */}
-                    {/* <li className="nav-item ms-3">
-                        <p className="">
-                            <a
-                                className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
-                                role="button"
-                                onClick={() => toggleCollapse("integrationsCollapse")}>
-                                Integraciones
-                                <i
-                                    className={`fa ${
-                                        collapsedItems.integrationsCollapse ? "fa-minus" : "fa-plus"
-                                    } text-white-50 my-auto icon-toggle`}></i>
-                            </a>
-                        </p>
-                        <div
-                            className={`collapse ${
-                                collapsedItems.integrationsCollapse ? "show" : ""
-                            }`}>
-                            <ul className="nav flex-column w-75 ms-4 gap-2">
-                                <li className="text-white-50 cursor-pointer">Integraciones 1</li>
-                                <li className="text-white-50 cursor-pointer">Integraciones 2</li>
-                            </ul>
-                        </div>
-                    </li> */}
                 </ul>
                 {/* #Menu */}
             </div>
