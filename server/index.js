@@ -30,7 +30,7 @@ const allowedOrigins = [
     "https://intacsep.spotynet.com", // Production
     "http://localhost:5173", // Development,
     "https://prueba-intacsep.spotynet.com", //Pruebas
-    "https://stg-intacsep.spotynet.com/",
+    "https://stg-intacsep.spotynet.com",
 ];
 
 app.use(
