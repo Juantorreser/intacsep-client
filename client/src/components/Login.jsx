@@ -25,7 +25,6 @@ const Login = () => {
         }));
     };
 
-
     const registerUser = async (e) => {
         e.preventDefault();
         setErrorMessage("");
@@ -51,13 +50,15 @@ const Login = () => {
         e.preventDefault();
         setErrorMessage("");
         setIsLoading(true); // Set loading state
+        
 
         try {
-            await login(formData.email, formData.password);
-            navigate("/bitacoras");
+            await login(formData.email, formData.password); // Ensure this throws an error on failure
+            // Only navigate if login is successful
+            // navigate("/bitacoras");
         } catch (e) {
-            navigate("/");
-            setErrorMessage(e.message || "Email or password incorrect");
+            // Handle the error and navigate to the appropriate page
+            navigate("/"); // Navigate only if there's an error
         } finally {
             setIsLoading(false); // Reset loading state
         }
@@ -178,7 +179,7 @@ const Login = () => {
                             />
                             <label htmlFor="floatingInput">Email</label>
                         </div>
-                        <div className="form-floating">
+                        <div className="form-floating mb-2">
                             <input
                                 type="password"
                                 name="password"
@@ -191,11 +192,13 @@ const Login = () => {
                             />
                             <label htmlFor="floatingPassword">Contraseña</label>
                         </div>
-                        <a href="">Olvidaste tu contraseña?</a>
+                        <p id="errorMsg" className="text-danger m-1 visually-hidden">
+                            Email o Contraseña incorrectos. Intente de nuevo
+                        </p>
+                        <a href="" className="mt-0">Olvidaste tu contraseña?</a>
                         <button type="submit" className="btn btn-primary" disabled={isLoading}>
                             {isLoading ? "Iniciando Sesión ..." : "Iniciar sesión"}
                         </button>
-                        {errorMessage && <p className="text-danger mt-3">{errorMessage}</p>}
                     </form>
                     <a
                         href="https://www.spotynet.com/"

@@ -25,16 +25,13 @@ const AuthProvider = ({children}) => {
         inactivityTimeoutRef.current = setTimeout(() => {
             console.log("Inactivity timeout reached");
             setShowInactivityPopup(true);
-        }, 2 * 60 * 10); // 2 minutes
+        }, 2 * 60 * 1000); // 2 minutes
     };
-
-
 
     const handleRedirectToLogin = () => {
         setShowInactivityPopup(false);
         logout();
     };
-
 
     useEffect(() => {
         handleUserActivity(); // Initialize the inactivity timer
@@ -96,8 +93,9 @@ const AuthProvider = ({children}) => {
             logout(); // Optionally, navigate to login or home
         }
     };
-
     const login = async (email, password) => {
+        const errorMsg = document.getElementById("errorMsg");
+        errorMsg.classList.add("visually-hidden");
         try {
             const response = await fetch(`${baseUrl}/login`, {
                 method: "POST",
@@ -107,15 +105,19 @@ const AuthProvider = ({children}) => {
             });
 
             if (!response.ok) {
-                navigate("/");
-                throw new Error("Login failed");
+                // Read the response JSON to get the error message
+                console.log("ERROR");
+                errorMsg.classList.remove("visually-hidden");
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Login failed");
             }
-
+            errorMsg.classList.add("visually-hidden");
             const data = await response.json();
             setUser(data.user);
+            navigate("/bitacoras"); // Navigate only after successful login
         } catch (e) {
-            console.error("Error during login: a", e);
-            navigate("/");
+            console.error("Error during login:", e);
+            // Show an appropriate error message to the user
         }
     };
 
@@ -145,8 +147,13 @@ const AuthProvider = ({children}) => {
             {children}
             {showInactivityPopup && (
                 <div className="inactivity-popup">
-                    <p>You have been inactive for a while. Please log in again.</p>
-                    <button onClick={handleRedirectToLogin}>Go to Login</button>
+                    <div className="content">
+                        <i className="fa fa-info-circle"></i>
+                        <h1>Sesión Expirada</h1>
+                        <p>Su sesión ha expirado debido al tiempo de inactividad.</p>
+                        <p>Favor de iniciar sesión nuevamente</p>
+                        <button onClick={handleRedirectToLogin}>Iniciar Sesión</button>
+                    </div>
                 </div>
             )}
         </AuthContext.Provider>

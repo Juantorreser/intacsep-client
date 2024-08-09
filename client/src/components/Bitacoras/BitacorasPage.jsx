@@ -203,7 +203,7 @@ const BitacorasPage = () => {
     const [destinos, setDestinos] = useState([]);
     const [operadores, setOperadores] = useState([]);
 
-    useInactivityTimeout(120000, logout); // 120000 ms = 2 minutes
+    // useInactivityTimeout(120000, logout); // 120000 ms = 2 minutes
 
     const [formData, setFormData] = useState({
         bitacora_id: "",

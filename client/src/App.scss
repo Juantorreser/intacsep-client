@@ -157,36 +157,58 @@ $gray: #306eac;
         background-color: #6c757d; /* Ensure the button remains grey when focused or hovered */
         border-color: #6c757d; /* Ensure the border remains grey */
     }
-    
-}
 
-.inactivity-popup {
+    .inactivity-popup {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.8);
         display: flex;
         justify-content: center;
         align-items: center;
         color: #fff;
         z-index: 1000;
-    }
 
-    .inactivity-popup p {
-        margin-bottom: 10px;
-    }
+        & .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            color: $gray;
+            padding-inline: 50px;
+            padding-block: 50px;
+            border-radius: 10px;
+        }
 
-    .inactivity-popup button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        border: none;
-        color: #fff;
-        cursor: pointer;
-        border-radius: 5px;
+        & i {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        & h1{
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        & p {
+            
+            margin-bottom: 10px;
+        }
+
+        & button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
     }
-    
+}
+
 #pdfBitacora {
     $pdfBlack: #21354b;
     $pdfBlue: #1b75bc;
