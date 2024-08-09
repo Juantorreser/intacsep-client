@@ -28,9 +28,8 @@ const JWT_SECRET_REFRESH = process.env.JWT_SECRET_REFRESH;
 //midleware
 const allowedOrigins = [
     "https://intacsep.spotynet.com", // Production
-    "http://localhost:5173", // Development,
-    "https://prueba-intacsep.spotynet.com", //Pruebas
-    "http://stg-intacsep.spotynet.com",
+    "http://localhost:5173", // Development
+    "https://stg-intacsep.spotynet.com", //Pruebas
 ];
 
 app.use(
