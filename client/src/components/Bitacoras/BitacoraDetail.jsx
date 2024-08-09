@@ -353,6 +353,7 @@ const BitacoraDetail = () => {
     }
 
     const EventCard = ({
+        _id,
         nombre,
         descripcion,
         ubicacion,
@@ -362,48 +363,166 @@ const BitacoraDetail = () => {
         createdAt,
         registrado_por,
         frecuencia,
-    }) => (
-        <div className="card mb-3">
-            <div className="card-header text-center">
-                <h5 className="card-title fw-semibold">{nombre}</h5>
-            </div>
-            <div className="card-body">
-                <div className="row">
-                    <div className="col-md-6">
-                        <p className="card-text">
-                            <strong>Registrado por:</strong> {registrado_por}
-                        </p>
-                        <p className="card-text">
-                            <strong>Descripción:</strong> {descripcion}
-                        </p>
-                        <p className="card-text">
-                            <strong>Frecuencia:</strong> {`${frecuencia} min`}
-                        </p>
-                    </div>
-                    <div className="col-md-6">
-                        <p className="card-text">
-                            <strong>Ubicación:</strong> {ubicacion}
-                        </p>
-                        <p className="card-text">
-                            <strong>Último Posicionamiento:</strong> {ultimo_posicionamiento}
-                        </p>
-                        <p className="card-text">
-                            <strong>Velocidad:</strong> {velocidad}
-                        </p>
-                        <p className="card-text">
-                            <strong>Coordenadas:</strong> {coordenadas}
-                        </p>
-                        <p className="card-text">
-                            <strong>Fecha:</strong> {new Date(createdAt).toLocaleDateString()}
-                        </p>
-                        <p className="card-text">
-                            <strong>Hora:</strong> {new Date(createdAt).toLocaleTimeString()}
-                        </p>
+    }) => {
+        const [showModal, setShowModal] = useState(false);
+        const [formData, setFormData] = useState({
+            nombre,
+            descripcion,
+            ubicacion,
+            ultimo_posicionamiento,
+            velocidad,
+            coordenadas,
+            frecuencia,
+        });
+
+        const handleEditClick = () => setShowModal(true);
+        const handleClose = () => setShowModal(false);
+
+        const handleInputChange = (e) => {
+            const {name, value} = e.target;
+            setFormData({...formData, [name]: value});
+        };
+
+        const handleFormSubmit = async (e) => {
+            e.preventDefault();
+            try {
+                handleClose(); // Close the modal after successful update
+                console.log("UPDATED");
+                console.log(formData);
+
+                // Optionally, refresh the event list or update the UI
+            } catch (error) {
+                console.error("Error updating event:", error);
+            }
+        };
+
+        return (
+            <div className="card mb-3">
+                <div className="card-header text-center pt-3">
+                    <h5 className="card-title fw-semibold">{nombre}</h5>
+                    <Button
+                        variant="primary"
+                        onClick={handleEditClick}
+                        className="position-absolute end-0 top-0 mt-2 me-3 btn">
+                        <i className="fa fa-edit"></i>
+                    </Button>
+                </div>
+                <div className="card-body">
+                    <div className="row">
+                        <div className="col-md-6">
+                            <p className="card-text">
+                                <strong>Registrado por:</strong> {registrado_por}
+                            </p>
+                            <p className="card-text">
+                                <strong>Descripción:</strong> {descripcion}
+                            </p>
+                            <p className="card-text">
+                                <strong>Frecuencia:</strong> {`${frecuencia} min`}
+                            </p>
+                        </div>
+                        <div className="col-md-6">
+                            <p className="card-text">
+                                <strong>Ubicación:</strong> {ubicacion}
+                            </p>
+                            <p className="card-text">
+                                <strong>Último Posicionamiento:</strong> {ultimo_posicionamiento}
+                            </p>
+                            <p className="card-text">
+                                <strong>Velocidad:</strong> {velocidad}
+                            </p>
+                            <p className="card-text">
+                                <strong>Coordenadas:</strong> {coordenadas}
+                            </p>
+                            <p className="card-text">
+                                <strong>Fecha:</strong> {new Date(createdAt).toLocaleDateString()}
+                            </p>
+                            <p className="card-text">
+                                <strong>Hora:</strong> {new Date(createdAt).toLocaleTimeString()}
+                            </p>
+                        </div>
                     </div>
                 </div>
+
+                {/* Edit Modal */}
+                <Modal show={showModal} onHide={handleClose} backdrop="static">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Editar Evento</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form onSubmit={handleFormSubmit}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Nombre</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="nombre"
+                                    value={formData.nombre}
+                                    onChange={handleInputChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Descripción</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    name="descripcion"
+                                    value={formData.descripcion}
+                                    onChange={handleInputChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Ubicación</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="ubicacion"
+                                    value={formData.ubicacion}
+                                    onChange={handleInputChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Último Posicionamiento</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="ultimo_posicionamiento"
+                                    value={formData.ultimo_posicionamiento}
+                                    onChange={handleInputChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Velocidad</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="velocidad"
+                                    value={formData.velocidad}
+                                    onChange={handleInputChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Coordenadas</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="coordenadas"
+                                    value={formData.coordenadas}
+                                    onChange={handleInputChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Frecuencia</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="frecuencia"
+                                    value={formData.frecuencia}
+                                    onChange={handleInputChange}
+                                />
+                            </Form.Group>
+                            <Button variant="success" type="submit">
+                                Guardar
+                            </Button>
+                        </Form>
+                    </Modal.Body>
+                </Modal>
             </div>
-        </div>
-    );
+        );
+    };
 
     const events = Array.isArray(bitacora.eventos) ? bitacora.eventos : [];
 
