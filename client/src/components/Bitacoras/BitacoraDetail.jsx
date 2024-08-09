@@ -1,16 +1,15 @@
 import React, {useState, useEffect} from "react";
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Footer from "../Footer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown, faChevronUp, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../../context/AuthContext";
-import {useNavigate} from "react-router-dom";
 import {Modal, Button, Form} from "react-bootstrap";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-const BitacoraDetail = () => {
+const BitacoraDetail = ({edited}) => {
     const {id} = useParams();
     const {user, verifyToken, setUser} = useAuth();
     const [bitacora, setBitacora] = useState(null);
@@ -116,7 +115,21 @@ const BitacoraDetail = () => {
             const response = await fetch(`${baseUrl}/bitacora/${id}`);
             if (response.ok) {
                 const data = await response.json();
-                setBitacora(data);
+                console.log(edited);
+
+                if (edited || edited.edited) {
+                    setBitacora(data.edited_bitacora);
+                    setEditedBitacora(data.edited_bitacora);
+                    console.log("EDITADA");
+                } else if (!edited && data.edited_bitacora) {
+                    console.log("REGULAR PAGE pero tiene edited_btacora");
+                    setBitacora(data);
+                    setEditedBitacora(data.edited_bitacora);
+                } else {
+                    console.log("REGULAR PAGE pero NO tiene edited_btacora");
+                    setBitacora(data);
+                    setEditedBitacora(data);
+                }
                 setIsEventStarted(data.status === "iniciada");
                 setFinishButtonDisabled(data.status === "finalizada");
             } else {
@@ -160,7 +173,7 @@ const BitacoraDetail = () => {
         fetchBitacora();
         fetchEventTypes();
         init();
-    }, [isEdited]);
+    }, []);
 
     useEffect(() => {
         const fetchRolePermissions = async () => {
@@ -385,15 +398,17 @@ const BitacoraDetail = () => {
 
         const handleFormSubmit = async (e) => {
             e.preventDefault();
-            try {
-                handleClose(); // Close the modal after successful update
-                console.log("UPDATED");
-                console.log(formData);
-
-                // Optionally, refresh the event list or update the UI
-            } catch (error) {
-                console.error("Error updating event:", error);
+            console.log(formData);
+            if (edited_bitacora) {
+                edited_bitacora.eventos.forEach((evento, i) => {
+                    if (evento.nombre === formData.nombre) {
+                        edited_bitacora.eventos[i] = formData;
+                    }
+                });
             }
+            console.log(edited_bitacora);
+
+            handleEditSubmit(e);
         };
 
         return (
@@ -457,6 +472,7 @@ const BitacoraDetail = () => {
                                     name="nombre"
                                     value={formData.nombre}
                                     onChange={handleInputChange}
+                                    disabled
                                 />
                             </Form.Group>
                             <Form.Group className="mb-3">

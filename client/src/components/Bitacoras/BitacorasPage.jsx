@@ -487,6 +487,11 @@ const BitacorasPage = () => {
             });
         }, 0);
     };
+
+    const handleEditClick = (bitacoraId) => {
+        navigate(`/bitacoras/${bitacoraId}/editada`);
+    };
+
     return (
         <section id="activeBits">
             <Header />
@@ -522,6 +527,9 @@ const BitacorasPage = () => {
                                         </th>
                                         <th className="text-center">
                                             <i className="fa fa-clipboard-check"></i>
+                                        </th>
+                                        <th className="text-center">
+                                            <i className="fa fa-edit"></i>
                                         </th>
                                     </tr>
                                 </thead>
@@ -563,13 +571,27 @@ const BitacorasPage = () => {
                                                     className={
                                                         bitacora.edited_bitacora == null
                                                             ? "btn btn-secondary"
-                                                            : "btn btn-primary"
+                                                            : "btn btn-warning"
                                                     }
                                                     onClick={() =>
                                                         generatePDF(bitacora.edited_bitacora)
                                                     }
                                                     disabled={bitacora.edited_bitacora == null}>
                                                     <i className="fa fa-file-pdf"></i>
+                                                </button>
+                                            </td>
+                                            <td className="text-center">
+                                                <button
+                                                    className={
+                                                        bitacora.edited_bitacora == null
+                                                            ? "btn btn-secondary"
+                                                            : "btn btn-primary"
+                                                    }
+                                                    onClick={() =>
+                                                        handleEditClick(bitacora._id)
+                                                    }
+                                                    disabled={bitacora.edited_bitacora == null}>
+                                                    <i className="fa fa-edit"></i>
                                                 </button>
                                             </td>
                                         </tr>

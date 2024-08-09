@@ -28,7 +28,9 @@ function App() {
                 <Route path="/login" element={<Login />}></Route>
                 <Route path="/inicio" element={<Home />}></Route>
                 <Route path="/bitacoras" element={<BitacorasPage />}></Route>
-                <Route path="/bitacora/:id" element={<BitacoraDetail />} />
+                <Route path="/bitacora/:id" element={<BitacoraDetail edited={false} />} />
+                <Route path="/bitacoras/:id/editada" element={<BitacoraDetail edited={true} />} />
+
                 <Route path="/tipos_monitoreo" element={<TiposMonitoreo />}></Route>
                 <Route path="/usuarios" element={<UsersPage />}></Route>
                 <Route path="/roles" element={<UserRolePage />}></Route>
