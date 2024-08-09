@@ -514,6 +514,11 @@ const BitacoraDetail = () => {
                 </div>
                 <div className="content-wrapper">
                     <div className="d-flex justify-content-center align-items-center mb-3 ms-5 position-relative">
+                        <div
+                            className="position-absolute start-0 me-3 btn"
+                            onClick={() => navigate(-1)}>
+                            <i className="fa fa-chevron-left fw-bold"></i>
+                        </div>
                         <h1 className="fs-3 fw-semibold text-black text-center position-relative">
                             Detalles
                         </h1>
