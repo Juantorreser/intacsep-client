@@ -1,5 +1,5 @@
 import {ReactNode} from "react";
-import {createContext, useState, useEffect, useContext} from "react";
+import {createContext, useState, useEffect, useContext, useRef} from "react";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
 
@@ -10,21 +10,46 @@ const AuthProvider = ({children}) => {
     const [cookies, setCookie, removeCookie] = useCookies(["access_token", "refresh_token"]);
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
+    const [showInactivityPopup, setShowInactivityPopup] = useState(false);
+    const inactivityTimeoutRef = useRef(null);
 
-    // useEffect(() => {
-    //     const fetchUserFromToken = async () => {
-    //         if (cookies.access_token) {
-    //             try {
-    //                 await verifyToken();
-    //             } catch (error) {
-    //                 console.error("Token verification failed:", error);
-    //                 setUser(null); // Set user to null only if token verification fails
-    //             }
-    //         }
-    //     };
+    const handleUserActivity = () => {
+        if (!user) {
+            console.log("User is not logged in");
+            return; // Do nothing if the user is not logged in
+        }
+        console.log("User activity detected");
+        if (inactivityTimeoutRef.current) {
+            clearTimeout(inactivityTimeoutRef.current);
+        }
+        inactivityTimeoutRef.current = setTimeout(() => {
+            console.log("Inactivity timeout reached");
+            setShowInactivityPopup(true);
+        }, 2 * 60 * 10); // 2 minutes
+    };
 
-    //     fetchUserFromToken();
-    // }, [cookies.access_token]); // Add cookies.access_token as a dependency
+
+
+    const handleRedirectToLogin = () => {
+        setShowInactivityPopup(false);
+        logout();
+    };
+
+
+    useEffect(() => {
+        handleUserActivity(); // Initialize the inactivity timer
+
+        window.addEventListener("mousemove", handleUserActivity);
+        window.addEventListener("keypress", handleUserActivity);
+
+        return () => {
+            window.removeEventListener("mousemove", handleUserActivity);
+            window.removeEventListener("keypress", handleUserActivity);
+            if (inactivityTimeoutRef.current) {
+                clearTimeout(inactivityTimeoutRef.current);
+            }
+        };
+    }, [user]);
 
     const verifyToken = async () => {
         try {
@@ -118,6 +143,12 @@ const AuthProvider = ({children}) => {
     return (
         <AuthContext.Provider value={{user, login, logout, verifyToken, refreshToken, setUser}}>
             {children}
+            {showInactivityPopup && (
+                <div className="inactivity-popup">
+                    <p>You have been inactive for a while. Please log in again.</p>
+                    <button onClick={handleRedirectToLogin}>Go to Login</button>
+                </div>
+            )}
         </AuthContext.Provider>
     );
 };

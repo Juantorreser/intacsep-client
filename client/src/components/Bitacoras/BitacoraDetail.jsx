@@ -380,12 +380,14 @@ const BitacoraDetail = ({edited}) => {
         const [showModal, setShowModal] = useState(false);
         const [formData, setFormData] = useState({
             nombre,
+            registrado_por,
             descripcion,
             ubicacion,
             ultimo_posicionamiento,
             velocidad,
             coordenadas,
             frecuencia,
+            createdAt,
         });
 
         const handleEditClick = () => setShowModal(true);
@@ -402,6 +404,7 @@ const BitacoraDetail = ({edited}) => {
             if (edited_bitacora) {
                 edited_bitacora.eventos.forEach((evento, i) => {
                     if (evento.nombre === formData.nombre) {
+                        formData.createdAt = edited_bitacora.eventos[i].createdAt;
                         edited_bitacora.eventos[i] = formData;
                     }
                 });
@@ -471,6 +474,16 @@ const BitacoraDetail = ({edited}) => {
                                     type="text"
                                     name="nombre"
                                     value={formData.nombre}
+                                    onChange={handleInputChange}
+                                    disabled
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Registrado Por</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="nombre"
+                                    value={formData.registrado_por}
                                     onChange={handleInputChange}
                                     disabled
                                 />
