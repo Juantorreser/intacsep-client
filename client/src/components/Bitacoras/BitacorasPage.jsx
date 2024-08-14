@@ -439,6 +439,7 @@ const BitacorasPage = () => {
 
     const generatePDF = async (bitacora) => {
         const tempContainer = document.createElement("div");
+        tempContainer.classList.add("visibility-hidden");
         tempContainer.style.position = "absolute";
         tempContainer.style.top = "-9999px";
         document.body.appendChild(tempContainer);
