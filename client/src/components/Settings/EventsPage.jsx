@@ -84,7 +84,7 @@ const EventsPage = () => {
 
     const handleEditClick = (event) => {
         setEditEvent(event);
-        setEditEventName(event.name);
+        setEditEventName(event.eventType); // Ensure this matches the actual field in your event object
     };
 
     const handleEditSave = async (id) => {
