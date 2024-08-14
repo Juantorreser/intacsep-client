@@ -748,7 +748,7 @@ app.put("/event_types/:id", async (req, res) => {
     try {
         const updatedEvent = await EventType.findByIdAndUpdate(
             req.params.id,
-            {EventType: req.body.name},
+            {eventType: req.body.name},
             {new: true} // Return the updated document
         );
         if (!updatedEvent) return res.status(404).json({message: "Event not found"});
