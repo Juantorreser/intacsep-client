@@ -437,25 +437,30 @@ const BitacorasPage = () => {
         fetchBitacoras(currentPage, newLimit);
     };
 
-    const generatePDF = async (bitacora) => {
+    const generatePDF = async (bitacora) => { //FUNCIONAA
+        // Create a temporary container to render the BitacoraDetail component
         const tempContainer = document.createElement("div");
         tempContainer.classList.add("visibility-hidden");
         tempContainer.style.position = "absolute";
         tempContainer.style.top = "-9999px";
         document.body.appendChild(tempContainer);
 
+        // Render the BitacoraDetail component into the temporary container
         const root = createRoot(tempContainer);
         root.render(<BitacoraDetail bitacora={bitacora} />);
 
-        setTimeout(() => {
-            html2canvas(tempContainer, {scale: 2}).then((canvas) => {
+        // Ensure styles are applied before capturing the content
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Adjust timeout as needed
+
+        html2canvas(tempContainer, {scale: 2, useCORS: true})
+            .then((canvas) => {
                 const imgData = canvas.toDataURL("image/png");
 
-                // Letter size dimensions in points (1 inch = 72 points)
+                // Define PDF dimensions in points (1 inch = 72 points)
                 const letterWidth = 8.5 * 72;
                 const letterHeight = 11 * 72;
 
-                // Create PDF with letter size
+                // Create a new jsPDF instance
                 const pdf = new jsPDF({
                     orientation: "portrait",
                     unit: "pt",
@@ -463,18 +468,19 @@ const BitacorasPage = () => {
                     compress: true,
                 });
 
+                // Calculate image dimensions to fit the page width
                 const imgWidth = letterWidth;
                 const imgHeight = canvas.height * (letterWidth / canvas.width);
                 const pageHeight = letterHeight;
-                const pageWidth = letterWidth;
 
                 let heightLeft = imgHeight;
                 let position = 0;
 
+                // Add the first page with the image
                 pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-
                 heightLeft -= pageHeight;
 
+                // Add additional pages if needed
                 while (heightLeft >= 0) {
                     position = heightLeft - imgHeight;
                     pdf.addPage();
@@ -482,12 +488,17 @@ const BitacorasPage = () => {
                     heightLeft -= pageHeight;
                 }
 
-                // Save PDF
+                // Save the PDF with a filename based on the bitacora data
                 pdf.save(`Bitácora No.${bitacora.bitacora_id}, ${bitacora.cliente}.pdf`);
+
+                // Clean up by removing the temporary container
                 document.body.removeChild(tempContainer);
+            })
+            .catch((error) => {
+                console.error("Error generating PDF:", error);
             });
-        }, 0);
     };
+
 
     const handleEditClick = (bitacoraId) => {
         navigate(`/bitacoras/${bitacoraId}/editada`);
@@ -588,9 +599,7 @@ const BitacorasPage = () => {
                                                             ? "btn btn-secondary"
                                                             : "btn btn-primary"
                                                     }
-                                                    onClick={() =>
-                                                        handleEditClick(bitacora._id)
-                                                    }
+                                                    onClick={() => handleEditClick(bitacora._id)}
                                                     disabled={bitacora.edited_bitacora == null}>
                                                     <i className="fa fa-edit"></i>
                                                 </button>
