@@ -437,7 +437,8 @@ const BitacorasPage = () => {
         fetchBitacoras(currentPage, newLimit);
     };
 
-    const generatePDF = async (bitacora) => { //FUNCIONAA
+    const generatePDF = async (bitacora) => {
+        //FUNCIONAA
         // Create a temporary container to render the BitacoraDetail component
         const tempContainer = document.createElement("div");
         tempContainer.classList.add("visibility-hidden");
@@ -498,7 +499,6 @@ const BitacorasPage = () => {
                 console.error("Error generating PDF:", error);
             });
     };
-
 
     const handleEditClick = (bitacoraId) => {
         navigate(`/bitacoras/${bitacoraId}/editada`);
@@ -569,12 +569,18 @@ const BitacorasPage = () => {
                                             <td className="text-center">
                                                 <button
                                                     className={
-                                                        bitacora.status !== "finalizada"
+                                                        bitacora.status !== "finalizada" &&
+                                                        bitacora.status !== "cerrada" &&
+                                                        bitacora.status !== "cerrada (e)"
                                                             ? "btn btn-secondary"
                                                             : "btn btn-danger"
                                                     }
                                                     onClick={() => generatePDF(bitacora)}
-                                                    disabled={bitacora.status !== "finalizada"}>
+                                                    disabled={
+                                                        bitacora.status !== "finalizada" &&
+                                                        bitacora.status !== "cerrada" &&
+                                                        bitacora.status !== "cerrada (e)"
+                                                    }>
                                                     <i className="fa fa-file-pdf"></i>
                                                 </button>
                                             </td>
