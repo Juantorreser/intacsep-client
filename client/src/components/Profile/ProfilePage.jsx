@@ -73,7 +73,6 @@ const ProfilePage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const response = await fetch(`${baseUrl}/users/${id}`, {
                 method: "PUT",
@@ -91,15 +90,12 @@ const ProfilePage = () => {
                     lastName: modalData.lastName,
                     phone: modalData.phone,
                 }));
-                setShowToast(true);
-                setTimeout(() => setShowToast(false), 3000);
             } else {
                 console.error("Failed to update user:", response.statusText);
             }
         } catch (error) {
             console.error("Error updating user:", error);
         }
-
         handleModalToggle(); // Close the modal after submission
     };
 
