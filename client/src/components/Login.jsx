@@ -16,6 +16,38 @@ const Login = () => {
     });
     const [errorMessage, setErrorMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false); // Loading state
+    //RESET PWD
+    const [isResettingPassword, setIsResettingPassword] = useState(false);
+    const [resetEmail, setResetEmail] = useState("");
+    const [resetError, setResetError] = useState("");
+    const [resetSuccess, setResetSuccess] = useState("");
+
+    const requestPasswordReset = async (e) => {
+        e.preventDefault();
+        setResetError("");
+        setResetSuccess("");
+        setIsLoading(true);
+
+        try {
+            const response = await fetch(`${baseUrl}/request-reset-password`, {
+                method: "POST",
+                headers: {"content-type": "application/json"},
+                body: JSON.stringify({email: resetEmail}),
+            });
+            const data = await response.json();
+            setIsLoading(false);
+
+            if (response.ok) {
+                setResetSuccess("Password reset email sent! Please check your inbox.");
+            } else {
+                setResetError(data.message || "Error sending reset email");
+            }
+        } catch (error) {
+            setIsLoading(false);
+            setResetError("Failed to send reset email");
+        }
+    };
+
 
     const handleForm = (e) => {
         const {name, value} = e.target;
@@ -212,7 +244,103 @@ const Login = () => {
         );
     };
 
-    return <> {setForm()} </>;
+    return (
+        <section id="login">
+            <div className="container col justify-content-center align-items-center">
+                {isResettingPassword ? (
+                    <div>
+                        <img src="./logo1.png" alt="logo" width={80} />
+                        <p>Reset Password</p>
+                        <form
+                            onSubmit={requestPasswordReset}
+                            className="d-flex flex-column justify-content-center align-items-center">
+                            <div className="form-floating mb-3">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    className="form-control"
+                                    placeholder="name@example.com"
+                                    required
+                                    value={resetEmail}
+                                    onChange={(e) => setResetEmail(e.target.value)}
+                                />
+                                <label htmlFor="floatingInput">Email</label>
+                            </div>
+                            {resetError && <p className="text-danger">{resetError}</p>}
+                            {resetSuccess && <p className="text-success">{resetSuccess}</p>}
+                            <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                                {isLoading ? "Sending..." : "Send Reset Link"}
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-link mt-3"
+                                onClick={() => setIsResettingPassword(false)}>
+                                Back to Login
+                            </button>
+                        </form>
+                    </div>
+                ) : (
+                    <div className="container col justify-content-center align-items-center">
+                        <img src="./logo1.png" alt="logo" width={80} />
+                        <p>Inicio de sesión</p>
+                        <form
+                            onSubmit={loginUser}
+                            className="d-flex flex-column justify-content-center align-items-center">
+                            <div className="form-floating mb-3">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    className="form-control"
+                                    id="floatingInput"
+                                    placeholder="name@example.com"
+                                    required
+                                    value={formData.email}
+                                    onChange={handleForm}
+                                />
+                                <label htmlFor="floatingInput">Email</label>
+                            </div>
+                            <div className="form-floating mb-2">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    className="form-control"
+                                    id="floatingPassword"
+                                    placeholder="Password"
+                                    required
+                                    value={formData.password}
+                                    onChange={handleForm}
+                                />
+                                <label htmlFor="floatingPassword">Contraseña</label>
+                            </div>
+                            <p id="errorMsg" className="text-danger m-1 visually-hidden">
+                                Email o Contraseña incorrectos. Intente de nuevo
+                            </p>
+                            <a
+                                href=""
+                                className="mt-0"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setIsResettingPassword(true);
+                                }}>
+                                Olvidaste tu contraseña?
+                            </a>
+                            <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                                {isLoading ? "Iniciando Sesión ..." : "Iniciar sesión"}
+                            </button>
+                        </form>
+                    </div>
+                )}
+                <a
+                    href="https://www.spotynet.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="opacity-25 mt-5">
+                    Powered by © Spotynet 2024
+                </a>
+            </div>
+        </section>
+    );
+
 };
 
 export default Login;

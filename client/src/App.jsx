@@ -19,6 +19,7 @@ import OrigenPage from "./components/Settings/OrigenPage";
 import DestinoPage from "./components/Settings/DestinoPage";
 import OperadorPage from "./components/Settings/OperadorPage";
 import ProfilePage from "./components/Profile/ProfilePage";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
     return (
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/destinos" element={<DestinoPage />}></Route>
                 <Route path="/operadores" element={<OperadorPage />}></Route>
                 <Route path="/perfil" element={<ProfilePage />}></Route>
+                <Route path="/reset-password" element={<ResetPassword />} />
             </Routes>
         </>
     );

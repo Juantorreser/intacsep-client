@@ -17,8 +17,31 @@ import Destino from "./models/Destino.js";
 import Origen from "./models/Origen.js";
 import Operador from "./models/Operador.js";
 import session from "express-session";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
 
 dotenv.config();
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
+
+const sendPasswordResetEmail = (email, resetToken) => {
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Cambio de contraseña",
+        html: `<p>Se ha solicitado un cambio de contraseña. Click <a href="${resetUrl}"> aqui</a> para cambiar su contraseña. Si no solicitó este cambio, favor de hacer caso omiso.</p>`,
+    };
+
+    return transporter.sendMail(mailOptions);
+};
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -66,6 +89,8 @@ app.use((req, res, next) => {
         req.path === "/logout" ||
         req.path === "/refresh_token" ||
         req.path === "/register" ||
+        req.path === "/request-reset-password" ||
+        req.path === "/reset-password" ||
         (req.method === "GET" && req.path != "/user")
     ) {
         return next();
@@ -192,6 +217,46 @@ app.post("/logout", (req, res) => {
     });
     res.status(200).send("Successful");
 });
+
+app.post("/request-reset-password", async (req, res) => {
+    const {email} = req.body;
+    // Find the user by email
+    const user = await User.findOne({email});
+    if (!user) return res.status(404).send({message: "User not found"});
+
+    // Create a reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetPasswordToken = jwt.sign({id: user._id, token: resetToken}, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+    });
+
+    // Send email
+
+    await sendPasswordResetEmail(email, resetPasswordToken);
+    res.status(200).send({message: "Password reset email sent"});
+});
+
+app.post("/reset-password", async (req, res) => {
+    const {token, newPassword} = req.body;
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        // Update the user's password
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+
+        res.send("Password has been reset");
+    } catch (err) {
+        res.status(400).send("Invalid or expired token");
+    }
+});
+
 app.post("/protected", (req, res) => {
     const {user} = req.session;
 
