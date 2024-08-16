@@ -557,7 +557,11 @@ app.put("/monitoreos/:id", async (req, res) => {
     try {
         const {id} = req.params;
         const {tipoMonitoreo} = req.body;
-        const updatedMonitoreo = await Monitoreo.findByIdAndUpdate(id, {name}, {new: true});
+        const updatedMonitoreo = await Monitoreo.findByIdAndUpdate(
+            id,
+            {tipoMonitoreo},
+            {new: true}
+        );
         res.json(updatedMonitoreo);
     } catch (e) {
         res.status(500).json({message: "Failed to edit origen", error: e.message});
