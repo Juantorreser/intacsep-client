@@ -644,16 +644,19 @@ app.delete("/users/:id", async (req, res) => {
 
 //UPDATE user
 app.put("/users/:id", async (req, res) => {
-    const {email, password, firstName, lastName, phone, countryKey, role} = req.body;
+    const {password, firstName, lastName, phone} = req.body;
 
     try {
-        const updateData = {email, firstName, lastName, phone, countryKey, role};
+        const updateData = {firstName, lastName, phone};
 
         // Hash the password if it is provided
         if (password) {
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
-            updateData.password = hashedPassword;
+            const prevUser = await User.findById(req.params.id);
+            if (prevUser.password != password) {
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(password, salt);
+                updateData.password = hashedPassword;
+            }
         }
 
         const user = await User.findByIdAndUpdate(req.params.id, updateData, {new: true});
@@ -662,7 +665,6 @@ app.put("/users/:id", async (req, res) => {
             return res.status(404).json({message: "User not found"});
         }
 
-        res.json(user);
     } catch (error) {
         console.error("Error updating user:", error);
         res.status(500).json({message: "Server error"});
