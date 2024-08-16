@@ -127,6 +127,40 @@ $gray: #306eac;
         height: 60px;
     }
 
+    #resetPwd {
+        background-color: $bg;
+        input {
+            color: white;
+        }
+        .form-control {
+            background-color: $bg;
+            min-width: 300px;
+            margin: 0 5px;
+        }
+        .form-floating {
+            background-color: $bg;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+            font-weight: 100;
+            margin-block: 15px;
+        }
+        .form-floating > .form-control-plaintext ~ label::after,
+        .form-floating > .form-control:focus ~ label::after,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label::after,
+        .form-floating > .form-select ~ label::after {
+            background-color: white;
+        }
+        .form-floating > .form-control-plaintext ~ label,
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label,
+        .form-floating > .form-select ~ label {
+            color: black;
+            opacity: 85%;
+        }
+    }
+
     #leftsidebar {
         // .itemLine::before{
         //     content: "";
@@ -188,13 +222,12 @@ $gray: #306eac;
             margin-bottom: 20px;
         }
 
-        & h1{
+        & h1 {
             font-weight: 700;
             margin-bottom: 20px;
         }
 
         & p {
-            
             margin-bottom: 10px;
         }
 

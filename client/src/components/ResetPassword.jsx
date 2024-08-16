@@ -35,24 +35,42 @@ const ResetPassword = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="New Password"
-                required
-            />
-            <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm Password"
-                required
-            />
-            <button type="submit">Reset Password</button>
-            {message && <p>{message}</p>}
-        </form>
+        <section id="resetPwd">
+            <div className="container d-flex flex-column justify-content-center align-items-center min-vh-100">
+                <img src="./logo1.png" alt="logo" width={80} />
+                <p className="text-white">Cambiar Contraseña</p>
+                <form
+                    onSubmit={handleSubmit}
+                    className="d-flex flex-column justify-content-center align-items-center">
+                    <div className="form-floating mb-3">
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="New Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <label htmlFor="floatingInput">New Password</label>
+                    </div>
+                    <div className="form-floating mb-3">
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                        />
+                        <label htmlFor="floatingInput">Confirm Password</label>
+                    </div>
+                    {message && <p className="text-danger">{message}</p>}
+                    <button type="submit" className="btn btn-primary">
+                        Reset Password
+                    </button>
+                </form>
+            </div>
+        </section>
     );
 };
 
