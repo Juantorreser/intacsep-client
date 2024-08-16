@@ -38,9 +38,9 @@ const Login = () => {
             setIsLoading(false);
 
             if (response.ok) {
-                setResetSuccess("Password reset email sent! Please check your inbox.");
+                setResetSuccess("Email de cambio de contraseña enviado!");
             } else {
-                setResetError(data.message || "Error sending reset email");
+                setResetError(data.message || "Error al enviar link");
             }
         } catch (error) {
             setIsLoading(false);
@@ -248,9 +248,9 @@ const Login = () => {
         <section id="login">
             <div className="container col justify-content-center align-items-center">
                 {isResettingPassword ? (
-                    <div>
+                    <div className="container col justify-content-center align-items-center">
                         <img src="./logo1.png" alt="logo" width={80} />
-                        <p>Reset Password</p>
+                        <p>Cambiar Contraseña</p>
                         <form
                             onSubmit={requestPasswordReset}
                             className="d-flex flex-column justify-content-center align-items-center">
@@ -269,13 +269,13 @@ const Login = () => {
                             {resetError && <p className="text-danger">{resetError}</p>}
                             {resetSuccess && <p className="text-success">{resetSuccess}</p>}
                             <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                                {isLoading ? "Sending..." : "Send Reset Link"}
+                                {isLoading ? "Enviando..." : "Enviar Link de Verificación"}
                             </button>
                             <button
                                 type="button"
                                 className="btn btn-link mt-3"
                                 onClick={() => setIsResettingPassword(false)}>
-                                Back to Login
+                                Volver a Inicio de Sesión
                             </button>
                         </form>
                     </div>
