@@ -979,7 +979,7 @@ const BitacorasPage = () => {
                                                 onClick={handleModalToggle}>
                                                 Cancelar
                                             </button>
-                                            <button type="submit" className="btn btn-primary">
+                                            <button type="submit" className="btn btn-success">
                                                 Crear
                                             </button>
                                         </div>

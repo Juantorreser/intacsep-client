@@ -107,6 +107,18 @@ const ProfilePage = () => {
                     <Sidebar />
                 </div>
                 <div className="content-wrapper px-5 mb-4">
+                    <div className="d-flex justify-content-center align-items-center mb-3 ms-5 position-relative">
+                        <h1 className="fs-3 fw-semibold text-black text-center position-relative p- m-0">
+                            Perfil
+                        </h1>
+
+                        <button
+                            type="button"
+                            className="btn btn-primary position-absolute end-0 me-3"
+                            onClick={handleModalToggle}>
+                            <i className="fa fa-edit"></i>
+                        </button>
+                    </div>
                     <form className="px-5 mx-5">
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">
@@ -192,12 +204,6 @@ const ProfilePage = () => {
                                 disabled
                             />
                         </div>
-                        <button
-                            type="button"
-                            className="btn btn-success"
-                            onClick={handleModalToggle}>
-                            Editar
-                        </button>
                     </form>
                 </div>
             </div>
@@ -279,7 +285,7 @@ const ProfilePage = () => {
                                         <div className="modal-footer">
                                             <button
                                                 type="button"
-                                                className="btn btn-secondary"
+                                                className="btn btn-danger"
                                                 onClick={handleModalToggle}>
                                                 Cancelar
                                             </button>

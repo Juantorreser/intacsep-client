@@ -208,11 +208,11 @@ const OrigenPage = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                    <Button variant="danger" onClick={() => setShowModal(false)}>
                         Cancelar
                     </Button>
-                    <Button variant="primary" onClick={handleSaveEdit}>
-                        Guardar Cambios
+                    <Button variant="success" onClick={handleSaveEdit}>
+                        Guardar
                     </Button>
                 </Modal.Footer>
             </Modal>

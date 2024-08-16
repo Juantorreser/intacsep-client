@@ -6,7 +6,7 @@ import Footer from "../Footer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown, faChevronUp, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../../context/AuthContext";
-import {Modal, Button, Form} from "react-bootstrap";
+import {Modal, Button, Form, Row} from "react-bootstrap";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const BitacoraDetail = ({edited}) => {
@@ -582,9 +582,19 @@ const BitacoraDetail = ({edited}) => {
                                     onChange={handleInputChange}
                                 />
                             </Form.Group>
-                            <Button variant="success" type="submit">
-                                Guardar
-                            </Button>
+                            <Row className="justify-content-end">
+                                <Button
+                                    type="button"
+                                    className="btn btn-danger me-2 col-2"
+                                    onClick={handleClose} // This line is added
+                                >
+                                    Cancelar
+                                </Button>
+
+                                <Button variant="success" type="submit" className="col-2 me-2">
+                                    Guardar
+                                </Button>
+                            </Row>
                         </Form>
                     </Modal.Body>
                 </Modal>
@@ -1396,7 +1406,14 @@ const BitacoraDetail = ({edited}) => {
                                     />
                                 </Form.Group>
                                 <div className="w-100 d-flex flex-row justify-content-end">
-                                    <Button type="submit" variant="success" className="ms-auto">
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger me-2"
+                                        data-bs-dismiss="modal"
+                                        onClick={() => setEditModalVisible(false)}>
+                                        Cancelar
+                                    </button>
+                                    <Button type="submit" variant="success" className="me-2">
                                         Guardar
                                     </Button>
                                 </div>

@@ -4,10 +4,14 @@ import Sidebar from "../Sidebar";
 import Footer from "../Footer";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 const TiposMonitoreo = () => {
     const [monitoreos, setMonitoreos] = useState([]);
     const [newMonitoreo, setNewMonitoreo] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [currentMonitoreo, setCurrentMonitoreo] = useState(null);
+    const [editingName, setEditingName] = useState("");
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [idToDelete, setIdToDelete] = useState("");
@@ -28,7 +32,7 @@ const TiposMonitoreo = () => {
         };
 
         fetchMonitoreos();
-    }, [baseUrl]);
+    }, []);
 
     const handleConfirmDelete = async (id) => {
         try {
@@ -78,6 +82,37 @@ const TiposMonitoreo = () => {
             }
         } catch (e) {
             console.error("Error creating monitoreo:", e);
+        }
+    };
+
+    const handleSaveEdit = async () => {
+        if (!currentMonitoreo) return;
+
+        try {
+            const response = await fetch(`${baseUrl}/monitoreos/${currentMonitoreo._id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({tipoMonitoreo: editingName}),
+                credentials: "include",
+            });
+
+            if (response.ok) {
+                const updatedMonitoreo = await response.json();
+                setOrigenes(
+                    monitoreos.map((monitoreo) =>
+                        monitoreo._id === updatedMonitoreo._id ? updatedMonitoreo : monitoreo
+                    )
+                );
+                setShowModal(false);
+                setCurrentMonitoreo(null);
+                setEditingName("");
+            } else {
+                console.error("Failed to edit Monitoreo:", response.statusText);
+            }
+        } catch (e) {
+            console.error("Error editing Monitoreo:", e);
         }
     };
 
@@ -132,6 +167,15 @@ const TiposMonitoreo = () => {
                                             <td>{monitoreo.tipoMonitoreo}</td>
                                             <td className="text-end">
                                                 <button
+                                                    className="btn btn-primary rounded-circle me-2"
+                                                    onClick={() => {
+                                                        setCurrentMonitoreo(monitoreo);
+                                                        setEditingName(monitoreo.tipoMonitoreo);
+                                                        setShowModal(true);
+                                                    }}>
+                                                    <i className="fas fa-edit"></i>
+                                                </button>
+                                                <button
                                                     className="btn btn-danger rounded-circle"
                                                     onClick={() => handleDelete(monitoreo._id)}>
                                                     <i className="fas fa-trash"></i>
@@ -145,6 +189,32 @@ const TiposMonitoreo = () => {
                     </div>
                 </div>
             </div>
+            {/* Edit Modal */}
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Editar Operador</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Nombre del Operador</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={editingName}
+                                onChange={(e) => setEditingName(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={() => setShowModal(false)}>
+                        Cancelar
+                    </Button>
+                    <Button variant="success" onClick={handleSaveEdit}>
+                        Guardar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             {/* Delete Modal */}
             <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
                 <Modal.Header closeButton>
