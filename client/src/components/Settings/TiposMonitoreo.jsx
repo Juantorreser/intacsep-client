@@ -192,12 +192,12 @@ const TiposMonitoreo = () => {
             {/* Edit Modal */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Editar Operador</Modal.Title>
+                    <Modal.Title>Editar Monitoreo</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-3">
-                            <Form.Label>Nombre del Operador</Form.Label>
+                            <Form.Label>Tipo de monitoreo</Form.Label>
                             <Form.Control
                                 type="text"
                                 value={editingName}
