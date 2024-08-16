@@ -100,7 +100,7 @@ const TiposMonitoreo = () => {
 
             if (response.ok) {
                 const updatedMonitoreo = await response.json();
-                setOrigenes(
+                setMonitoreos(
                     monitoreos.map((monitoreo) =>
                         monitoreo._id === updatedMonitoreo._id ? updatedMonitoreo : monitoreo
                     )

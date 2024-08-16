@@ -4,6 +4,7 @@ import Sidebar from "../Sidebar";
 import Footer from "../Footer";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 const EventsPage = () => {
     const [events, setEvents] = useState([]);
@@ -13,6 +14,7 @@ const EventsPage = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [idToDelete, setIdToDelete] = useState("");
+    const [showEditModal, setShowEditModal] = useState(false);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -48,10 +50,12 @@ const EventsPage = () => {
             console.error("Error deleting event:", e);
         }
     };
+
     const handleDelete = (id) => {
         setIdToDelete(id);
         setShowDeleteModal(true);
     };
+
     const handleCloseDeleteModal = () => {
         setShowDeleteModal(false);
     };
@@ -66,14 +70,14 @@ const EventsPage = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({eventType: newEvent}), // Update this to match the schema field
+                body: JSON.stringify({eventType: newEvent}),
                 credentials: "include",
             });
 
             if (response.ok) {
                 const createdEvent = await response.json();
                 setEvents([...events, createdEvent]);
-                setNewEvent(""); // Clear the input field
+                setNewEvent("");
             } else {
                 console.error("Failed to create event:", response.statusText);
             }
@@ -85,22 +89,28 @@ const EventsPage = () => {
     const handleEditClick = (event) => {
         setEditEvent(event);
         setEditEventName(event.eventType); // Ensure this matches the actual field in your event object
+        setShowEditModal(true); // Show the edit modal
     };
 
-    const handleEditSave = async (id) => {
+    const handleEditSave = async () => {
+        if (!editEvent || !editEventName) return;
+        
         try {
-            const response = await fetch(`${baseUrl}/event_types/${id}`, {
+            const response = await fetch(`${baseUrl}/event_types/${editEvent._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({name: editEventName}),
+                body: JSON.stringify({name: editEventName}), // Ensure this matches the schema field
                 credentials: "include",
             });
 
             if (response.ok) {
                 const updatedEvent = await response.json();
-                setEvents(events.map((event) => (event._id === id ? updatedEvent : event)));
+                setEvents(
+                    events.map((event) => (event._id === updatedEvent._id ? updatedEvent : event))
+                );
+                setShowEditModal(false);
                 setEditEvent(null);
                 setEditEventName("");
             } else {
@@ -109,6 +119,12 @@ const EventsPage = () => {
         } catch (e) {
             console.error("Error updating event:", e);
         }
+    };
+
+    const handleCloseEditModal = () => {
+        setShowEditModal(false);
+        setEditEvent(null);
+        setEditEventName("");
     };
 
     return (
@@ -161,33 +177,13 @@ const EventsPage = () => {
                                 <tbody>
                                     {events.map((event) => (
                                         <tr key={event._id}>
-                                            <td>
-                                                {editEvent && editEvent._id === event._id ? (
-                                                    <input
-                                                        type="text"
-                                                        value={editEventName}
-                                                        onChange={(e) =>
-                                                            setEditEventName(e.target.value)
-                                                        }
-                                                    />
-                                                ) : (
-                                                    event.eventType // Update this to match the schema field
-                                                )}
-                                            </td>
+                                            <td>{event.eventType}</td>
                                             <td className="text-end">
-                                                {editEvent && editEvent._id === event._id ? (
-                                                    <button
-                                                        className="btn btn-success rounded-circle"
-                                                        onClick={() => handleEditSave(event._id)}>
-                                                        <i className="fas fa-save"></i>
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        className="btn btn-primary rounded-circle"
-                                                        onClick={() => handleEditClick(event)}>
-                                                        <i className="fas fa-pencil-alt"></i>
-                                                    </button>
-                                                )}
+                                                <button
+                                                    className="btn btn-primary rounded-circle"
+                                                    onClick={() => handleEditClick(event)}>
+                                                    <i className="fa fa-edit"></i>
+                                                </button>
                                                 <button
                                                     className="btn btn-danger rounded-circle ms-2"
                                                     onClick={() => handleDelete(event._id)}>
@@ -202,6 +198,7 @@ const EventsPage = () => {
                     </div>
                 </div>
             </div>
+
             {/* Delete Modal */}
             <Modal show={showDeleteModal} onHide={handleCloseDeleteModal} backdrop="static">
                 <Modal.Header closeButton>
@@ -217,6 +214,34 @@ const EventsPage = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            {/* Edit Modal */}
+            <Modal show={showEditModal} onHide={handleCloseEditModal} backdrop="static">
+                <Modal.Header closeButton>
+                    <Modal.Title>Editar Evento</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Nombre del Evento</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={editEventName}
+                                onChange={(e) => setEditEventName(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseEditModal}>
+                        Cancelar
+                    </Button>
+                    <Button variant="success" onClick={handleEditSave}>
+                        Confirmar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <Footer />
         </section>
     );
