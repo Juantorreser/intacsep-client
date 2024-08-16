@@ -51,7 +51,7 @@ const ResetPassword = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
-                        <label htmlFor="floatingInput">New Password</label>
+                        <label htmlFor="floatingInput">Nueva Contraseña</label>
                     </div>
                     <div className="form-floating mb-3">
                         <input
@@ -62,11 +62,11 @@ const ResetPassword = () => {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
                         />
-                        <label htmlFor="floatingInput">Confirm Password</label>
+                        <label htmlFor="floatingInput">Confirmar Contraseña</label>
                     </div>
                     {message && <p className="text-danger">{message}</p>}
                     <button type="submit" className="btn btn-primary">
-                        Reset Password
+                        Cambiar Contraseña
                     </button>
                 </form>
             </div>
