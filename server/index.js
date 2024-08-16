@@ -664,7 +664,7 @@ app.put("/users/:id", async (req, res) => {
         if (!user) {
             return res.status(404).json({message: "User not found"});
         }
-        res.send("Saved Succesfully");
+        res.status(200).json({message: "SAVED"});
     } catch (error) {
         console.error("Error updating user:", error);
         res.status(500).json({message: "Server error"});
