@@ -11,6 +11,7 @@ import "jspdf-autotable"; // For table support in jsPDF
 import useInactivityTimeout from "../../utils/useInactivityTimeout";
 import html2canvas from "html2canvas";
 import {Container, Row, Col, Card} from "react-bootstrap";
+import {getPaginatedBitacoras, sortBitacoras} from "../../utils/utils"; // Assume these functions exist
 
 const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
     <Container ref={ref} id="pdfBitacora">
@@ -202,6 +203,12 @@ const BitacorasPage = () => {
     const [origenes, setOrigenes] = useState([]);
     const [destinos, setDestinos] = useState([]);
     const [operadores, setOperadores] = useState([]);
+    const [sortField, setSortField] = useState("bitacora_id"); // Default sort field
+    const [sortOrder, setSortOrder] = useState("desc"); // Default sort order
+    const [statusFilter, setStatusFilter] = useState("");
+    const [creationDateFilter, setCreationDateFilter] = useState("");
+    const [clienteFilter, setClienteFilter] = useState("");
+    const [operadorFilter, setOperadorFilter] = useState("");
 
     // useInactivityTimeout(120000, logout); // 120000 ms = 2 minutes
 
@@ -419,11 +426,53 @@ const BitacorasPage = () => {
             console.error("Error creating bitácora:", e);
         }
     };
+    const getFilteredBitacoras = () => {
+        let filtered = bitacoras;
 
-    const getPaginatedBitacoras = (bitacoras, page = 1, limit = 25) => {
-        const startIndex = (page - 1) * limit;
-        const endIndex = Math.min(startIndex + limit, bitacoras.length);
-        return bitacoras.slice(startIndex, endIndex);
+        if (statusFilter) {
+            filtered = filtered.filter((bitacora) => bitacora.status === statusFilter);
+        }
+
+        if (clienteFilter) {
+            filtered = filtered.filter((bitacora) => bitacora.cliente === clienteFilter);
+        }
+
+        if (operadorFilter) {
+            filtered = filtered.filter((bitacora) => bitacora.operador === operadorFilter);
+        }
+
+        if (creationDateFilter) {
+            filtered = filtered.filter(
+                (bitacora) =>
+                    new Date(bitacora.createdAt).toISOString().split("T")[0] === creationDateFilter
+            );
+        }
+
+        return filtered;
+    };
+
+    const sortedFilteredBitacoras = sortBitacoras(getFilteredBitacoras(), sortField, sortOrder);
+
+    const filteredBitacoras = bitacoras.filter((bitacora) => {
+        return (
+            (clienteFilter === "" || bitacora.cliente === clienteFilter) &&
+            (operadorFilter === "" || bitacora.operador === operadorFilter)
+        );
+    });
+
+    const getPaginatedBitacoras = (bitacoras, page, itemsPerPage) => {
+        const filtered = getFilteredBitacoras();
+        const sorted = filtered.sort((a, b) => {
+            // Sorting logic here based on `sortOrder`
+        });
+        return sorted.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+    };
+
+    const clearFilters = () => {
+        setStatusFilter("");
+        setCreationDateFilter("");
+        setSortField("ID");
+        setSortOrder("desc");
     };
 
     const handlePageChange = (newPage) => {
@@ -504,11 +553,36 @@ const BitacorasPage = () => {
         navigate(`/bitacoras/${bitacoraId}/editada`);
     };
 
+    const handleSortChange = (field) => {
+        const order = field === sortField && sortOrder === "asc" ? "desc" : "asc";
+        setSortField(field);
+        setSortOrder(order);
+        sortData(field, order);
+    };
+
+    const sortData = (field, order) => {
+        filteredBitacoras.sort((a, b) => {
+            if (a[field] < b[field]) {
+                return order === "asc" ? -1 : 1;
+            }
+            if (a[field] > b[field]) {
+                return order === "asc" ? 1 : -1;
+            }
+            return 0;
+        });
+    };
+
+    const uniqueClientes = [
+        ...new Set(sortedFilteredBitacoras.map((bitacora) => bitacora.cliente)),
+    ];
+    const uniqueOperadores = [
+        ...new Set(sortedFilteredBitacoras.map((bitacora) => bitacora.operador)),
+    ];
+
     return (
         <section id="activeBits">
             <Header />
             <div className="w-100 d-flex">
-                {/* Sidebar */}
                 <div className="sidebar-wrapper">
                     <Sidebar />
                 </div>
@@ -517,115 +591,243 @@ const BitacorasPage = () => {
                         <h1 className="text-center flex-grow-1 fs-3 fw-semibold text-black">
                             Bitácoras
                         </h1>
-                        <button className="btn btn-primary rounded-5" onClick={handleModalToggle}>
+                        <button
+                            className="btn btn-primary rounded-5"
+                            onClick={() => setShowModal(!showModal)}>
                             <i className="fa fa-plus"></i>
                         </button>
                     </div>
 
                     {/* Table */}
-                    <div className="mx-3 my-4">
-                        <div className="table-responsive">
-                            <table className="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Cliente</th>
-                                        <th>Tipo Monitoreo</th>
-                                        <th>Operador</th>
-                                        <th>Fecha Creación</th>
-                                        <th>Status</th>
-                                        <th className="text-center">
-                                            <i className="fa fa-download"></i>
-                                        </th>
-                                        <th className="text-center">
-                                            <i className="fa fa-clipboard-check"></i>
-                                        </th>
-                                        <th className="text-center">
-                                            <i className="fa fa-edit"></i>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {getPaginatedBitacoras(
-                                        bitacoras,
-                                        currentPage,
-                                        itemsPerPage
-                                    ).map((bitacora) => (
-                                        <tr key={bitacora._id}>
-                                            <td>
-                                                <a
-                                                    href={`/bitacora/${bitacora._id}`}
-                                                    className="text-decoration-none">
-                                                    {bitacora.bitacora_id}
-                                                </a>
-                                            </td>
-                                            <td>{bitacora.cliente}</td>
-                                            <td>{bitacora.monitoreo}</td>
-                                            <td>{bitacora.operador}</td>
-                                            <td>
-                                                {new Date(bitacora.createdAt).toLocaleDateString()}
-                                            </td>
-                                            <td>{bitacora.status}</td>
-                                            <td className="text-center">
-                                                <button
-                                                    className={
-                                                        bitacora.status !== "finalizada" &&
-                                                        bitacora.status !== "cerrada" &&
-                                                        bitacora.status !== "cerrada (e)"
-                                                            ? "btn btn-secondary"
-                                                            : "btn btn-danger"
-                                                    }
-                                                    onClick={() => generatePDF(bitacora)}
-                                                    disabled={
-                                                        bitacora.status !== "finalizada" &&
-                                                        bitacora.status !== "cerrada" &&
-                                                        bitacora.status !== "cerrada (e)"
-                                                    }>
-                                                    <i className="fa fa-file-pdf"></i>
-                                                </button>
-                                            </td>
-                                            <td className="text-center">
-                                                <button
-                                                    className={
-                                                        bitacora.edited_bitacora == null
-                                                            ? "btn btn-secondary"
-                                                            : "btn btn-warning"
-                                                    }
-                                                    onClick={() =>
-                                                        generatePDF(bitacora.edited_bitacora)
-                                                    }
-                                                    disabled={bitacora.edited_bitacora == null}>
-                                                    <i className="fa fa-file-pdf"></i>
-                                                </button>
-                                            </td>
-                                            <td className="text-center">
-                                                <button
-                                                    className={
-                                                        bitacora.edited_bitacora == null
-                                                            ? "btn btn-secondary"
-                                                            : "btn btn-primary"
-                                                    }
-                                                    onClick={() => handleEditClick(bitacora._id)}
-                                                    disabled={bitacora.edited_bitacora == null}>
-                                                    <i className="fa fa-edit"></i>
-                                                </button>
-                                            </td>
+                    <div className="mx-3 my-2 table-wrapper">
+                        <div className="table-container">
+                            <div className="table-responsive">
+                                <table className="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                className="one"
+                                                onClick={() => handleSortChange("bitacora_id")}
+                                                style={{cursor: "pointer"}}>
+                                                ID{" "}
+                                                {sortField === "bitacora_id" &&
+                                                    (sortOrder === "asc" ? "↑" : "↓")}
+                                            </th>
+                                            <th
+                                                className="two"
+                                                onClick={() => handleSortChange("cliente")}
+                                                style={{cursor: "pointer"}}>
+                                                Cliente{" "}
+                                                {sortField === "cliente" &&
+                                                    (sortOrder === "asc" ? "↑" : "↓")}
+                                            </th>
+                                            <th
+                                                className="two"
+                                                onClick={() => handleSortChange("monitoreo")}
+                                                style={{cursor: "pointer"}}>
+                                                Tipo Monitoreo{" "}
+                                                {sortField === "monitoreo" &&
+                                                    (sortOrder === "asc" ? "↑" : "↓")}
+                                            </th>
+                                            <th
+                                                className="two"
+                                                onClick={() => handleSortChange("operador")}
+                                                style={{cursor: "pointer"}}>
+                                                Operador{" "}
+                                                {sortField === "operador" &&
+                                                    (sortOrder === "asc" ? "↑" : "↓")}
+                                            </th>
+                                            <th
+                                                className="two"
+                                                onClick={() => handleSortChange("createdAt")}
+                                                style={{cursor: "pointer"}}>
+                                                Fecha Creación{" "}
+                                                {sortField === "createdAt" &&
+                                                    (sortOrder === "asc" ? "↑" : "↓")}
+                                            </th>
+                                            <th
+                                                className="one"
+                                                onClick={() => handleSortChange("status")}
+                                                style={{cursor: "pointer"}}>
+                                                Status{" "}
+                                                {sortField === "status" &&
+                                                    (sortOrder === "asc" ? "↑" : "↓")}
+                                            </th>
+                                            <th className="text-center half">
+                                                <i className="fa fa-download"></i>
+                                            </th>
+                                            <th className="text-center half">
+                                                <i className="fa fa-clipboard-check"></i>
+                                            </th>
+                                            <th className="text-center half">
+                                                <i className="fa fa-edit"></i>
+                                            </th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+
+                                        {/* Filter Row */}
+                                        <tr>
+                                            <th className="one"></th>
+                                            <th className="two">
+                                                <select
+                                                    id="clienteFilter"
+                                                    className="form-select"
+                                                    value={clienteFilter}
+                                                    onChange={(e) =>
+                                                        setClienteFilter(e.target.value)
+                                                    }>
+                                                    <option value="">Todos</option>
+                                                    {clients.map((client, id) => (
+                                                        <option
+                                                            key={id}
+                                                            value={client.razon_social}>
+                                                            {client.razon_social}
+                                                        </option>
+                                                    ))}
+                                                    {/* Add more status options as needed */}
+                                                </select>
+                                            </th>
+                                            <th className="two"></th>
+                                            <th className="two">
+                                                <select
+                                                    id="operadorFilter"
+                                                    className="form-select"
+                                                    value={operadorFilter}
+                                                    onChange={(e) =>
+                                                        setOperadorFilter(e.target.value)
+                                                    }>
+                                                    <option value="">Todos</option>
+                                                    {operadores.map((operador, id) => (
+                                                        <option key={id} value={operador.name}>
+                                                            {operador.name}
+                                                        </option>
+                                                    ))}
+                                                    {/* Add more status options as needed */}
+                                                </select>
+                                            </th>
+                                            <th className="two">
+                                                <div className="">
+                                                    <input
+                                                        id="creationDateFilter"
+                                                        type="date"
+                                                        className="form-control"
+                                                        value={creationDateFilter}
+                                                        onChange={(e) =>
+                                                            setCreationDateFilter(e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+                                            <th className="one">
+                                                <div>
+                                                <select
+                                                    id="statusFilter"
+                                                    className="form-select"
+                                                    value={statusFilter}
+                                                    onChange={(e) =>
+                                                        setStatusFilter(e.target.value)
+                                                    }>
+                                                    <option value="">Todos</option>
+                                                    <option value="nueva">Nueva</option>
+                                                    <option value="validada">Validada</option>
+                                                    <option value="iniciada">Iniciada</option>
+                                                    <option value="cerrada">Cerrada</option>
+                                                    <option value="finalizada">Finalizada</option>
+                                                    <option value="cerrada (e)">Cerrada (e)</option>
+                                                    
+                                                </select>
+                                            </div>
+                                            </th>
+                                            <th className="half"></th>
+                                            <th className="half"></th>
+                                            <th className="half"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {getPaginatedBitacoras(
+                                            filteredBitacoras,
+                                            currentPage,
+                                            itemsPerPage
+                                        ).map((bitacora) => (
+                                            <tr key={bitacora._id}>
+                                                <td className="one">
+                                                    <a
+                                                        href={`/bitacora/${bitacora._id}`}
+                                                        className="text-decoration-none">
+                                                        {bitacora.bitacora_id}
+                                                    </a>
+                                                </td>
+                                                <td className="two">{bitacora.cliente}</td>
+                                                <td className="two">{bitacora.monitoreo}</td>
+                                                <td className="two">{bitacora.operador}</td>
+                                                <td className="two">
+                                                    {new Date(
+                                                        bitacora.createdAt
+                                                    ).toLocaleDateString()}
+                                                </td>
+                                                <td className="one">{bitacora.status}</td>
+                                                <td className="text-center half">
+                                                    <button
+                                                        className={
+                                                            bitacora.status !== "finalizada" &&
+                                                            bitacora.status !== "cerrada" &&
+                                                            bitacora.status !== "cerrada (e)"
+                                                                ? "btn btn-secondary"
+                                                                : "btn btn-danger"
+                                                        }
+                                                        onClick={() => generatePDF(bitacora)}
+                                                        disabled={
+                                                            bitacora.status !== "finalizada" &&
+                                                            bitacora.status !== "cerrada" &&
+                                                            bitacora.status !== "cerrada (e)"
+                                                        }>
+                                                        <i className="fa fa-file-pdf"></i>
+                                                    </button>
+                                                </td>
+                                                <td className="text-center half">
+                                                    <button
+                                                        className={
+                                                            bitacora.edited_bitacora == null
+                                                                ? "btn btn-secondary"
+                                                                : "btn btn-warning"
+                                                        }
+                                                        onClick={() =>
+                                                            generatePDF(bitacora.edited_bitacora)
+                                                        }
+                                                        disabled={bitacora.edited_bitacora == null}>
+                                                        <i className="fa fa-file-pdf"></i>
+                                                    </button>
+                                                </td>
+                                                <td className="text-center half">
+                                                    <button
+                                                        className={
+                                                            bitacora.edited_bitacora == null
+                                                                ? "btn btn-secondary"
+                                                                : "btn btn-primary"
+                                                        }
+                                                        onClick={() =>
+                                                            handleEditClick(bitacora._id)
+                                                        }
+                                                        disabled={bitacora.edited_bitacora == null}>
+                                                        <i className="fa fa-edit"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
                     {/* Pagination Controls */}
-                    <div className="d-flex justify-content-between align-items-center mx-3 my-4">
-                        <div>
-                            <label htmlFor="itemsPerPage" className="form-label">
+                    <div className="d-flex justify-content-between align-items-center mx-3 my-3">
+                        <div className="d-flex w-50 align-items-center">
+                            <label htmlFor="itemsPerPage" className="form-label col-5 p-0 m-0">
                                 Items Por Página:
                             </label>
                             <select
                                 id="itemsPerPage"
-                                className="form-select"
+                                className="form-select col-1 w-25"
                                 value={itemsPerPage}
                                 onChange={handleItemsPerPageChange}>
                                 <option value={25}>25</option>
@@ -636,7 +838,7 @@ const BitacorasPage = () => {
 
                         <div>
                             <button
-                                className="btn btn-primary"
+                                className="btn border-0"
                                 disabled={currentPage === 1}
                                 onClick={() => handlePageChange(currentPage - 1)}>
                                 <i className="fa fa-chevron-left"></i>
@@ -645,7 +847,7 @@ const BitacorasPage = () => {
                                 Página {currentPage} de {totalPages}
                             </span>
                             <button
-                                className="btn btn-primary"
+                                className="btn border-0"
                                 disabled={currentPage === totalPages}
                                 onClick={() => handlePageChange(currentPage + 1)}>
                                 <i className="fa fa-chevron-right"></i>
@@ -991,7 +1193,6 @@ const BitacorasPage = () => {
                     <div className="modal-backdrop fade show"></div>
                 </>
             )}
-
             <Footer />
         </section>
     );

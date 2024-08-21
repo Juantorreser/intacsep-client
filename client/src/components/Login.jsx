@@ -269,7 +269,7 @@ const Login = () => {
                             {resetError && <p className="text-danger">{resetError}</p>}
                             {resetSuccess && <p className="text-success">{resetSuccess}</p>}
                             <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                                {isLoading ? "Enviando..." : "Enviar Link de Verificación"}
+                                {isLoading ? "Cargando..." : "Recuperar"}
                             </button>
                             <button
                                 type="button"

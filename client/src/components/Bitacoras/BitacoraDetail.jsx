@@ -744,7 +744,7 @@ const BitacoraDetail = ({edited}) => {
                     <Sidebar />
                 </div>
                 <div className="content-wrapper">
-                    <div className="d-flex justify-content-center align-items-center mb-3 ms-5 position-relative">
+                    <div className="d-flex justify-content-center align-items-center mb-3 ms-1 position-relative">
                         <div
                             className="position-absolute start-0 me-3 btn"
                             onClick={() => navigate("/bitacoras")}>
