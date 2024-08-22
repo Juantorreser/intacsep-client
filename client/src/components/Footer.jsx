@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
     return (
-        <footer className="w-100 text-center bg-body-tertiary pt-4 pb-4">
+        <footer className="w-100 text-center bg-body-tertiary pt-4 pb-4 mt-auto">
             <a
                 href="https://www.spotynet.com/"
                 target="_blank"

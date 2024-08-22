@@ -42,20 +42,20 @@ $gray: #306eac;
     }
 
     .letter-spacing-sm {
-        letter-spacing: 0.05em; 
+        letter-spacing: 0.05em;
     }
 
     .letter-spacing-md {
-        letter-spacing: 0.1em; 
+        letter-spacing: 0.1em;
     }
 
     .letter-spacing-lg {
-        letter-spacing: 0.3em; 
+        letter-spacing: 0.3em;
     }
 
-    footer{
-        position: relative;
-        top: 5px;
+    footer {
+        height: 15%;
+        margin-top: auto;
     }
 
     #login {
@@ -116,7 +116,7 @@ $gray: #306eac;
         margin-top: 80px;
         width: 85%; /* Adjust based on your sidebar width */
         padding: 0;
-        height: 80vh;
+        min-height: 75vh;
     }
 
     @media (max-width: 768px) {
@@ -334,7 +334,13 @@ $gray: #306eac;
 .table-wrapper {
     display: flex;
     flex-direction: column;
-    height: 80%; /* Full viewport height */
+    height: 60vh; /* Full viewport height */
+}
+
+@media (min-width: 1400px) {
+    .table-wrapper {
+        height: 80vh; /* Full viewport height */
+    }
 }
 
 .table-container {
@@ -377,7 +383,7 @@ $gray: #306eac;
     white-space: wrap; /* Prevent text from wrapping */
 }
 
-@media (min-width: 768px) {
+@media (min-width: 800) {
     .table-container thead th,
     .table-container tbody td {
         &.one {
@@ -393,7 +399,7 @@ $gray: #306eac;
 }
 
 /* Styles for screens smaller than 768px */
-@media (max-width: 767px) {
+@media (max-width: 800) {
     .table-container {
         overflow-x: auto; /* Ensure table is scrollable horizontally */
         -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
