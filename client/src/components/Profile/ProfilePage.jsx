@@ -1,20 +1,17 @@
 import React, {useState, useEffect} from "react";
-import Header from "../Header";
-import Sidebar from "../Sidebar";
 import {useAuth} from "../../context/AuthContext";
 import {useNavigate} from "react-router-dom";
-import Footer from "../Footer";
 
-const ProfilePage = () => {
+const ProfileModal = ({showModal, handleClose}) => {
     const {user, verifyToken, setUser} = useAuth();
     const [pwd, setPwd] = useState("");
     const [id, setId] = useState("");
     const [initialized, setInitialized] = useState(false);
     const [modalData, setModalData] = useState({});
-    const [showModal, setShowModal] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const navigate = useNavigate();
     const baseUrl = import.meta.env.VITE_BASE_URL;
+
     const fetchUser = async () => {
         try {
             const data = await verifyToken();
@@ -39,6 +36,7 @@ const ProfilePage = () => {
             console.error("Error fetching user data:", error);
         }
     };
+
     useEffect(() => {
         const init = async () => {
             try {
@@ -67,10 +65,6 @@ const ProfilePage = () => {
         }));
     };
 
-    const handleModalToggle = () => {
-        setShowModal(!showModal);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -90,129 +84,23 @@ const ProfilePage = () => {
                     lastName: modalData.lastName,
                     phone: modalData.phone,
                 }));
+                setShowToast(true);
             } else {
                 console.error("Failed to update user:", response.statusText);
             }
         } catch (error) {
             console.error("Error updating user:", error);
         }
-        handleModalToggle(); // Close the modal after submission
+        handleClose(); // Close the modal after submission
     };
 
     return (
-        <section id="profilePage">
-            <Header />
-            <div className="w-100 d-flex">
-                <div className="sidebar-wrapper">
-                    <Sidebar />
-                </div>
-                <div className="content-wrapper px-5 mb-4">
-                    <div className="d-flex justify-content-center align-items-center mb-3 ms-5 position-relative">
-                        <h1 className="fs-3 fw-semibold text-black text-center position-relative p- m-0">
-                            Perfil
-                        </h1>
-
-                        <button
-                            type="button"
-                            className="btn btn-primary position-absolute end-0 me-3"
-                            onClick={handleModalToggle}>
-                            <i className="fa fa-edit"></i>
-                        </button>
-                    </div>
-                    <form className="px-5 mx-5">
-                        <div className="mb-3">
-                            <label htmlFor="email" className="form-label">
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                className="form-control"
-                                id="email"
-                                name="email"
-                                value={user.email || ""}
-                                required
-                                disabled
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="password" className="form-label">
-                                Contraseña
-                            </label>
-                            <input
-                                type="password"
-                                className="form-control"
-                                id="password"
-                                name="password"
-                                value={pwd}
-                                required
-                                disabled
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="firstName" className="form-label">
-                                Nombre
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="firstName"
-                                name="firstName"
-                                value={modalData.firstName || ""}
-                                required
-                                disabled
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="lastName" className="form-label">
-                                Apellido
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="lastName"
-                                name="lastName"
-                                value={modalData.lastName || ""}
-                                required
-                                disabled
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="phone" className="form-label">
-                                Telefono
-                            </label>
-                            <input
-                                type="tel"
-                                className="form-control"
-                                id="phone"
-                                name="phone"
-                                value={modalData.phone || ""}
-                                required
-                                disabled
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="role" className="form-label">
-                                Rol
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="role"
-                                name="role"
-                                value={user.role || ""}
-                                required
-                                disabled
-                            />
-                        </div>
-                    </form>
-                </div>
-            </div>
-
+        <>
             {showModal && (
                 <>
                     <div className="modal-backdrop fade show"></div>
                     <div
-                        className={`modal fade ${showModal ? "show d-block" : ""}`}
+                        className={`modal mt-5 pt-3 fade ${showModal ? "show d-block" : ""}`}
                         tabIndex="-1"
                         style={{display: showModal ? "block" : "none"}}>
                         <div className="modal-dialog">
@@ -222,7 +110,7 @@ const ProfilePage = () => {
                                     <button
                                         type="button"
                                         className="btn-close"
-                                        onClick={handleModalToggle}></button>
+                                        onClick={handleClose}></button>
                                 </div>
                                 <div className="modal-body">
                                     <form onSubmit={handleSubmit}>
@@ -286,7 +174,7 @@ const ProfilePage = () => {
                                             <button
                                                 type="button"
                                                 className="btn btn-danger"
-                                                onClick={handleModalToggle}>
+                                                onClick={handleClose}>
                                                 Cancelar
                                             </button>
                                             <button type="submit" className="btn btn-success">
@@ -317,10 +205,8 @@ const ProfilePage = () => {
                     </div>
                 </div>
             )}
-
-            <Footer />
-        </section>
+        </>
     );
 };
 
-export default ProfilePage;
+export default ProfileModal;

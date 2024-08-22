@@ -258,7 +258,7 @@ const RolePage = () => {
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Create New Role</h5>
+                            <h5 className="modal-title">Crear Rol</h5>
                             <button
                                 type="button"
                                 className="btn-close"
@@ -268,7 +268,7 @@ const RolePage = () => {
                             <div className="modal-body">
                                 <div className="mb-3">
                                     <label htmlFor="roleName" className="form-label">
-                                        Role Name
+                                        Nombre
                                     </label>
                                     <input
                                         type="text"
@@ -277,7 +277,7 @@ const RolePage = () => {
                                         className="form-control"
                                         value={newRole.name}
                                         onChange={(e) => handleInputChange(e, setNewRole)}
-                                        placeholder="Enter role name"
+                                        placeholder="Nombre del rol"
                                         required
                                     />
                                 </div>
@@ -457,12 +457,12 @@ const RolePage = () => {
                             <div className="modal-footer">
                                 <button
                                     type="button"
-                                    className="btn btn-secondary"
+                                    className="btn btn-danger px-2"
                                     onClick={() => setShowModal(false)}>
-                                    Close
+                                    Cancelar
                                 </button>
-                                <button type="submit" className="btn btn-primary">
-                                    Save
+                                <button type="submit" className="btn btn-success px-4">
+                                    Crear
                                 </button>
                             </div>
                         </form>

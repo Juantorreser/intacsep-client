@@ -41,17 +41,21 @@ $gray: #306eac;
         flex-direction: row;
     }
 
-    /* Add this to your CSS file */
     .letter-spacing-sm {
-        letter-spacing: 0.05em; /* Adjust value as needed */
+        letter-spacing: 0.05em; 
     }
 
     .letter-spacing-md {
-        letter-spacing: 0.1em; /* Adjust value as needed */
+        letter-spacing: 0.1em; 
     }
 
     .letter-spacing-lg {
-        letter-spacing: 0.3em; /* Adjust value as needed */
+        letter-spacing: 0.3em; 
+    }
+
+    footer{
+        position: relative;
+        top: 5px;
     }
 
     #login {

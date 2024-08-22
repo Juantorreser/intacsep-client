@@ -206,7 +206,7 @@ const UsersPage = () => {
                                             <td>{user.lastName}</td>
                                             <td>{user.phone}</td>
                                             <td>{user.role}</td>
-                                            <td className="text-end">
+                                            <td className="text-end d-flex">
                                                 <button
                                                     className="btn btn-primary me-2"
                                                     onClick={() => handleEdit(user)}>
@@ -373,13 +373,13 @@ const UsersPage = () => {
                                                 <div className="modal-footer">
                                                     <button
                                                         type="button"
-                                                        className="btn btn-danger"
+                                                        className="btn btn-danger px-"
                                                         onClick={closeModal}>
                                                         Cancelar
                                                     </button>
                                                     <button
                                                         type="submit"
-                                                        className="btn btn-success">
+                                                        className="btn btn-success px-4">
                                                         {editingUserId ? "Guardar" : "Crear"}
                                                     </button>
                                                 </div>

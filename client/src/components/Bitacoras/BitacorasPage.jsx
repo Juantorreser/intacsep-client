@@ -719,23 +719,26 @@ const BitacorasPage = () => {
                                             </th>
                                             <th className="one">
                                                 <div>
-                                                <select
-                                                    id="statusFilter"
-                                                    className="form-select"
-                                                    value={statusFilter}
-                                                    onChange={(e) =>
-                                                        setStatusFilter(e.target.value)
-                                                    }>
-                                                    <option value="">Todos</option>
-                                                    <option value="nueva">Nueva</option>
-                                                    <option value="validada">Validada</option>
-                                                    <option value="iniciada">Iniciada</option>
-                                                    <option value="cerrada">Cerrada</option>
-                                                    <option value="finalizada">Finalizada</option>
-                                                    <option value="cerrada (e)">Cerrada (e)</option>
-                                                    
-                                                </select>
-                                            </div>
+                                                    <select
+                                                        id="statusFilter"
+                                                        className="form-select"
+                                                        value={statusFilter}
+                                                        onChange={(e) =>
+                                                            setStatusFilter(e.target.value)
+                                                        }>
+                                                        <option value="">Todos</option>
+                                                        <option value="nueva">Nueva</option>
+                                                        <option value="validada">Validada</option>
+                                                        <option value="iniciada">Iniciada</option>
+                                                        <option value="cerrada">Cerrada</option>
+                                                        <option value="finalizada">
+                                                            Finalizada
+                                                        </option>
+                                                        <option value="cerrada (e)">
+                                                            Cerrada (e)
+                                                        </option>
+                                                    </select>
+                                                </div>
                                             </th>
                                             <th className="half"></th>
                                             <th className="half"></th>
@@ -869,6 +872,16 @@ const BitacorasPage = () => {
                         <div className="modal-dialog">
                             <div className="modal-content">
                                 <div className="modal-body w-100">
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        aria-label="Close"
+                                        onClick={handleModalToggle}
+                                        style={{
+                                            position: "absolute",
+                                            top: "15px",
+                                            right: "15px",
+                                        }}></button>
                                     <div className="w-100 col justify-content-center align-items-center">
                                         <img src="/logo2.png" alt="" width={50} />
                                         <p className="p-0 m-0"> Nueva Bitácora</p>
@@ -1177,11 +1190,11 @@ const BitacorasPage = () => {
                                         <div className="d-flex justify-content-end">
                                             <button
                                                 type="button"
-                                                className="btn btn-danger me-3"
+                                                className="btn btn-danger me-3 px-2"
                                                 onClick={handleModalToggle}>
                                                 Cancelar
                                             </button>
-                                            <button type="submit" className="btn btn-success">
+                                            <button type="submit" className="btn btn-success px-4">
                                                 Crear
                                             </button>
                                         </div>
