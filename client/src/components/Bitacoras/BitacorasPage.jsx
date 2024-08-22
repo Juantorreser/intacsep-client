@@ -209,6 +209,7 @@ const BitacorasPage = () => {
     const [creationDateFilter, setCreationDateFilter] = useState("");
     const [clienteFilter, setClienteFilter] = useState("");
     const [operadorFilter, setOperadorFilter] = useState("");
+    const [monitoreoFilter, setMonitoreoFilter] = useState("");
 
     // useInactivityTimeout(120000, logout); // 120000 ms = 2 minutes
 
@@ -441,6 +442,10 @@ const BitacorasPage = () => {
             filtered = filtered.filter((bitacora) => bitacora.operador === operadorFilter);
         }
 
+        if (monitoreoFilter) {
+            filtered = filtered.filter((bitacora) => bitacora.monitoreo === monitoreoFilter);
+        }
+
         if (creationDateFilter) {
             filtered = filtered.filter(
                 (bitacora) =>
@@ -572,12 +577,58 @@ const BitacorasPage = () => {
         });
     };
 
-    const uniqueClientes = [
-        ...new Set(sortedFilteredBitacoras.map((bitacora) => bitacora.cliente)),
-    ];
-    const uniqueOperadores = [
-        ...new Set(sortedFilteredBitacoras.map((bitacora) => bitacora.operador)),
-    ];
+    const getLatestEventFrec = (bitacora) => {
+        if (bitacora.eventos.length > 0) {
+            // Find the latest event by comparing createdAt timestamps
+            const latestEvent = bitacora.eventos.reduce((latest, current) =>
+                new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
+            );
+            return latestEvent.frecuencia;
+        } else {
+            return "N/A";
+        }
+    };
+
+    const getEventColor = (bitacora) => {
+        if (bitacora.status != "iniciada" && bitacora.status != "validada") {
+            return ["#333235", "#333235", "#333235"]; // No events
+        }
+
+        const latestEvent = bitacora.eventos.reduce((latest, current) =>
+            new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
+        );
+
+        const frecuencia = latestEvent.frecuencia;
+        if (!frecuencia) return ["#333235", "#333235", "#333235"]; // No frecuencia
+
+        const frecuenciaMs = frecuencia * 60000; // Convert minutes to milliseconds
+        const eventTimeMs = new Date(latestEvent.createdAt).getTime();
+        const currentTimeMs = new Date().getTime();
+        const elapsedTimeMs = currentTimeMs - eventTimeMs;
+
+        const greenColor = "#51FF4E"; // Green
+        const greenColor2 = "#3DDC3B"; // Green
+        const greenColor3 = "#3C933B"; // Green
+        const yellowColor = "#ECEC27"; // Yellow
+        const yellowColor2 = "#D8D811"; // Yellow
+        const yellowColor3 = "#ACAC2A"; // Yellow
+        const redColor = "#F82929"; // Red
+        const redColor2 = "#B82F2F"; // Red
+        const redColor3 = "#883B3B"; // Red
+
+        // Determine the color
+        if (elapsedTimeMs < frecuenciaMs) {
+            const threshold = frecuenciaMs * 0.75; // 75% of the frecuencia
+            if (elapsedTimeMs < threshold) {
+                return [greenColor, greenColor2, greenColor3]; // Green
+            } else {
+                return [yellowColor, yellowColor2, yellowColor3]; // Yellow
+            }
+        } else {
+            return [redColor, redColor2, redColor3]; // Red
+        }
+    };
+
 
     return (
         <section id="activeBits">
@@ -646,11 +697,19 @@ const BitacorasPage = () => {
                                                     (sortOrder === "asc" ? "↑" : "↓")}
                                             </th>
                                             <th
-                                                className="one"
+                                                className="two"
                                                 onClick={() => handleSortChange("status")}
                                                 style={{cursor: "pointer"}}>
                                                 Status{" "}
                                                 {sortField === "status" &&
+                                                    (sortOrder === "asc" ? "↑" : "↓")}
+                                            </th>
+                                            <th
+                                                className="one"
+                                                onClick={() => handleSortChange("frecuencia")}
+                                                style={{cursor: "pointer"}}>
+                                                Frecuencia{" "}
+                                                {sortField === "frecuencia" &&
                                                     (sortOrder === "asc" ? "↑" : "↓")}
                                             </th>
                                             <th className="text-center half">
@@ -686,7 +745,24 @@ const BitacorasPage = () => {
                                                     {/* Add more status options as needed */}
                                                 </select>
                                             </th>
-                                            <th className="two"></th>
+                                            <th className="two">
+                                                <select
+                                                    id="clienteFilter"
+                                                    className="form-select"
+                                                    value={monitoreoFilter}
+                                                    onChange={(e) =>
+                                                        setMonitoreoFilter(e.target.value)
+                                                    }>
+                                                    <option value="">Todos</option>
+                                                    {monitoreos.map((monitreo, id) => (
+                                                        <option
+                                                            key={id}
+                                                            value={monitreo.tipoMonitoreo}>
+                                                            {monitreo.tipoMonitoreo}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </th>
                                             <th className="two">
                                                 <select
                                                     id="operadorFilter"
@@ -717,7 +793,7 @@ const BitacorasPage = () => {
                                                     />
                                                 </div>
                                             </th>
-                                            <th className="one">
+                                            <th className="two">
                                                 <div>
                                                     <select
                                                         id="statusFilter"
@@ -740,6 +816,7 @@ const BitacorasPage = () => {
                                                     </select>
                                                 </div>
                                             </th>
+                                            <th className="one"></th>
                                             <th className="half"></th>
                                             <th className="half"></th>
                                             <th className="half"></th>
@@ -767,7 +844,29 @@ const BitacorasPage = () => {
                                                         bitacora.createdAt
                                                     ).toLocaleDateString()}
                                                 </td>
-                                                <td className="one">{bitacora.status}</td>
+                                                <td className="two text-capitalize">
+                                                    {bitacora.status}
+                                                </td>
+                                                <td className="one text-capitalize">
+                                                    {/* <p>{getLatestEventFrec(bitacora)}</p> */}
+                                                    <div className="semaforo">
+                                                        {/* <div className="one"></div>
+                                                        <div className="two"></div>
+                                                        <div className="three"></div> */}
+                                                        {getEventColor(bitacora).map(
+                                                            (color, index) => (
+                                                                <div
+                                                                    key={index}
+                                                                    className={`circle circle-${
+                                                                        index + 1
+                                                                    }`}
+                                                                    style={{
+                                                                        backgroundColor: color,
+                                                                    }}></div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </td>
                                                 <td className="text-center half">
                                                     <button
                                                         className={

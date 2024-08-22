@@ -370,36 +370,61 @@ $gray: #306eac;
     position: sticky;
     top: 0;
     background: white; /* Ensure the header is visible */
-    z-index: 1;
+    z-index: 100;
     overflow-x: auto; /* Enable horizontal scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 .table-container thead th,
 .table-container tbody td {
+    font-size: 0.8rem;
     padding: 8px;
     border: 1px solid #ddd;
     text-align: left;
-    white-space: wrap; /* Prevent text from wrapping */
+    white-space: wrap;
+    text-align: center;
 }
 
-@media (min-width: 800) {
+.table-container thead th {
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-align: center;
+
+    & select,
+    & input {
+        font-size: 0.7rem;
+    }
+}
+
+@media (min-width: 800px) {
     .table-container thead th,
     .table-container tbody td {
         &.one {
-            width: 9%; /* Adjust as needed */
+            width: 7%; /* Adjust as needed */
         }
         &.half {
-            width: 5%; /* Adjust as needed */
+            width: 4%; /* Adjust as needed */
         }
         &.two {
-            width: 14%; /* Adjust as needed */
+            width: 10%; /* Adjust as needed */
+        }
+        & button {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            & i {
+                font-size: 0.9rem;
+                padding: 0;
+                margin: 0;
+            }
         }
     }
 }
 
 /* Styles for screens smaller than 768px */
-@media (max-width: 800) {
+@media (max-width: 768px) {
     .table-container {
         overflow-x: auto; /* Ensure table is scrollable horizontally */
         -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
@@ -417,6 +442,14 @@ $gray: #306eac;
 
     .table-container thead th,
     .table-container tbody td {
+        button {
+            & i {
+                font-size: 0.9rem;
+                padding: 0;
+                margin: 0;
+            }
+        }
+
         &.one {
             width: 25%; /* Adjust as needed */
         }
@@ -426,5 +459,37 @@ $gray: #306eac;
         &.two {
             width: 40%; /* Adjust as needed */
         }
+    }
+}
+
+.semaforo {
+    margin: auto;
+    width: 90%;
+    height: 30px;
+    display: flex;
+    place-items: center;
+
+    & .circle {
+        height: 20px;
+        width: 20px;
+        border: solid rgb(255, 255, 255) 2px;
+        border-radius: 50%;
+    }
+
+    & .circle-1 {
+        background-color: red;
+        position: relative;
+        right: -7px;
+        z-index: 2;
+    }
+    & .circle-2 {
+        background-color: rgb(196, 32, 32);
+        z-index: 1;
+    }
+    & .circle-3 {
+        background: rgb(129, 15, 15);
+        position: relative;
+        left: -7px;
+        z-index: 0;
     }
 }
