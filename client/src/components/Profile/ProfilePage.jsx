@@ -115,20 +115,6 @@ const ProfileModal = ({showModal, handleClose}) => {
                                 <div className="modal-body">
                                     <form onSubmit={handleSubmit}>
                                         <div className="mb-3">
-                                            <label htmlFor="modalPassword" className="form-label">
-                                                Contraseña
-                                            </label>
-                                            <input
-                                                type="password"
-                                                className="form-control"
-                                                id="modalPassword"
-                                                name="password"
-                                                value={modalData.password || ""}
-                                                onChange={handleChange}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-3">
                                             <label htmlFor="modalFirstName" className="form-label">
                                                 Nombre
                                             </label>
@@ -170,6 +156,49 @@ const ProfileModal = ({showModal, handleClose}) => {
                                                 required
                                             />
                                         </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="modalEmail" className="form-label">
+                                                Email
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="modalLastName"
+                                                name="email"
+                                                value={user.email}
+                                                disabled
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="modalLastName" className="form-label">
+                                                Role
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="modalLastName"
+                                                name="lastName"
+                                                value={user.role}
+                                                disabled
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="modalPassword" className="form-label">
+                                                Contraseña
+                                            </label>
+                                            <input
+                                                type="password"
+                                                className="form-control"
+                                                id="modalPassword"
+                                                name="password"
+                                                value={modalData.password || ""}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </div>
+
                                         <div className="modal-footer">
                                             <button
                                                 type="button"
