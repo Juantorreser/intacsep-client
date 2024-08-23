@@ -16,6 +16,7 @@ const EventoSchema = new mongoose.Schema(
 
 const TransporteSchema = new mongoose.Schema(
     {
+        id: {type: Number, unique: true, required: true},
         remolque: {
             eco: String,
             placa: String,
