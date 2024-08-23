@@ -770,156 +770,160 @@ const BitacoraDetail = ({edited}) => {
                                 </button>
                             )}
                     </div>
-
-                    <div className="card-body">
-                        <div className="row ms-1">
-                            {/* Column 1 */}
-                            <div className="col-md-4">
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Folio Servicio:</strong> {bitacora.folio_servicio}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>No. Bitácora:</strong> {bitacora.bitacora_id}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Cliente:</strong> {bitacora.cliente}
-                                </h6>
-                                {/* <h6 className="card-subtitle mb-2">
+                    <div className="scrollable-content flex-grow-1 overflow-auto px-3">
+                        <div className="card-body">
+                            <div className="row ms-1">
+                                {/* Column 1 */}
+                                <div className="col-md-4">
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Folio Servicio:</strong> {bitacora.folio_servicio}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>No. Bitácora:</strong> {bitacora.bitacora_id}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Cliente:</strong> {bitacora.cliente}
+                                    </h6>
+                                    {/* <h6 className="card-subtitle mb-2">
                                     <strong>ID Cliente:</strong> {cliente.ID_Cliente}
                                 </h6> */}
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Tipo Monitoreo:</strong> {bitacora.monitoreo}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Operador:</strong> {bitacora.operador}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Teléfono:</strong> {bitacora.telefono}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Linea Transporte:</strong> {bitacora.linea_transporte}
-                                </h6>
-                            </div>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Tipo Monitoreo:</strong> {bitacora.monitoreo}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Operador:</strong> {bitacora.operador}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Teléfono:</strong> {bitacora.telefono}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Linea Transporte:</strong>{" "}
+                                        {bitacora.linea_transporte}
+                                    </h6>
+                                </div>
 
-                            {/* Column 2 */}
-                            <div className="col-md-2">
-                                <h5 className="card-subtitle mb-2 fw-semibold">Tracto:</h5>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Eco:</strong> {bitacora.tracto.eco}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Placa:</strong> {bitacora.tracto.placa}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Marca:</strong> {bitacora.tracto.marca}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Modelo:</strong> {bitacora.tracto.modelo}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Color:</strong> {bitacora.tracto.color}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Tipo:</strong> {bitacora.tracto.tipo}
-                                </h6>
-                            </div>
-                            {/* Column 3 */}
-                            <div className="col-md-3">
-                                <h5 className="card-subtitle mb-2 fw-semibold">Remolque:</h5>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Eco:</strong> {bitacora.remolque.eco}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Placa:</strong> {bitacora.remolque.placa}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Color:</strong> {bitacora.remolque.color}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Capacidad:</strong> {bitacora.remolque.capacidad}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Sello:</strong> {bitacora.remolque.sello}
-                                </h6>
-                            </div>
+                                {/* Column 2 */}
+                                <div className="col-md-2">
+                                    <h5 className="card-subtitle mb-2 fw-semibold">Tracto:</h5>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Eco:</strong> {bitacora.tracto.eco}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Placa:</strong> {bitacora.tracto.placa}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Marca:</strong> {bitacora.tracto.marca}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Modelo:</strong> {bitacora.tracto.modelo}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Color:</strong> {bitacora.tracto.color}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Tipo:</strong> {bitacora.tracto.tipo}
+                                    </h6>
+                                </div>
+                                {/* Column 3 */}
+                                <div className="col-md-3">
+                                    <h5 className="card-subtitle mb-2 fw-semibold">Remolque:</h5>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Eco:</strong> {bitacora.remolque.eco}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Placa:</strong> {bitacora.remolque.placa}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Color:</strong> {bitacora.remolque.color}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Capacidad:</strong> {bitacora.remolque.capacidad}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Sello:</strong> {bitacora.remolque.sello}
+                                    </h6>
+                                </div>
 
-                            {/* Column 4 */}
-                            <div className="col-md-3">
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Origen:</strong> {bitacora.origen}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Destino:</strong> {bitacora.destino}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Enlace:</strong> {bitacora.enlace}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>ID Acceso:</strong> {bitacora.id_acceso}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Contraseña Acceso:</strong> {bitacora.contra_acceso}
-                                </h6>
+                                {/* Column 4 */}
+                                <div className="col-md-3">
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Origen:</strong> {bitacora.origen}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Destino:</strong> {bitacora.destino}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Enlace:</strong> {bitacora.enlace}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>ID Acceso:</strong> {bitacora.id_acceso}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Contraseña Acceso:</strong> {bitacora.contra_acceso}
+                                    </h6>
+                                </div>
+                            </div>
+                            <hr />
+                            {/* New Row for Inicio Monitoreo, Final Monitoreo, and Iniciar button */}
+                            <div className="row mt-3 mx-1">
+                                <div className="col-md-5">
+                                    <p className="card-text mb-2">
+                                        <strong>Inicio Monitoreo:</strong>{" "}
+                                        {bitacora.inicioMonitoreo
+                                            ? formatDate(bitacora.inicioMonitoreo)
+                                            : "--"}
+                                    </p>
+                                </div>
+                                <div className="col-md-5">
+                                    <p className="card-text mb-2">
+                                        <strong>Final Monitoreo:</strong>{" "}
+                                        {bitacora.finalMonitoreo
+                                            ? formatDate(bitacora.finalMonitoreo)
+                                            : "--"}
+                                    </p>
+                                </div>
+                                <div className="col-md-2 d-flex justify-content-end align-items-center">
+                                    <button
+                                        id="iniciarBtn"
+                                        className={getButtonClass(bitacora.status)}
+                                        onClick={
+                                            bitacora.status === "iniciada"
+                                                ? handleFinish
+                                                : handleStart
+                                        }
+                                        disabled={!hasEventWithName()}>
+                                        {getButtonText(bitacora.status)}
+                                    </button>
+                                </div>
                             </div>
                         </div>
+
                         <hr />
-                        {/* New Row for Inicio Monitoreo, Final Monitoreo, and Iniciar button */}
-                        <div className="row mt-3 mx-1">
-                            <div className="col-md-5">
-                                <p className="card-text mb-2">
-                                    <strong>Inicio Monitoreo:</strong>{" "}
-                                    {bitacora.inicioMonitoreo
-                                        ? formatDate(bitacora.inicioMonitoreo)
-                                        : "--"}
-                                </p>
-                            </div>
-                            <div className="col-md-5">
-                                <p className="card-text mb-2">
-                                    <strong>Final Monitoreo:</strong>{" "}
-                                    {bitacora.finalMonitoreo
-                                        ? formatDate(bitacora.finalMonitoreo)
-                                        : "--"}
-                                </p>
-                            </div>
-                            <div className="col-md-2 d-flex justify-content-end align-items-center">
-                                <button
-                                    id="iniciarBtn"
-                                    className={getButtonClass(bitacora.status)}
-                                    onClick={
-                                        bitacora.status === "iniciada" ? handleFinish : handleStart
-                                    }
-                                    disabled={!hasEventWithName()}>
-                                    {getButtonText(bitacora.status)}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <hr />
+                        <div className="container mt-4">
+                            <div className="row mb-3">
+                                <div className="d-flex justify-content-between align-items-center eventsTitle">
+                                    <button
+                                        className="btn btn-primary rounded-5"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#eventModal"
+                                        disabled={
+                                            bitacora.status === "cerrada" ||
+                                            bitacora.status === "cerrada (e)"
+                                        }>
+                                        <FontAwesomeIcon icon={faPlus} />
+                                    </button>
 
-                    <div className="container mt-4">
-                        <div className="row mb-3">
-                            <div className="d-flex justify-content-between align-items-center">
-                                <button
-                                    className="btn btn-primary rounded-5"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#eventModal"
-                                    disabled={
-                                        bitacora.status === "cerrada" ||
-                                        bitacora.status === "cerrada (e)"
-                                    }>
-                                    <FontAwesomeIcon icon={faPlus} />
-                                </button>
-
-                                <h1 className="text-center fs-3 fw-semibold text-black flex-grow-1 me-5">
-                                    Eventos
-                                </h1>
+                                    <h1 className="text-center fs-3 fw-semibold text-black flex-grow-1 me-5">
+                                        Eventos
+                                    </h1>
+                                </div>
                             </div>
-                        </div>
-                        <div className="row">
-                            {events.map((event, index) => (
-                                <EventCard key={index} {...event} />
-                            ))}
+                            <div className="row">
+                                {events.map((event, index) => (
+                                    <EventCard key={index} {...event} />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

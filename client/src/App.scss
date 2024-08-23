@@ -186,6 +186,32 @@ $gray: #306eac;
         // }
     }
 
+    #bitacoraDetail {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            .scrollable-content {
+                flex-grow: 1;
+                overflow-y: hidden;
+                height: calc(100vh - 210px);
+                position: relative;
+            }
+
+            .eventsTitle {
+                position: sticky;
+                top: 0;
+                z-index: 10; 
+                background-color: white;
+                padding: 10px 0; 
+            }
+        }
+    }
+
     .btn-disabled {
         background-color: #6c757d; /* Bootstrap's grey color */
         border-color: #6c757d; /* Match the border color */
@@ -475,6 +501,4 @@ $gray: #306eac;
         width: 20px;
         border-radius: 50%;
     }
-
-
 }
