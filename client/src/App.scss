@@ -104,7 +104,7 @@ $gray: #306eac;
         position: fixed;
         top: 0;
         left: 0;
-        width: 20%; /* Adjust based on your preference */
+        width: 17%; /* Adjust based on your preference */
         height: 100%;
         z-index: 1000;
         background-color: #f8f9fa; /* or any background color */
@@ -112,9 +112,9 @@ $gray: #306eac;
     }
 
     .content-wrapper {
-        margin-left: 20%; /* Same as the sidebar width */
+        margin-left: 17%; /* Same as the sidebar width */
         margin-top: 80px;
-        width: 85%; /* Adjust based on your sidebar width */
+        width: 83%; /* Adjust based on your sidebar width */
         padding: 0;
         min-height: 75vh;
     }

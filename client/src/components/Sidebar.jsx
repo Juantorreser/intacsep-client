@@ -81,24 +81,24 @@ const Sidebar = () => {
                         className="d-flex align-items-center text-white-50 w-100 justify-content-start cursor-pointer"
                         style={{height: "100px"}}
                         onClick={handleOpenModal}>
-                        <div className="d-flex justify-content-center align-items-center w-25 h-100">
+                        {/* <div className="d-flex justify-content-center align-items-center w-25 h-100">
                             <i className="fa fa-user" style={{fontSize: "3em"}}></i>
-                        </div>
+                        </div> */}
                         <div className="d-flex flex-column justify-content-center align-items-start ms-2 mb-3">
-                            <span className="d-block" style={{fontSize: "0.8rem"}}>
+                            <span className="d-block mb-1" style={{fontSize: "0.75rem"}}>
                                 Bienvenido (a)
                             </span>
-                            <h5 style={{fontSize: "1.2rem"}}>
+                            <h5 style={{fontSize: "1rem"}}>
                                 {user && user.firstName && user.lastName
                                     ? `${user.firstName} ${user.lastName}`
                                     : "Usuario"}
                             </h5>
                             {user && (
                                 <>
-                                    <span style={{fontSize: "0.8rem"}}>
+                                    <span style={{fontSize: "0.75rem"}}>
                                         {user.email || "Email no disponible"}
                                     </span>
-                                    <span style={{fontSize: "0.8rem"}}>
+                                    <span style={{fontSize: "0.75rem"}}>
                                         {user.role || "Rol no disponible"}
                                     </span>
                                 </>
@@ -124,7 +124,8 @@ const Sidebar = () => {
                                     <a
                                         className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center"
                                         role="button"
-                                        onClick={() => toggleCollapse("bitacorasCollapse")}>
+                                        onClick={() => toggleCollapse("bitacorasCollapse")}
+                                        style={{fontSize: "0.95rem"}}>
                                         Monitoreo
                                         <i
                                             className={`fa ${
@@ -140,8 +141,9 @@ const Sidebar = () => {
                                     }`}>
                                     <ul className="nav flex-column w-75 gap-2">
                                         <li
-                                            className="text-white-50 cursor-pointer mb-3 ms-3 mt-0"
-                                            onClick={() => navigate("/bitacoras")}>
+                                            className="text-white-50 cursor-pointer mb-3 ms-2 mt-0"
+                                            onClick={() => navigate("/bitacoras")}
+                                            style={{fontSize: "0.92rem"}}>
                                             Bitácoras
                                         </li>
                                     </ul>
@@ -156,7 +158,8 @@ const Sidebar = () => {
                                     <a
                                         className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
                                         role="button"
-                                        onClick={() => toggleCollapse("settingsCollapse")}>
+                                        onClick={() => toggleCollapse("settingsCollapse")}
+                                        style={{fontSize: "0.95rem"}}>
                                         Configuración
                                         <i
                                             className={`fa ${
@@ -167,7 +170,7 @@ const Sidebar = () => {
                                     </a>
                                 </p>
                                 <div
-                                    className={`collapse ms-3 ${
+                                    className={`collapse ms-2 ${
                                         collapsedItems.settingsCollapse ? "show" : ""
                                     }`}>
                                     {/* Catálogos Collapsible */}
@@ -175,7 +178,8 @@ const Sidebar = () => {
                                         <a
                                             className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2 itemLine"
                                             role="button"
-                                            onClick={() => toggleCollapse("catalogosCollapse")}>
+                                            onClick={() => toggleCollapse("catalogosCollapse")}
+                                            style={{fontSize: "0.92rem"}}>
                                             Catálogos
                                             <i
                                                 className={`fa ${
@@ -189,25 +193,28 @@ const Sidebar = () => {
                                         className={`collapse ${
                                             collapsedItems.catalogosCollapse ? "show" : ""
                                         }`}>
-                                        <ul className="nav flex-column w-75 ms-4 gap-2">
+                                        <ul className="nav flex-column w-75 ms-3 gap-2">
                                             {roleData.tipos_de_monitoreo && (
                                                 <li
                                                     className="text-white-50 cursor-pointer itemLine2"
-                                                    onClick={() => navigate("/tipos_monitoreo")}>
+                                                    onClick={() => navigate("/tipos_monitoreo")}
+                                                    style={{fontSize: "0.85rem"}}>
                                                     Tipos Monitoreo
                                                 </li>
                                             )}
                                             {roleData.eventos && (
                                                 <li
                                                     className="text-white-50 cursor-pointer itemLine2"
-                                                    onClick={() => navigate("/eventos")}>
+                                                    onClick={() => navigate("/eventos")}
+                                                    style={{fontSize: "0.85rem"}}>
                                                     Eventos
                                                 </li>
                                             )}
                                             {roleData.clientes && (
                                                 <li
                                                     className="text-white-50 cursor-pointer itemLine2"
-                                                    onClick={() => navigate("/clientes")}>
+                                                    onClick={() => navigate("/clientes")}
+                                                    style={{fontSize: "0.85rem"}}>
                                                     Clientes
                                                 </li>
                                             )}
@@ -215,21 +222,24 @@ const Sidebar = () => {
                                             {roleData.origenes && (
                                                 <li
                                                     className="text-white-50 cursor-pointer itemLine2"
-                                                    onClick={() => navigate("/origenes")}>
+                                                    onClick={() => navigate("/origenes")}
+                                                    style={{fontSize: "0.85rem"}}>
                                                     Origenes
                                                 </li>
                                             )}
                                             {roleData.destinos && (
                                                 <li
                                                     className="text-white-50 cursor-pointer itemLine2"
-                                                    onClick={() => navigate("/destinos")}>
+                                                    onClick={() => navigate("/destinos")}
+                                                    style={{fontSize: "0.85rem"}}>
                                                     Destinos
                                                 </li>
                                             )}
                                             {roleData.operadores && (
                                                 <li
                                                     className="text-white-50 cursor-pointer mb-3 itemLine2"
-                                                    onClick={() => navigate("/operadores")}>
+                                                    onClick={() => navigate("/operadores")}
+                                                    style={{fontSize: "0.85rem"}}>
                                                     Operadores
                                                 </li>
                                             )}
@@ -239,9 +249,10 @@ const Sidebar = () => {
                                     {/* Sistema Collapsible */}
                                     <p className="">
                                         <a
-                                            className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2 itemLine"
+                                            className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2 itemLine p-0 mb-0"
                                             role="button"
-                                            onClick={() => toggleCollapse("sistemaCollapse")}>
+                                            onClick={() => toggleCollapse("sistemaCollapse")}
+                                            style={{fontSize: "0.92rem"}}>
                                             Sistema
                                             <i
                                                 className={`fa ${
@@ -259,14 +270,16 @@ const Sidebar = () => {
                                             {roleData.usuarios && (
                                                 <li
                                                     className="text-white-50 cursor-pointer"
-                                                    onClick={() => navigate("/usuarios")}>
+                                                    onClick={() => navigate("/usuarios")}
+                                                    style={{fontSize: "0.85rem"}}>
                                                     Usuarios
                                                 </li>
                                             )}
                                             {roleData.roles && (
                                                 <li
                                                     className="text-white-50 cursor-pointer itemLine2"
-                                                    onClick={() => navigate("/roles")}>
+                                                    onClick={() => navigate("/roles")}
+                                                    style={{fontSize: "0.85rem"}}>
                                                     Roles
                                                 </li>
                                             )}
