@@ -591,7 +591,7 @@ const BitacorasPage = () => {
 
     const getEventColor = (bitacora) => {
         if (bitacora.status != "iniciada" && bitacora.status != "validada") {
-            return ["#333235", "#333235", "#333235"]; // No events
+            return ["#333235"]; // No events
         }
 
         const latestEvent = bitacora.eventos.reduce((latest, current) =>
@@ -599,7 +599,7 @@ const BitacorasPage = () => {
         );
 
         const frecuencia = latestEvent.frecuencia;
-        if (!frecuencia) return ["#333235", "#333235", "#333235"]; // No frecuencia
+        if (!frecuencia) return ["#333235"]; // No frecuencia
 
         const frecuenciaMs = frecuencia * 60000; // Convert minutes to milliseconds
         const eventTimeMs = new Date(latestEvent.createdAt).getTime();
@@ -620,15 +620,14 @@ const BitacorasPage = () => {
         if (elapsedTimeMs < frecuenciaMs) {
             const threshold = frecuenciaMs * 0.75; // 75% of the frecuencia
             if (elapsedTimeMs < threshold) {
-                return [greenColor, greenColor2, greenColor3]; // Green
+                return [greenColor] // Green
             } else {
-                return [yellowColor, yellowColor2, yellowColor3]; // Yellow
+                return [yellowColor] // Yellow
             }
         } else {
-            return [redColor, redColor2, redColor3]; // Red
+            return [redColor] // Red
         }
     };
-
 
     return (
         <section id="activeBits">
@@ -838,7 +837,7 @@ const BitacorasPage = () => {
                                                 </td>
                                                 <td className="two">{bitacora.cliente}</td>
                                                 <td className="two">{bitacora.monitoreo}</td>
-                                                <td className="two">{bitacora.operador}</td>
+                                                <td className="two ">{bitacora.operador}</td>
                                                 <td className="two">
                                                     {new Date(
                                                         bitacora.createdAt
@@ -848,18 +847,12 @@ const BitacorasPage = () => {
                                                     {bitacora.status}
                                                 </td>
                                                 <td className="one text-capitalize">
-                                                    {/* <p>{getLatestEventFrec(bitacora)}</p> */}
                                                     <div className="semaforo">
-                                                        {/* <div className="one"></div>
-                                                        <div className="two"></div>
-                                                        <div className="three"></div> */}
                                                         {getEventColor(bitacora).map(
                                                             (color, index) => (
                                                                 <div
                                                                     key={index}
-                                                                    className={`circle circle-${
-                                                                        index + 1
-                                                                    }`}
+                                                                    className={`circle`}
                                                                     style={{
                                                                         backgroundColor: color,
                                                                     }}></div>
