@@ -14,6 +14,27 @@ const EventoSchema = new mongoose.Schema(
     {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`
 );
 
+const TransporteSchema = new mongoose.Schema(
+    {
+        remolque: {
+            eco: String,
+            placa: String,
+            color: String,
+            capacidad: String,
+            sello: String,
+        },
+        tracto: {
+            eco: String,
+            placa: String,
+            marca: String,
+            modelo: String,
+            color: String,
+            tipo: String,
+        },
+    },
+    {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`
+);
+
 const BitSchema = new mongoose.Schema(
     {
         bitacora_id: {type: String, required: true, unique: true},
@@ -46,6 +67,7 @@ const BitSchema = new mongoose.Schema(
         inicioMonitoreo: {type: Date},
         finalMonitoreo: {type: Date},
         status: {type: String, default: "creada", required: true},
+        transportes: [TransporteSchema],
         eventos: [EventoSchema],
         edited_bitacora: Object, // Reference to Bitacora model
     },
