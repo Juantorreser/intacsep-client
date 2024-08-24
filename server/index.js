@@ -534,7 +534,7 @@ app.patch("/bitacora/:id", async (req, res) => {
     const {id} = req.params;
     const edited_bitacora = req.body;
 
-    console.log("Received edited_bitacora:", edited_bitacora); // Add this line to debug
+    console.log("Received edited_bitacora:", edited_bitacora.transportes); // Add this line to debug
 
     try {
         const bitacora = await Bitacora.findById(id);
@@ -549,6 +549,39 @@ app.patch("/bitacora/:id", async (req, res) => {
     } catch (error) {
         console.error("Error updating bitacora:", error);
         res.status(500).json({message: "Internal server error"});
+    }
+});
+
+//Add trasnportes
+app.post("/bitacoras/:id/transportes", async (req, res) => {
+    try {
+        const bitacoraId = req.params.id;
+        const {id, tracto, remolque} = req.body;
+
+        // Find the bitacora by ID
+        const bitacora = await Bitacora.findOne({_id: bitacoraId});
+        if (!bitacora) {
+            return res.status(404).json({message: "Bitacora not found"});
+        }
+
+        // Create a new Transporte object
+        const newTransporte = {
+            id,
+            tracto,
+            remolque,
+        };
+
+        // Add the new Transporte to the bitacora's transportes array
+        bitacora.transportes.push(newTransporte);
+
+        // Save the updated bitacora
+        await bitacora.save();
+
+        // Return the updated bitacora
+        res.status(200).json(bitacora);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: "Server error", error});
     }
 });
 

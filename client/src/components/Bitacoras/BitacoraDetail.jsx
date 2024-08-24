@@ -8,6 +8,205 @@ import {faChevronDown, faChevronUp, faPlus} from "@fortawesome/free-solid-svg-ic
 import {useAuth} from "../../context/AuthContext";
 import {Modal, Button, Form, Row} from "react-bootstrap";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import TransporteDetails from "./TransporteDetails";
+
+const CreateTransporteModal = ({show, handleClose, addTransporte, transportes}) => {
+    const [transporteData, setTransporteData] = useState({
+        id: transportes.length + 1,
+        tracto: {
+            eco: "",
+            placa: "",
+            marca: "",
+            modelo: "",
+            color: "",
+            tipo: "",
+        },
+        remolque: {
+            eco: "",
+            placa: "",
+            color: "",
+            capacidad: "",
+            sello: "",
+        },
+    });
+
+    // Handle form input changes
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        const [section, field] = name.split(".");
+        if (section && field) {
+            setTransporteData((prevData) => ({
+                ...prevData,
+                [section]: {
+                    ...prevData[section],
+                    [field]: value,
+                },
+            }));
+        } else {
+            setTransporteData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
+    };
+
+    // Handle form submission
+    const handleSubmitTransporte = (e) => {
+        e.preventDefault();
+        addTransporte(transporteData);
+        handleClose();
+    };
+
+    return (
+        <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>Crear Nuevo Transporte</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form onSubmit={handleSubmitTransporte}>
+                    <Form.Group className="mb-3">
+                        <Form.Label>ID</Form.Label>
+                        <Form.Control
+                            type="number"
+                            name="id"
+                            value={transportes.length + 1}
+                            onChange={handleChange}
+                            required
+                            disabled
+                        />
+                    </Form.Group>
+
+                    {/* Tracto Fields */}
+                    <h5>Tracto</h5>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Eco</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="tracto.eco"
+                            value={transporteData.tracto.eco}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Placa</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="tracto.placa"
+                            value={transporteData.tracto.placa}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Marca</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="tracto.marca"
+                            value={transporteData.tracto.marca}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Modelo</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="tracto.modelo"
+                            value={transporteData.tracto.modelo}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Color</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="tracto.color"
+                            value={transporteData.tracto.color}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Tipo</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="tracto.tipo"
+                            value={transporteData.tracto.tipo}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+
+                    {/* Remolque Fields */}
+                    <h5>Remolque</h5>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Eco</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="remolque.eco"
+                            value={transporteData.remolque.eco}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Placa</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="remolque.placa"
+                            value={transporteData.remolque.placa}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Color</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="remolque.color"
+                            value={transporteData.remolque.color}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Capacidad</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="remolque.capacidad"
+                            value={transporteData.remolque.capacidad}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Sello</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="remolque.sello"
+                            value={transporteData.remolque.sello}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+                    <div className="d-flex w-100 justify-content-end">
+                        <button
+                            type="cancel"
+                            className="btn btn-danger px-3 me-3"
+                            onClick={handleClose}>
+                            Cancelar
+                        </button>
+                        <button type="submit" className="btn btn-success px-4">
+                            Crear
+                        </button>
+                    </div>
+                </Form>
+            </Modal.Body>
+        </Modal>
+    );
+};
 
 const BitacoraDetail = ({edited}) => {
     const {id} = useParams();
@@ -27,7 +226,83 @@ const BitacoraDetail = ({edited}) => {
     const [monitoreos, setMonitoreos] = useState([]);
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("detalles");
+    const [selectedTransporte, setSelectedTransporte] = useState(null);
+    const [transportes, setTransportes] = useState(bitacora?.transportes || []);
+    const [showModal, setShowModal] = useState(false);
+    const [isEditTransporteModalVisible, setEditTransporteModalVisible] = useState(false);
+    const [editedTransporte, setEditedTransporte] = useState(null);
 
+    const handleEditTransporte = () => {
+        setEditedTransporte(selectedTransporte);
+        setEditTransporteModalVisible(true);
+    };
+
+    //TRANSPORTES LOGIC
+    const handleClose = () => setShowModal(false);
+    const handleShow = () => setShowModal(true);
+    const handleSelectTransporte = (transporte) => {
+        setSelectedTransporte(transporte);
+    };
+
+    const handleTransportEdit = (e) => {
+        e.preventDefault();
+        console.log("TRANSPORT EDIT");
+        
+        // Find the index of the transporte by its ID
+        const index = edited_bitacora.transportes.findIndex(
+            (transporte) => transporte.id === editedTransporte.id
+        );
+
+        console.log(editedTransporte);
+        
+
+        if (index !== -1) {
+            // Update the specific transporte in the transportes array
+            const updatedTransportes = [...edited_bitacora.transportes];
+            updatedTransportes[index] = editedTransporte;
+
+            // Update edited_bitacora with the modified transportes array
+            setEditedBitacora((prevState) => ({
+                ...prevState,
+                transportes: updatedTransportes,
+            }));
+
+            console.log(edited_bitacora);
+            
+            // Call the original handleEditSubmit function
+            handleEditSubmit(e);
+            setEditTransporteModalVisible(false)
+        } else {
+            console.error("Transporte not found");
+        }
+    };
+
+    const addTransporte = async (newTransporte) => {
+        try {
+            const response = await fetch(`${baseUrl}/bitacoras/${bitacora._id}/transportes`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newTransporte),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to add transporte");
+            }
+
+            const updatedBitacora = await response.json();
+
+            // Assuming the updatedBitacora contains the updated transportes array
+            setTransportes(updatedBitacora.transportes);
+            fetchBitacora();
+        } catch (error) {
+            console.error("Error adding transporte:", error);
+        }
+    };
+
+    //TABS
     const handleTabClick = (tabName) => {
         setActiveTab(tabName);
     };
@@ -125,15 +400,18 @@ const BitacoraDetail = ({edited}) => {
                 if (edited || edited.edited) {
                     setBitacora(data.edited_bitacora);
                     setEditedBitacora(data.edited_bitacora);
+                    setTransportes(data.edited_bitacora.transportes);
                     console.log("EDITADA");
                 } else if (!edited && data.edited_bitacora) {
                     console.log("REGULAR PAGE pero tiene edited_btacora");
                     setBitacora(data);
                     setEditedBitacora(data.edited_bitacora);
+                    setTransportes(data.transportes);
                 } else {
                     console.log("REGULAR PAGE pero NO tiene edited_btacora");
                     setBitacora(data);
                     setEditedBitacora(data);
+                    setTransportes(data.transportes);
                 }
                 setIsEventStarted(data.status === "iniciada");
                 setFinishButtonDisabled(data.status === "finalizada");
@@ -481,7 +759,7 @@ const BitacoraDetail = ({edited}) => {
                             <p className="card-text">
                                 <strong>Descripción:</strong> {descripcion}
                             </p>
-                            <p className="d-flex align-items-start gap-2">
+                            <div className="d-flex align-items-start gap-2">
                                 <strong>Frecuencia: </strong>
                                 <p> {`${frecuencia}  min`} </p>
                                 {isLastEvent && (
@@ -496,7 +774,7 @@ const BitacoraDetail = ({edited}) => {
                                         ))}
                                     </div>
                                 )}
-                            </p>
+                            </div>
                         </div>
                         <div className="col-md-6">
                             <p className="card-text">
@@ -707,7 +985,9 @@ const BitacoraDetail = ({edited}) => {
 
     const handleEditSubmit = async (e) => {
         e.preventDefault();
+        console.log(`SENDED edited_bitacora`);
         console.log(edited_bitacora);
+        
 
         try {
             const response = await fetch(`${baseUrl}/bitacora/${id}`, {
@@ -723,7 +1003,7 @@ const BitacoraDetail = ({edited}) => {
                 console.log(updatedBitacora);
 
                 setBitacora(updatedBitacora);
-                setIsEdited(!isEdited);
+                setIsEdited(true);
                 setEditModalVisible(false);
             } else {
                 console.error("Failed to edit bitácora:", response.statusText);
@@ -892,13 +1172,14 @@ const BitacoraDetail = ({edited}) => {
                         )}
                         {/* TRANSPORTES BTN */}
                         {activeTab === "transportes" && (
-                            <button
-                                className="btn btn-success position-absolute end-0 me-4"
-                                onClick={() => {
-                                    // Handle the transportes tab button click
-                                }}>
-                                <i className="fa fa-truck"></i>
-                            </button>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <button
+                                    variant="primary"
+                                    onClick={handleShow}
+                                    className="btn btn-primary rounded-5 position-absolute end-0 me-4">
+                                    <i className="fa fa-plus"></i>
+                                </button>
+                            </div>
                         )}
                     </div>
                     <div className="scrollable-content flex-grow-1 overflow-auto px-3">
@@ -1021,49 +1302,102 @@ const BitacoraDetail = ({edited}) => {
                                 role="tabpanel"
                                 aria-labelledby="transportes-tab">
                                 <div className="d-flex mt-4">
-                                    {/* Column 1 */}
-                                    <div className="col-md-6">
-                                        <h5 className="card-subtitle mb-2 fw-semibold">Tracto:</h5>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Eco:</strong> {bitacora.tracto.eco}
-                                        </h6>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Placa:</strong> {bitacora.tracto.placa}
-                                        </h6>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Marca:</strong> {bitacora.tracto.marca}
-                                        </h6>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Modelo:</strong> {bitacora.tracto.modelo}
-                                        </h6>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Color:</strong> {bitacora.tracto.color}
-                                        </h6>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Tipo:</strong> {bitacora.tracto.tipo}
-                                        </h6>
+                                    {/* Left Side: List of Transporte IDs */}
+                                    <div className="col-md-4 border-end pe-3">
+                                        <h5 className="fw-semibold">Lista de Transportes</h5>
+                                        <ul className="list-group">
+                                            {bitacora.transportes.map((transporte) => (
+                                                <li
+                                                    key={transporte.id}
+                                                    className={`list-group-item ${
+                                                        selectedTransporte?.id === transporte.id
+                                                            ? "active"
+                                                            : ""
+                                                    }`}
+                                                    onClick={() =>
+                                                        handleSelectTransporte(transporte)
+                                                    }
+                                                    style={{cursor: "pointer"}}>
+                                                    Transporte ID: {transporte.id}
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </div>
-                                    {/* Column 2 */}
-                                    <div className="col-md-6">
-                                        <h5 className="card-subtitle mb-2 fw-semibold">
-                                            Remolque:
-                                        </h5>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Eco:</strong> {bitacora.remolque.eco}
-                                        </h6>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Placa:</strong> {bitacora.remolque.placa}
-                                        </h6>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Color:</strong> {bitacora.remolque.color}
-                                        </h6>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Capacidad:</strong>{" "}
-                                            {bitacora.remolque.capacidad}
-                                        </h6>
-                                        <h6 className="card-subtitle mb-2">
-                                            <strong>Sello:</strong> {bitacora.remolque.sello}
-                                        </h6>
+
+                                    {/* Right Side: Selected Transporte Details */}
+                                    <div className="col-md-8 ps-3">
+                                        {selectedTransporte ? (
+                                            <>
+                                                <div className="row">
+                                                    <div className="col-md-6">
+                                                        <h5 className="card-subtitle mb-2 fw-semibold">
+                                                            Tracto:
+                                                        </h5>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Eco:</strong>{" "}
+                                                            {selectedTransporte.tracto.eco}
+                                                        </h6>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Placa:</strong>{" "}
+                                                            {selectedTransporte.tracto.placa}
+                                                        </h6>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Marca:</strong>{" "}
+                                                            {selectedTransporte.tracto.marca}
+                                                        </h6>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Modelo:</strong>{" "}
+                                                            {selectedTransporte.tracto.modelo}
+                                                        </h6>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Color:</strong>{" "}
+                                                            {selectedTransporte.tracto.color}
+                                                        </h6>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Tipo:</strong>{" "}
+                                                            {selectedTransporte.tracto.tipo}
+                                                        </h6>
+                                                    </div>
+                                                    <div className="col-md-6">
+                                                        <h5 className="card-subtitle mb-2 fw-semibold">
+                                                            Remolque:
+                                                        </h5>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Eco:</strong>{" "}
+                                                            {selectedTransporte.remolque.eco}
+                                                        </h6>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Placa:</strong>{" "}
+                                                            {selectedTransporte.remolque.placa}
+                                                        </h6>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Color:</strong>{" "}
+                                                            {selectedTransporte.remolque.color}
+                                                        </h6>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Capacidad:</strong>{" "}
+                                                            {selectedTransporte.remolque.capacidad}
+                                                        </h6>
+                                                        <h6 className="card-subtitle mb-2">
+                                                            <strong>Sello:</strong>{" "}
+                                                            {selectedTransporte.remolque.sello}
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                                <div className="d-flex justify-content-end mt-3">
+                                                    <button
+                                                        className="btn btn-primary"
+                                                        onClick={handleEditTransporte}>
+                                                        Editar Transporte
+                                                    </button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="alert alert-info" role="alert">
+                                                Seleccione un transporte de la lista para ver los
+                                                detalles.
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -1569,6 +1903,64 @@ const BitacoraDetail = ({edited}) => {
                     </Modal>
                 </>
             )}
+
+            {/* EDIT TRANSPORTES */}
+            {isEditTransporteModalVisible && (
+                <>
+                    {" "}
+                    <div className="modal-backdrop fade show"></div>
+                    <div className="modal show d-block">
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Editar Transporte</h5>
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        onClick={() => setEditTransporteModalVisible(false)}
+                                    />
+                                </div>
+                                <div className="modal-body">
+                                    {/* Form inputs for editing transporte */}
+                                    <form onSubmit={handleTransportEdit}>
+                                        {/* Example inputs for tracto */}
+                                        <div className="mb-3">
+                                            <label className="form-label">Eco</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={editedTransporte.tracto.eco}
+                                                onChange={(e) =>
+                                                    setEditedTransporte({
+                                                        ...editedTransporte,
+                                                        tracto: {
+                                                            ...editedTransporte.tracto,
+                                                            eco: e.target.value,
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                        </div>
+                                        {/* Repeat similar inputs for other fields... */}
+
+                                        <button type="submit" className="btn btn-primary">
+                                            Guardar Cambios
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {/* CREATE TRASNPORTES */}
+            <CreateTransporteModal
+                show={showModal}
+                handleClose={handleClose}
+                addTransporte={addTransporte}
+                transportes={transportes}
+            />
         </section>
     );
 };
