@@ -210,6 +210,7 @@ const BitacorasPage = () => {
     const [clienteFilter, setClienteFilter] = useState("");
     const [operadorFilter, setOperadorFilter] = useState("");
     const [monitoreoFilter, setMonitoreoFilter] = useState("");
+    const [idFilter, setIdFilter] = useState("");
 
     // useInactivityTimeout(120000, logout); // 120000 ms = 2 minutes
 
@@ -427,8 +428,15 @@ const BitacorasPage = () => {
             console.error("Error creating bitácora:", e);
         }
     };
+
     const getFilteredBitacoras = () => {
         let filtered = bitacoras;
+
+        if (idFilter) {
+            filtered = filtered.filter((bitacora) =>
+                bitacora.bitacora_id.toString().includes(idFilter)
+            );
+        }
 
         if (statusFilter) {
             filtered = filtered.filter((bitacora) => bitacora.status === statusFilter);
@@ -620,12 +628,12 @@ const BitacorasPage = () => {
         if (elapsedTimeMs < frecuenciaMs) {
             const threshold = frecuenciaMs * 0.75; // 75% of the frecuencia
             if (elapsedTimeMs < threshold) {
-                return [greenColor] // Green
+                return [greenColor]; // Green
             } else {
-                return [yellowColor] // Yellow
+                return [yellowColor]; // Yellow
             }
         } else {
-            return [redColor] // Red
+            return [redColor]; // Red
         }
     };
 
@@ -724,7 +732,16 @@ const BitacorasPage = () => {
 
                                         {/* Filter Row */}
                                         <tr>
-                                            <th className="one"></th>
+                                            <th className="one">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="# ID"
+                                                    value={idFilter}
+                                                    onChange={(e) => setIdFilter(e.target.value)}
+                                                />
+                                            </th>
+
                                             <th className="two">
                                                 <select
                                                     id="clienteFilter"
