@@ -1160,8 +1160,8 @@ const BitacorasPage = () => {
                                             />
                                         </div>
                                         <hr />
-                                        <p>Tracto: </p>
-                                        {/* Tracto */}
+                                        {/* <p>Tracto: </p>
+                                         Tracto *
                                         <div className="form-group mb-3">
                                             <label htmlFor="tracto_eco">ECO </label>
                                             <input
@@ -1221,10 +1221,10 @@ const BitacorasPage = () => {
                                                 onChange={handleChange}
                                                 className="form-control"
                                             />
-                                        </div>
+                                        </div> */}
 
                                         {/* Remolque */}
-                                        <hr />
+                                        {/* <hr />
                                         <p>Remolque: </p>
                                         <div className="form-group mb-3">
                                             <label htmlFor="remolque_eco">ECO</label>
@@ -1277,7 +1277,7 @@ const BitacorasPage = () => {
                                             />
                                         </div>
 
-                                        <hr />
+                                        <hr /> */}
 
                                         <div className="d-flex justify-content-end">
                                             <button
