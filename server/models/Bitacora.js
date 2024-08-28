@@ -1,20 +1,5 @@
 import mongoose from "mongoose";
 
-const EventoSchema = new mongoose.Schema(
-    {
-        nombre: {type: String, required: true},
-        descripcion: {type: String, required: true},
-        ubicacion: {type: String, default: ""},
-        ultimo_posicionamiento: {type: String, default: ""},
-        velocidad: {type: String, default: ""},
-        coordenadas: {type: String, default: ""},
-        frecuencia: {type: Number, defaul: 0},
-        registrado_por: {type: String, default: "Nombre Usuario"},
-        transportes: [TransporteSchema],
-    },
-    {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`
-);
-
 const TransporteSchema = new mongoose.Schema(
     {
         id: {type: Number, unique: true, required: true},
@@ -33,6 +18,21 @@ const TransporteSchema = new mongoose.Schema(
             color: String,
             tipo: String,
         },
+    },
+    {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`
+);
+
+const EventoSchema = new mongoose.Schema(
+    {
+        nombre: {type: String, required: true},
+        descripcion: {type: String, required: true},
+        ubicacion: {type: String, default: ""},
+        ultimo_posicionamiento: {type: String, default: ""},
+        velocidad: {type: String, default: ""},
+        coordenadas: {type: String, default: ""},
+        frecuencia: {type: Number, defaul: 0},
+        registrado_por: {type: String, default: "Nombre Usuario"},
+        transportes: [TransporteSchema],
     },
     {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`
 );
