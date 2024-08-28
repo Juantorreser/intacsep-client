@@ -758,7 +758,6 @@ const BitacorasPage = () => {
                                                             {client.razon_social}
                                                         </option>
                                                     ))}
-                                                    {/* Add more status options as needed */}
                                                 </select>
                                             </th>
                                             <th className="two">
@@ -793,7 +792,6 @@ const BitacorasPage = () => {
                                                             {operador.name}
                                                         </option>
                                                     ))}
-                                                    {/* Add more status options as needed */}
                                                 </select>
                                             </th>
                                             <th className="two">
@@ -862,7 +860,9 @@ const BitacorasPage = () => {
                                                 </td>
                                                 <td className="two text-capitalize">
                                                     {bitacora.status}
+                                                    {bitacora.edited ? " (e)" : ""}
                                                 </td>
+
                                                 <td className="one text-capitalize">
                                                     <div className="semaforo">
                                                         {getEventColor(bitacora).map(
@@ -898,28 +898,28 @@ const BitacorasPage = () => {
                                                 <td className="text-center half">
                                                     <button
                                                         className={
-                                                            bitacora.edited_bitacora == null
+                                                            bitacora.edited === false
                                                                 ? "btn btn-secondary"
                                                                 : "btn btn-warning"
                                                         }
                                                         onClick={() =>
                                                             generatePDF(bitacora.edited_bitacora)
                                                         }
-                                                        disabled={bitacora.edited_bitacora == null}>
+                                                        disabled={bitacora.edited == false}>
                                                         <i className="fa fa-file-pdf"></i>
                                                     </button>
                                                 </td>
                                                 <td className="text-center half">
                                                     <button
                                                         className={
-                                                            bitacora.edited_bitacora == null
+                                                            bitacora.edited == false
                                                                 ? "btn btn-secondary"
                                                                 : "btn btn-primary"
                                                         }
                                                         onClick={() =>
                                                             handleEditClick(bitacora._id)
                                                         }
-                                                        disabled={bitacora.edited_bitacora == null}>
+                                                        disabled={bitacora.edited == false}>
                                                         <i className="fa fa-edit"></i>
                                                     </button>
                                                 </td>

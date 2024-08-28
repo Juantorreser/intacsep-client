@@ -253,7 +253,6 @@ const BitacoraDetail = ({edited}) => {
             (transporte) => transporte.id === editedTransporte.id
         );
 
-
         if (index > -1) {
             // Update the specific transporte in the transportes array
             const updatedTransportes = [...edited_bitacora.transportes];
@@ -270,7 +269,6 @@ const BitacoraDetail = ({edited}) => {
             }
 
             console.log(edited_bitacora);
-            
 
             // Call the original handleEditSubmit function
             handleEditSubmit(e);
@@ -422,7 +420,6 @@ const BitacoraDetail = ({edited}) => {
                 setIsEventStarted(data.status === "iniciada");
                 setFinishButtonDisabled(data.status === "finalizada");
                 setFinishButtonDisabled(data.status === "cerrada");
-                setFinishButtonDisabled(data.status === "cerrada (e)");
             } else {
                 console.error("Failed to fetch bitácora:", response.statusText);
             }
@@ -743,12 +740,10 @@ const BitacoraDetail = ({edited}) => {
                             !(
                                 (roleData &&
                                     roleData.edit_eventos_a &&
-                                    bitacora.status !== "cerrada" &&
-                                    bitacora.status !== "cerrada (e)") ||
+                                    bitacora.status !== "cerrada") ||
                                 (roleData &&
                                     roleData.edit_eventos_c &&
-                                    (bitacora.status === "cerrada" ||
-                                        bitacora.status === "cerrada (e)"))
+                                    bitacora.status === "cerrada")
                             )
                         }>
                         <i className="fa fa-edit"></i>
@@ -919,8 +914,6 @@ const BitacoraDetail = ({edited}) => {
                 return "btn btn-secondary"; // Style for "finalizada"
             case "cerrada":
                 return "btn btn-dark"; // Style for "cerrada"
-            case "cerrada (e)":
-                return "btn btn-dark"; // Style for "cerrada"
             default:
                 return "btn btn-secondary"; // Default style
         }
@@ -937,8 +930,6 @@ const BitacoraDetail = ({edited}) => {
             case "finalizada":
                 return "Cerrada";
             case "cerrada":
-                return "Cerrada";
-            case "cerrada (e)":
                 return "Cerrada";
             default:
                 return "Iniciar"; // Default text
@@ -1014,14 +1005,13 @@ const BitacoraDetail = ({edited}) => {
         }
 
         try {
-            const response = await fetch(`${baseUrl}/bitacora/${id}/status`, {
+            const response = await fetch(`${baseUrl}/bitacora/${id}/edited`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    status: "cerrada (e)",
-                    inicioMonitoreo: new Date().toISOString(), // Set the start time
+                    edited: true,
                 }),
                 credentials: "include",
             });
@@ -1144,11 +1134,8 @@ const BitacoraDetail = ({edited}) => {
                         {/* DETALLES BTN */}
                         {activeTab === "detalles" &&
                             roleData &&
-                            ((roleData.edit_bitacora_abierta &&
-                                bitacora.status !== "cerrada" &&
-                                bitacora.status !== "cerrada (e)") ||
-                                ((bitacora.status === "cerrada" ||
-                                    bitacora.status === "cerrada (e)") &&
+                            ((roleData.edit_bitacora_abierta && bitacora.status !== "cerrada") ||
+                                (bitacora.status === "cerrada" &&
                                     roleData.edit_bitacora_cerrada)) && (
                                 <button
                                     className="btn btn-primary position-absolute end-0 me-4"
@@ -1164,10 +1151,7 @@ const BitacoraDetail = ({edited}) => {
                                 className="btn btn-primary rounded-5 position-absolute end-0 me-4"
                                 data-bs-toggle="modal"
                                 data-bs-target="#eventModal"
-                                disabled={
-                                    bitacora.status === "cerrada" ||
-                                    bitacora.status === "cerrada (e)"
-                                }>
+                                disabled={bitacora.status === "cerrada"}>
                                 <FontAwesomeIcon icon={faPlus} />
                             </button>
                         )}
