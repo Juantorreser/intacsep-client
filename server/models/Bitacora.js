@@ -10,6 +10,7 @@ const EventoSchema = new mongoose.Schema(
         coordenadas: {type: String, default: ""},
         frecuencia: {type: Number, defaul: 0},
         registrado_por: {type: String, default: "Nombre Usuario"},
+        transportes: [TransporteSchema],
     },
     {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`
 );
@@ -70,6 +71,7 @@ const BitSchema = new mongoose.Schema(
         status: {type: String, default: "creada", required: true},
         transportes: [TransporteSchema],
         eventos: [EventoSchema],
+        edited: {type: Boolean, required: true, default: false},
         edited_bitacora: Object, // Reference to Bitacora model
     },
     {timestamps: true}
