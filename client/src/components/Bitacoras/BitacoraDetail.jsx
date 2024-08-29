@@ -67,9 +67,9 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes}) 
                     <Form.Group className="mb-3">
                         <Form.Label>ID</Form.Label>
                         <Form.Control
-                            type="number"
+                            type="text"
                             name="id"
-                            value={transportes.length + 1}
+                            value={(transportes.length + 1).toString().padStart(2, "0")}
                             onChange={handleChange}
                             required
                             disabled
@@ -693,6 +693,7 @@ const BitacoraDetail = ({edited}) => {
             createdAt,
             registrado_por,
             frecuencia,
+            transportes,
         } = event;
         const [showModal, setShowModal] = useState(false);
         const [formData, setFormData] = useState({
@@ -705,6 +706,7 @@ const BitacoraDetail = ({edited}) => {
             coordenadas,
             frecuencia,
             createdAt,
+            transportes,
         });
 
         const isLastEvent = events[events.length - 1] === event;
@@ -781,6 +783,18 @@ const BitacoraDetail = ({edited}) => {
                         </div>
                         <div className="col-md-6">
                             <p className="card-text">
+                                <strong>Transportes:</strong>{" "}
+                                {transportes && transportes.length > 0
+                                    ? transportes
+                                          .map(
+                                              (transporte) =>
+                                                  `${bitacora.bitacora_id}.${transporte.id}`
+                                          )
+                                          .join(", ")
+                                    : ""}
+                            </p>
+
+                            <p className="card-text">
                                 <strong>Ubicación:</strong> {ubicacion}
                             </p>
                             <p className="card-text">
@@ -829,6 +843,19 @@ const BitacoraDetail = ({edited}) => {
                                     disabled
                                 />
                             </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Transportes</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="nombre"
+                                    value={formData.transportes
+                                        .map((transporte) => transporte.id)
+                                        .join(", ")}
+                                    onChange={handleInputChange}
+                                    disabled
+                                />
+                            </Form.Group>
+
                             <Form.Group className="mb-3">
                                 <Form.Label>Descripción</Form.Label>
                                 <Form.Control
@@ -1095,7 +1122,11 @@ const BitacoraDetail = ({edited}) => {
 
     const handleCheckboxChange = (e) => {
         const {value, checked} = e.target;
-
+        const transporteId = value;
+        const transporteToAdd = bitacora.transportes.find(
+            (transporte) => String(transporte.id) === transporteId
+        );
+        console.log(selectedTransportes);
         if (value === "all") {
             // Handle "All" selection
             if (checked) {
@@ -1106,9 +1137,11 @@ const BitacoraDetail = ({edited}) => {
         } else {
             // Handle individual selections
             if (checked) {
-                setSelectedTransportes((prev) => [...prev, value]);
+                setSelectedTransportes((prev) => [...prev, transporteToAdd]);
             } else {
-                setSelectedTransportes((prev) => prev.filter((id) => id !== value));
+                setSelectedTransportes((prev) =>
+                    prev.filter((transporte) => transporte.id !== transporteToAdd.id)
+                );
             }
         }
     };
@@ -1492,13 +1525,10 @@ const BitacoraDetail = ({edited}) => {
                                                 name="transportes"
                                                 value={transporte.id}
                                                 onChange={handleCheckboxChange}
-                                                checked={selectedTransportes.includes(
-                                                    transporte.id.toString()
-                                                )}
+                                                checked={selectedTransportes.includes(transporte)}
                                             />
                                             <label htmlFor={`transporte-${transporte.id}`}>
                                                 {transporte.id}{" "}
-                                                {/* Use the appropriate field for display */}
                                             </label>
                                         </div>
                                     ))}

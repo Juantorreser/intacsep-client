@@ -28,6 +28,16 @@ const RoleSchema = new mongoose.Schema(
             required: true,
             default: false,
         },
+        edit_transportes_a: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
+        edit_transportes_c: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
         tipos_de_monitoreo: {
             type: Boolean,
             required: true,
