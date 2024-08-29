@@ -97,7 +97,7 @@ const ProfileModal = ({showModal, handleClose}) => {
     return (
         <>
             {showModal && (
-                <>
+                <section id="profileModal">
                     <div className="modal-backdrop fade show"></div>
                     <div
                         className={`modal mt-5 pt-3 fade ${showModal ? "show d-block" : ""}`}
@@ -215,7 +215,7 @@ const ProfileModal = ({showModal, handleClose}) => {
                             </div>
                         </div>
                     </div>
-                </>
+                </section>
             )}
 
             {showToast && (

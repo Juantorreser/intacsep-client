@@ -50,6 +50,14 @@ const RoleCard = ({
                                         name: "edit_eventos_c",
                                         label: "Editar Eventos (Bitacora Cerrada)",
                                     },
+                                    {
+                                        name: "edit_transportes_a",
+                                        label: "Editar Transportes (Bitacora Abierta)",
+                                    },
+                                    {
+                                        name: "edit_transportes_c",
+                                        label: "Editar Transportes (Bitacora Cerrada)",
+                                    },
                                 ].map(({name, label}) => (
                                     <div key={name} className="form-check me-3">
                                         <input
