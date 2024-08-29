@@ -637,6 +637,26 @@ const BitacorasPage = () => {
         }
     };
 
+    const getRecorrido = (bitacora) => {
+        if (
+            bitacora.status != "iniciada" &&
+            bitacora.status != "validada" &&
+            bitacora.status != "cerrada" &&
+            bitacora.status != "finalizada"
+        ) {
+            return ""; // No events
+        }
+
+        const latestEvent = bitacora.eventos.reduce((latest, current) =>
+            new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
+        );
+
+        const recorrido = latestEvent.nombre;
+        if (!recorrido) return ""; // No frecuencia
+
+        return recorrido;
+    };
+
     return (
         <section id="activeBits">
             <Header />
@@ -663,6 +683,14 @@ const BitacorasPage = () => {
                                 <table className="table table-striped">
                                     <thead>
                                         <tr>
+                                            <th
+                                                className="half"
+                                                onClick={() => handleSortChange("frecuencia")}
+                                                style={{cursor: "pointer"}}>
+                                                Frec{" "}
+                                                {sortField === "frecuencia" &&
+                                                    (sortOrder === "asc" ? "↑" : "↓")}
+                                            </th>
                                             <th
                                                 className="one"
                                                 onClick={() => handleSortChange("bitacora_id")}
@@ -704,21 +732,14 @@ const BitacorasPage = () => {
                                                     (sortOrder === "asc" ? "↑" : "↓")}
                                             </th>
                                             <th
-                                                className="two"
+                                                className="one"
                                                 onClick={() => handleSortChange("status")}
                                                 style={{cursor: "pointer"}}>
                                                 Status{" "}
                                                 {sortField === "status" &&
                                                     (sortOrder === "asc" ? "↑" : "↓")}
                                             </th>
-                                            <th
-                                                className="one"
-                                                onClick={() => handleSortChange("frecuencia")}
-                                                style={{cursor: "pointer"}}>
-                                                Frecuencia{" "}
-                                                {sortField === "frecuencia" &&
-                                                    (sortOrder === "asc" ? "↑" : "↓")}
-                                            </th>
+                                            <th className="text-center two">Recorrido</th>
                                             <th className="text-center half">
                                                 <i className="fa fa-download"></i>
                                             </th>
@@ -726,12 +747,13 @@ const BitacorasPage = () => {
                                                 <i className="fa fa-clipboard-check"></i>
                                             </th>
                                             <th className="text-center half">
-                                                <i className="fa fa-edit"></i>
+                                                <i className="fa fa-eye"></i>
                                             </th>
                                         </tr>
 
                                         {/* Filter Row */}
                                         <tr>
+                                            <th className="half"></th>
                                             <th className="one">
                                                 <input
                                                     type="text"
@@ -807,7 +829,7 @@ const BitacorasPage = () => {
                                                     />
                                                 </div>
                                             </th>
-                                            <th className="two">
+                                            <th className="one">
                                                 <div>
                                                     <select
                                                         id="statusFilter"
@@ -830,7 +852,7 @@ const BitacorasPage = () => {
                                                     </select>
                                                 </div>
                                             </th>
-                                            <th className="one"></th>
+                                            <th className="two"></th>
                                             <th className="half"></th>
                                             <th className="half"></th>
                                             <th className="half"></th>
@@ -843,6 +865,20 @@ const BitacorasPage = () => {
                                             itemsPerPage
                                         ).map((bitacora) => (
                                             <tr key={bitacora._id}>
+                                                <td className="half text-capitalize">
+                                                    <div className="semaforo">
+                                                        {getEventColor(bitacora).map(
+                                                            (color, index) => (
+                                                                <div
+                                                                    key={index}
+                                                                    className={`circle`}
+                                                                    style={{
+                                                                        backgroundColor: color,
+                                                                    }}></div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </td>
                                                 <td className="one">
                                                     <a
                                                         href={`/bitacora/${bitacora._id}`}
@@ -858,25 +894,11 @@ const BitacorasPage = () => {
                                                         bitacora.createdAt
                                                     ).toLocaleDateString()}
                                                 </td>
-                                                <td className="two text-capitalize">
+                                                <td className="one text-capitalize">
                                                     {bitacora.status}
                                                     {bitacora.edited ? " (e)" : ""}
                                                 </td>
-
-                                                <td className="one text-capitalize">
-                                                    <div className="semaforo">
-                                                        {getEventColor(bitacora).map(
-                                                            (color, index) => (
-                                                                <div
-                                                                    key={index}
-                                                                    className={`circle`}
-                                                                    style={{
-                                                                        backgroundColor: color,
-                                                                    }}></div>
-                                                            )
-                                                        )}
-                                                    </div>
-                                                </td>
+                                                <td className="two">{getRecorrido(bitacora)}</td>
                                                 <td className="text-center half">
                                                     <button
                                                         className={
@@ -920,7 +942,7 @@ const BitacorasPage = () => {
                                                             handleEditClick(bitacora._id)
                                                         }
                                                         disabled={bitacora.edited == false}>
-                                                        <i className="fa fa-edit"></i>
+                                                        <i className="fa fa-eye"></i>
                                                     </button>
                                                 </td>
                                             </tr>
