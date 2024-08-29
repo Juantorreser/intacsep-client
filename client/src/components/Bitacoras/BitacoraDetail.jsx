@@ -1164,14 +1164,14 @@ const BitacoraDetail = ({edited}) => {
                 <div className="content-wrapper">
                     <div
                         id="detailHeader"
-                        className="d-flex justify-content-center align-items-center position-relative z-1////">
+                        className="d-flex justify-content-start ps-5 align-items-center position-relative z-1////">
                         <div
                             className="position-absolute start-0 ms-2 btn"
                             onClick={() => navigate("/bitacoras")}>
                             <i className="fa fa-chevron-left fw-bold"></i>
                         </div>
                         {/* Tab Navigation */}
-                        <ul className="nav nav-tabs" id="bitacoraTabs" role="tablist">
+                        <ul className="nav nav-tabs ms-2" id="bitacoraTabs" role="tablist">
                             <li className="nav-item" role="presentation">
                                 <button
                                     className="nav-link active"
@@ -1400,11 +1400,16 @@ const BitacoraDetail = ({edited}) => {
                                         {selectedTransporte ? (
                                             <>
                                                 <div className="d-flex justify-content-end mt-3 me-4 position-absolute end-0 ">
-                                                    <button
-                                                        className="btn btn-primary"
-                                                        onClick={handleEditTransporte}>
-                                                        <i className="fa fa-edit"></i>
-                                                    </button>
+                                                    {((roleData.edit_transportes_a &&
+                                                        bitacora.status !== "cerrada") ||
+                                                        (roleData.edit_transportes_c &&
+                                                            bitacora.status === "cerrada")) && (
+                                                        <button
+                                                            className="btn btn-primary"
+                                                            onClick={handleEditTransporte}>
+                                                            <i className="fa fa-edit"></i>
+                                                        </button>
+                                                    )}
                                                 </div>
                                                 <div className="row mt-3">
                                                     <div className="col-md-6">
@@ -2020,6 +2025,7 @@ const BitacoraDetail = ({edited}) => {
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h5 className="modal-title">Editar Transporte</h5>
+
                                     <button
                                         type="button"
                                         className="btn-close"
