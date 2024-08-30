@@ -192,6 +192,8 @@ const RolePage = () => {
             edit_bitacora_cerrada: false,
             edit_eventos_a: false,
             edit_eventos_c: false,
+            edit_transportes_a: false,
+            edit_eventos_c: false,
             tipos_de_monitoreo: false,
             eventos: false,
             clientes: false,
@@ -200,6 +202,7 @@ const RolePage = () => {
             origenes: false,
             destinos: false,
             operadores: false,
+            inactividad: false,
         });
     };
 
@@ -324,8 +327,8 @@ const RolePage = () => {
                                 <div className="form-check">
                                     <input
                                         type="checkbox"
-                                        id="edit_eventos"
-                                        name="edit_eventos"
+                                        id="edit_eventos_a"
+                                        name="edit_eventos_a"
                                         className="form-check-input"
                                         checked={newRole.edit_eventos_a}
                                         onChange={(e) => handleInputChange(e, setNewRole)}
@@ -337,14 +340,40 @@ const RolePage = () => {
                                 <div className="form-check">
                                     <input
                                         type="checkbox"
-                                        id="edit_eventos"
-                                        name="edit_eventos"
+                                        id="edit_eventos_c"
+                                        name="edit_eventos_c"
                                         className="form-check-input"
                                         checked={newRole.edit_eventos_c}
                                         onChange={(e) => handleInputChange(e, setNewRole)}
                                     />
                                     <label htmlFor="edit_bitacora" className="form-check-label">
                                         Editar Eventos (Bitacora Cerrada)
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="edit_transportes_a"
+                                        name="edit_transportes_a"
+                                        className="form-check-input"
+                                        checked={newRole.edit_transportes_a}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="edit_bitacora" className="form-check-label">
+                                        Editar Transportes (Bitacora Abierta)
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="edit_transportes_c"
+                                        name="edit_transportes_c"
+                                        className="form-check-input"
+                                        checked={newRole.edit_transportes_c}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="edit_bitacora" className="form-check-label">
+                                        Editar Trasnportes (Bitacora Cerrada)
                                     </label>
                                 </div>
                                 <div className="form-check">
@@ -388,32 +417,7 @@ const RolePage = () => {
                                         Clientes
                                     </label>
                                 </div>
-                                <div className="form-check">
-                                    <input
-                                        type="checkbox"
-                                        id="usuarios"
-                                        name="usuarios"
-                                        className="form-check-input"
-                                        checked={newRole.usuarios}
-                                        onChange={(e) => handleInputChange(e, setNewRole)}
-                                    />
-                                    <label htmlFor="usuarios" className="form-check-label">
-                                        Usuarios
-                                    </label>
-                                </div>
-                                <div className="form-check">
-                                    <input
-                                        type="checkbox"
-                                        id="roles"
-                                        name="roles"
-                                        className="form-check-input"
-                                        checked={newRole.roles}
-                                        onChange={(e) => handleInputChange(e, setNewRole)}
-                                    />
-                                    <label htmlFor="roles" className="form-check-label">
-                                        Roles
-                                    </label>
-                                </div>
+
                                 <div className="form-check">
                                     <input
                                         type="checkbox"
@@ -451,6 +455,45 @@ const RolePage = () => {
                                     />
                                     <label htmlFor="operadores" className="form-check-label">
                                         Operadores
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="usuarios"
+                                        name="usuarios"
+                                        className="form-check-input"
+                                        checked={newRole.usuarios}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="usuarios" className="form-check-label">
+                                        Usuarios
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="roles"
+                                        name="roles"
+                                        className="form-check-input"
+                                        checked={newRole.roles}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="roles" className="form-check-label">
+                                        Roles
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id="inactividad"
+                                        name="inactividad"
+                                        className="form-check-input"
+                                        checked={newRole.inactividad}
+                                        onChange={(e) => handleInputChange(e, setNewRole)}
+                                    />
+                                    <label htmlFor="roles" className="form-check-label">
+                                        Roles
                                     </label>
                                 </div>
                             </div>

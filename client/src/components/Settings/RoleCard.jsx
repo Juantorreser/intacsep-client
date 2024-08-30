@@ -83,11 +83,13 @@ const RoleCard = ({
                                     {name: "tipos_de_monitoreo", label: "Tipos de Monitoreo"},
                                     {name: "eventos", label: "Eventos"},
                                     {name: "clientes", label: "Clientes"},
-                                    {name: "usuarios", label: "Usuarios"},
-                                    {name: "roles", label: "Roles"},
+
                                     {name: "origenes", label: "Origenes"},
                                     {name: "destinos", label: "Destinos"},
                                     {name: "operadores", label: "Operadores"},
+                                    {name: "usuarios", label: "Usuarios"},
+                                    {name: "roles", label: "Roles"},
+                                    {name: "inactividad", label: "Inactividad"},
                                 ].map(({name, label}) => (
                                     <div key={name} className="form-check me-3">
                                         <input

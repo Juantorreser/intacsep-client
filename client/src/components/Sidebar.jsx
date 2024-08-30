@@ -283,6 +283,14 @@ const Sidebar = () => {
                                                     Roles
                                                 </li>
                                             )}
+                                            {roleData.inactividad && (
+                                                <li
+                                                    className="text-white-50 cursor-pointer itemLine2"
+                                                    onClick={() => navigate("/roles")}
+                                                    style={{fontSize: "0.85rem"}}>
+                                                    Inactividad
+                                                </li>
+                                            )}
                                         </ul>
                                     </div>
                                 </div>
