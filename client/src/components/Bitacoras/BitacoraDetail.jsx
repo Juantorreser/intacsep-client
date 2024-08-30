@@ -1376,7 +1376,8 @@ const BitacoraDetail = ({edited}) => {
                                                         handleSelectTransporte(transporte)
                                                     }
                                                     style={{cursor: "pointer"}}>
-                                                    Transporte ID: {transporte.id}
+                                                    Transporte ID:{" "}
+                                                    {`${bitacora.bitacora_id}.${transporte.id}`}
                                                 </li>
                                             ))}
                                         </ul>
