@@ -304,10 +304,6 @@ const BitacoraDetail = ({edited}) => {
         }
     };
 
-    useEffect(() => {
-        console.log(edited_bitacora);
-    }, [edited_bitacora]);
-
     //TABS
     const handleTabClick = (tabName) => {
         setActiveTab(tabName);
@@ -406,17 +402,20 @@ const BitacoraDetail = ({edited}) => {
                     setBitacora(data.edited_bitacora);
                     setEditedBitacora(data.edited_bitacora);
                     setTransportes(data.edited_bitacora.transportes);
+                    setSelectedTransportes(data.transportes);
                     console.log("EDITADA");
                 } else if (!edited && data.edited_bitacora) {
                     console.log("REGULAR PAGE pero tiene edited_btacora");
                     setBitacora(data);
                     setEditedBitacora(data.edited_bitacora);
                     setTransportes(data.transportes);
+                    setSelectedTransportes(data.transportes);
                 } else {
                     console.log("REGULAR PAGE pero NO tiene edited_btacora");
                     setBitacora(data);
                     setEditedBitacora(data);
                     setTransportes(data.transportes);
+                    setSelectedTransportes(data.transportes);
                 }
                 setIsEventStarted(data.status === "iniciada");
                 setFinishButtonDisabled(data.status === "finalizada");
@@ -595,7 +594,11 @@ const BitacoraDetail = ({edited}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(selectedTransportes);
+
+        if (selectedTransportes.length === 0) {
+            alert("Please select at least one transporte.");
+            return; // Prevent form submission if no checkboxes are selected
+        }
 
         try {
             const response = await fetch(`${baseUrl}/bitacora/${id}/event`, {
@@ -1112,25 +1115,17 @@ const BitacoraDetail = ({edited}) => {
         }
     };
 
-    // const handleSelectAll = (e) => {
-    //     if (selectedTransportes.length === bitacora.transportes.length) {
-    //         setSelectedTransportes([]);
-    //     } else {
-    //         setSelectedTransportes(bitacora.transportes.map((t) => t.id));
-    //     }
-    // };
-
     const handleCheckboxChange = (e) => {
         const {value, checked} = e.target;
         const transporteId = value;
         const transporteToAdd = bitacora.transportes.find(
             (transporte) => String(transporte.id) === transporteId
         );
-        console.log(selectedTransportes);
+
         if (value === "all") {
             // Handle "All" selection
             if (checked) {
-                setSelectedTransportes(bitacora.transportes.map((t) => t.id));
+                setSelectedTransportes(bitacora.transportes);
             } else {
                 setSelectedTransportes([]);
             }
@@ -1146,14 +1141,6 @@ const BitacoraDetail = ({edited}) => {
         }
     };
 
-    const handleSelectAll = () => {
-        if (selectedTransportes.length === bitacora.transportes.length) {
-            setSelectedTransportes([]);
-        } else {
-            setSelectedTransportes(bitacora.transportes.map((t) => t.id));
-        }
-    };
-
     return (
         <section id="bitacoraDetail">
             <Header />
@@ -1164,7 +1151,7 @@ const BitacoraDetail = ({edited}) => {
                 <div className="content-wrapper">
                     <div
                         id="detailHeader"
-                        className="d-flex justify-content-start ps-5 align-items-center position-relative z-1////">
+                        className="d-flex justify-content-start ps-5 align-items-center position-relative z-1">
                         <div
                             className="position-absolute start-0 ms-2 btn"
                             onClick={() => navigate("/bitacoras")}>
@@ -1508,32 +1495,40 @@ const BitacoraDetail = ({edited}) => {
                                     <label htmlFor="transportes" className="form-label">
                                         Transportes
                                     </label>
-                                    <div>
+                                    <div className="form-check">
                                         <input
                                             type="checkbox"
+                                            className="form-check-input"
                                             id="allTransportes"
                                             name="transportes"
                                             value="all"
-                                            onChange={handleSelectAll}
+                                            onChange={handleCheckboxChange}
                                             checked={
                                                 selectedTransportes.length ===
                                                 bitacora.transportes.length
                                             }
                                         />
-                                        <label htmlFor="allTransportes">All</label>
+                                        <label
+                                            className="form-check-label"
+                                            htmlFor="allTransportes">
+                                            Todos
+                                        </label>
                                     </div>
                                     {bitacora.transportes.map((transporte) => (
-                                        <div key={transporte.id}>
+                                        <div className="form-check" key={transporte.id}>
                                             <input
                                                 type="checkbox"
+                                                className="form-check-input"
                                                 id={`transporte-${transporte.id}`}
                                                 name="transportes"
                                                 value={transporte.id}
                                                 onChange={handleCheckboxChange}
                                                 checked={selectedTransportes.includes(transporte)}
                                             />
-                                            <label htmlFor={`transporte-${transporte.id}`}>
-                                                {transporte.id}{" "}
+                                            <label
+                                                className="form-check-label"
+                                                htmlFor={`transporte-${transporte.id}`}>
+                                                {`${bitacora.bitacora_id}.${transporte.id}`}
                                             </label>
                                         </div>
                                     ))}
