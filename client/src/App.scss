@@ -527,3 +527,23 @@ $gray: #306eac;
 #profileModal{
     z-index: 1000;
 }
+
+.s-font{
+    font-size: 0.7rem;
+}
+.m-font{
+    font-size: 0.85rem;
+}
+.itemsSelector{
+    font-size: 0.8rem !important;
+    width: fit-content  !important;
+    border: none !important;
+    padding: 10px 27px 10px 10px !important;
+}
+
+.pageLink{
+    text-decoration: none !important;
+    color: black !important;
+    border: none !important;
+    font-size: 0.9rem !important;
+}

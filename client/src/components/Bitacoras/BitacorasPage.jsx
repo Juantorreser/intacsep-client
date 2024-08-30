@@ -211,6 +211,8 @@ const BitacorasPage = () => {
     const [operadorFilter, setOperadorFilter] = useState("");
     const [monitoreoFilter, setMonitoreoFilter] = useState("");
     const [idFilter, setIdFilter] = useState("");
+    const startItem = (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
     // useInactivityTimeout(120000, logout); // 120000 ms = 2 minutes
 
@@ -954,14 +956,16 @@ const BitacorasPage = () => {
                     </div>
 
                     {/* Pagination Controls */}
-                    <div className="d-flex justify-content-between align-items-center mx-3 my-3">
-                        <div className="d-flex w-50 align-items-center">
-                            <label htmlFor="itemsPerPage" className="form-label col-5 p-0 m-0">
+                    <div className="d-flex justify-content-between align-items-center mx-3 my-3 gap-4">
+                        <div className="d-flex align-items-center justify-content-start">
+                            <label
+                                htmlFor="itemsPerPage"
+                                className="form-label p-0 m-0 s-font fw-bold">
                                 Items Por Página:
                             </label>
                             <select
                                 id="itemsPerPage"
-                                className="form-select col-1 w-25"
+                                className="form-select itemsSelector s-font ms-2"
                                 value={itemsPerPage}
                                 onChange={handleItemsPerPageChange}>
                                 <option value={25}>25</option>
@@ -970,21 +974,57 @@ const BitacorasPage = () => {
                             </select>
                         </div>
 
-                        <div>
+                        <div className="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span className="m-font">
+                                    {`${startItem}-${endItem} de ${totalItems}`}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="d-flex align-items-center">
                             <button
                                 className="btn border-0"
                                 disabled={currentPage === 1}
                                 onClick={() => handlePageChange(currentPage - 1)}>
-                                <i className="fa fa-chevron-left"></i>
+                                <i className="fa fa-chevron-left s-font"></i>
                             </button>
-                            <span className="mx-2">
-                                Página {currentPage} de {totalPages}
-                            </span>
+
+                            <div className="mx-0 s-font">
+                                {Array.from({length: Math.min(3, totalPages)}).map((_, index) => {
+                                    const pageNum = index + 1;
+                                    return (
+                                        <button
+                                            key={pageNum}
+                                            className={`btn pageLink s-font ${
+                                                pageNum === currentPage
+                                                    ? "fw-bold fs-6"
+                                                    : "opacity-75"
+                                            }`}
+                                            onClick={() => handlePageChange(pageNum)}>
+                                            {pageNum}
+                                        </button>
+                                    );
+                                })}
+                                {totalPages > 3 && (
+                                    <>
+                                        <span className="mx-1">...</span>
+                                        <button
+                                            className={`btn  pageLink s-font ${
+                                                totalPages === currentPage ? "fw-bold" : ""
+                                            }`}
+                                            onClick={() => handlePageChange(totalPages)}>
+                                            {totalPages}
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+
                             <button
                                 className="btn border-0"
                                 disabled={currentPage === totalPages}
                                 onClick={() => handlePageChange(currentPage + 1)}>
-                                <i className="fa fa-chevron-right"></i>
+                                <i className="fa fa-chevron-right s-font"></i>
                             </button>
                         </div>
                     </div>
