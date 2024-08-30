@@ -304,12 +304,7 @@ const Sidebar = () => {
                             </li>
                         )}
                     </ul>
-                    <InactivityModal
-                        show={showModal}
-                        handleClose={handleCloseModal}
-                        timeout={timeout}
-                        modifyTimeout={modifyTimeout}
-                    />
+
                     {/* #Menu */}
                 </div>
             </aside>

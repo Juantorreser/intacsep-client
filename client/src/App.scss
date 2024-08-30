@@ -281,7 +281,7 @@ $gray: #306eac;
 
     font-family: Arial, Helvetica, sans-serif;
     border: none;
-    padding: 20px 150px;
+    padding: 20px 100px;
     color: $pdfBlack;
     .header {
         text-align: start;
@@ -315,10 +315,42 @@ $gray: #306eac;
         }
     }
 
+    .transportes, .eventos{
+        margin-top: 30px;
+        padding-bottom: 20px;
+        border-bottom: dashed $pdfBlue 2px;
+        h2{
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: $pdfBlack;
+        }
+    }
+
     .body {
         margin-top: 30px;
         padding-bottom: 20px;
         border-bottom: dashed $pdfBlue 2px;
+    }
+    .transportCard{
+        border-radius: 10px;
+        // border: $pdfBlack solid 2px;
+        margin-bottom: 15px;
+        background-color: #f7f7f7;
+        .title{
+            background: $pdfBlue;
+            text-align: center;
+            justify-content: center;
+            padding-block: 5px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .divider{
+            height:100px;
+            width: 1px;
+            background-color: $pdfBlack;
+
+        }
+        
     }
     .event-card {
         width: 95%;

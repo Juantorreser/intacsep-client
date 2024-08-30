@@ -41,12 +41,13 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
                     </Col>
                 </Row>
             </Container>
+
             <Container className="body">
                 <Row>
                     <div className="card-body">
-                        <div className="row ms-1">
+                        <div className="row ">
                             {/* Column 1 */}
-                            <div className="col-md-4">
+                            <div className="col-md-6">
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Folio Servicio:</strong> {bitacora.folio_servicio}
                                 </h6>
@@ -56,11 +57,22 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Cliente:</strong> {bitacora.cliente}
                                 </h6>
-                                {/* <h6 className="card-subtitle mb-2">
-                                    <strong>ID Cliente:</strong> {cliente.ID_Cliente}
-                                </h6> */}
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Tipo Monitoreo:</strong> {bitacora.monitoreo}
+                                </h6>
+
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Linea Transporte:</strong> {bitacora.linea_transporte}
+                                </h6>
+                            </div>
+
+                            {/* Column 4 */}
+                            <div className="col-md-6">
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Origen:</strong> {bitacora.origen}
+                                </h6>
+                                <h6 className="card-subtitle mb-2">
+                                    <strong>Destino:</strong> {bitacora.destino}
                                 </h6>
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Operador:</strong> {bitacora.operador}
@@ -68,121 +80,150 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
                                 <h6 className="card-subtitle mb-2">
                                     <strong>Teléfono:</strong> {bitacora.telefono}
                                 </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Linea Transporte:</strong> {bitacora.linea_transporte}
-                                </h6>
-                            </div>
-
-                            {/* Column 2 */}
-                            <div className="col-md-2">
-                                <h5 className="card-subtitle mb-2 fw-semibold">Tracto:</h5>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Eco:</strong> {bitacora.tracto.eco}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Placa:</strong> {bitacora.tracto.placa}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Marca:</strong> {bitacora.tracto.marca}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Modelo:</strong> {bitacora.tracto.modelo}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Color:</strong> {bitacora.tracto.color}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Tipo:</strong> {bitacora.tracto.tipo}
-                                </h6>
-                            </div>
-                            {/* Column 3 */}
-                            <div className="col-md-3">
-                                <h5 className="card-subtitle mb-2 fw-semibold">Remolque:</h5>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Eco:</strong> {bitacora.remolque.eco}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Placa:</strong> {bitacora.remolque.placa}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Color:</strong> {bitacora.remolque.color}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Capacidad:</strong> {bitacora.remolque.capacidad}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Sello:</strong> {bitacora.remolque.sello}
-                                </h6>
-                            </div>
-
-                            {/* Column 4 */}
-                            <div className="col-md-3">
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Origen:</strong> {bitacora.origen}
-                                </h6>
-                                <h6 className="card-subtitle mb-2">
-                                    <strong>Destino:</strong> {bitacora.destino}
-                                </h6>
                             </div>
                         </div>
                     </div>
                 </Row>
             </Container>
         </Container>
-        <Col>
-            {bitacora.eventos.map((evento, index) => (
-                <Row md={12} key={index}>
-                    <Container className="mb-4 event-card">
-                        <Row>
-                            <Col md={6} className="title">
-                                <h3>{evento.nombre}</h3>
-                                <p>
-                                    <strong>Descripción:</strong>
-                                </p>
-                                <p>{evento.descripcion}</p>
-                                <p className="mt-4">
-                                    <strong>Registrado por: </strong> {evento.registrado_por}
-                                </p>
-                                <p className="mt-4">
-                                    <strong>Frecuencia: </strong> {`${evento.frecuencia} min`}
-                                </p>
-                            </Col>
-                            <Col md={1} className="line">
-                                <div className="circle"></div>
-                                <div className="line"></div>
-                            </Col>
-                            <Col md={5} className="fields">
-                                <p className="mt-4">
-                                    <strong>Ubicación: </strong> {evento.ubicacion}
-                                </p>
-                                <p className="mt-4">
-                                    <strong>Último Posicionamiento: </strong>{" "}
-                                    {evento.ultimo_posicionamiento}
-                                </p>
-                                <p className="mt-4">
-                                    <strong>Velocidad: </strong> {evento.velocidad}
-                                </p>
-                                <p className="mt-4">
-                                    <strong>Coordenadas: </strong> {evento.coordenadas}
-                                </p>
-                                <p className="mt-4">
-                                    <strong>Fecha:</strong>{" "}
-                                    {new Date(evento.createdAt).toLocaleDateString("es-MX", {
-                                        timeZone: "America/Mexico_City",
-                                    })}
-                                </p>
-                                <p className="mt-4">
-                                    <strong>Hora:</strong>{" "}
-                                    {new Date(evento.createdAt).toLocaleTimeString("es-MX", {
-                                        timeZone: "America/Mexico_City",
-                                    })}
-                                </p>
-                            </Col>
-                        </Row>
-                    </Container>
-                </Row>
-            ))}
-        </Col>
+        <Container className="transportes">
+            <Row className="justify-content-center w-100 text-center">
+                <h2>Transportes</h2>
+            </Row>
+            <Col className="mt-3">
+                {bitacora.transportes.map((transporte, index) => (
+                    <Row>
+                        <div className="card-body transportCard">
+                            <div className="d-flex flex-row title text-white fw-bolder fs-5">{`${bitacora.bitacora_id}.${transporte.id}`}</div>
+                            <div className="row px-4 py-3">
+                                {/* Column 1 */}
+                                <div className="col-md-6 text-center">
+                                    <h5 className="fw-bold">Tracto</h5>
+                                    <div className="row">
+                                        <div className="col-4">
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Eco:</strong> {transporte.tracto.eco}
+                                            </h6>
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>placa:</strong> {transporte.tracto.placa}
+                                            </h6>
+                                        </div>
+                                        <div className="col-4">
+                                            {" "}
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Modelo:</strong> {transporte.tracto.modelo}
+                                            </h6>
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Color:</strong> {transporte.tracto.color}
+                                            </h6>
+                                        </div>
+                                        <div className="col-4">
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Marca:</strong> {transporte.tracto.marca}
+                                            </h6>
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Tipo:</strong> {transporte.tracto.tipo}
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className=" col-md-1">
+                                    <div className="divider"></div>
+                                </div>
+                                {/* Column 4 */}
+                                <div className="col-md-5 text-center">
+                                    <h5 className="fw-bold">Remolque</h5>
+                                    <div className="row">
+                                        <div className="col-4">
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Eco:</strong> {transporte.remolque.eco}
+                                            </h6>
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Placa:</strong> {transporte.remolque.placa}
+                                            </h6>
+                                        </div>
+                                        <div className="col-4">
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Color:</strong> {transporte.remolque.color}
+                                            </h6>
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Capacidad:</strong>{" "}
+                                                {transporte.remolque.capacidad}
+                                            </h6>
+                                        </div>
+                                        <div className="col-4">
+                                            {" "}
+                                            <h6 className="card-subtitle mb-2">
+                                                <strong>Sello:</strong> {transporte.remolque.sello}
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </Row>
+                ))}
+            </Col>
+        </Container>
+        <Container className="eventos">
+            <Row className="justify-content-center w-100 text-center">
+                <h2>Eventos</h2>
+            </Row>
+            <Col className="mt-3">
+                {bitacora.eventos.map((evento, index) => (
+                    <Row md={12} key={index}>
+                        <Container className="mb-4 event-card">
+                            <Row>
+                                <Col md={6} className="title">
+                                    <h3>{evento.nombre}</h3>
+                                    <p>
+                                        <strong>Descripción:</strong>
+                                    </p>
+                                    <p>{evento.descripcion}</p>
+                                    <p className="mt-4">
+                                        <strong>Registrado por: </strong> {evento.registrado_por}
+                                    </p>
+                                    <p className="mt-4">
+                                        <strong>Frecuencia: </strong> {`${evento.frecuencia} min`}
+                                    </p>
+                                </Col>
+                                <Col md={1} className="line">
+                                    <div className="circle"></div>
+                                    <div className="line"></div>
+                                </Col>
+                                <Col md={5} className="fields">
+                                    <p className="mt-4">
+                                        <strong>Ubicación: </strong> {evento.ubicacion}
+                                    </p>
+                                    <p className="mt-4">
+                                        <strong>Último Posicionamiento: </strong>{" "}
+                                        {evento.ultimo_posicionamiento}
+                                    </p>
+                                    <p className="mt-4">
+                                        <strong>Velocidad: </strong> {evento.velocidad}
+                                    </p>
+                                    <p className="mt-4">
+                                        <strong>Coordenadas: </strong> {evento.coordenadas}
+                                    </p>
+                                    <p className="mt-4">
+                                        <strong>Fecha:</strong>{" "}
+                                        {new Date(evento.createdAt).toLocaleDateString("es-MX", {
+                                            timeZone: "America/Mexico_City",
+                                        })}
+                                    </p>
+                                    <p className="mt-4">
+                                        <strong>Hora:</strong>{" "}
+                                        {new Date(evento.createdAt).toLocaleTimeString("es-MX", {
+                                            timeZone: "America/Mexico_City",
+                                        })}
+                                    </p>
+                                </Col>
+                            </Row>
+                        </Container>
+                    </Row>
+                ))}
+            </Col>
+        </Container>
     </Container>
 ));
 
@@ -212,7 +253,6 @@ const BitacorasPage = () => {
     const [idFilter, setIdFilter] = useState("");
     const startItem = (currentPage - 1) * itemsPerPage + 1;
     const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
 
     const [formData, setFormData] = useState({
         bitacora_id: "",
