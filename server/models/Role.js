@@ -63,6 +63,11 @@ const RoleSchema = new mongoose.Schema(
             required: true,
             default: false,
         },
+        inactividad: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
         origenes: {
             type: Boolean,
             required: true,
