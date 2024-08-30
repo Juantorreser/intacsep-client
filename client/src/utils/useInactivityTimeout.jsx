@@ -1,3 +1,4 @@
+// useInactivityTimeout.jsx
 import {useEffect, useRef} from "react";
 
 const useInactivityTimeout = (timeout = 120000, onTimeout) => {

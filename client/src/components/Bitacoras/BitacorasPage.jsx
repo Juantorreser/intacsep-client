@@ -8,7 +8,6 @@ import Footer from "../Footer";
 import {formatDate} from "../../utils/dateUtils"; // Ensure you have a utility to format dates
 import jsPDF from "jspdf";
 import "jspdf-autotable"; // For table support in jsPDF
-import useInactivityTimeout from "../../utils/useInactivityTimeout";
 import html2canvas from "html2canvas";
 import {Container, Row, Col, Card} from "react-bootstrap";
 import {getPaginatedBitacoras, sortBitacoras} from "../../utils/utils"; // Assume these functions exist
@@ -214,7 +213,6 @@ const BitacorasPage = () => {
     const startItem = (currentPage - 1) * itemsPerPage + 1;
     const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-    // useInactivityTimeout(120000, logout); // 120000 ms = 2 minutes
 
     const [formData, setFormData] = useState({
         bitacora_id: "",

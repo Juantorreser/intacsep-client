@@ -5,6 +5,8 @@ import {useAuth} from "../context/AuthContext";
 import {useNavigate} from "react-router-dom";
 import {faL} from "@fortawesome/free-solid-svg-icons";
 import ProfileModal from "./Profile/ProfilePage";
+import {useTimeout} from "../context/TimeoutContext";
+import InactivityModal from "./Settings/InactivityModal";
 
 const Sidebar = () => {
     const {user, verifyToken, setUser} = useAuth();
@@ -16,6 +18,11 @@ const Sidebar = () => {
     const [showModal, setShowModal] = useState(false);
     const handleOpenModal = () => setShowModal(true);
     const handleCloseModal = () => setShowModal(false);
+    const {timeout, modifyTimeout} = useTimeout();
+    const [showInacModal, setShowInacModal] = useState(false);
+
+    const openInacModal = () => setShowInacModal(true);
+    const closeInacModal = () => setShowInacModal(false);
 
     useEffect(() => {
         const init = async () => {
@@ -286,7 +293,7 @@ const Sidebar = () => {
                                             {roleData.inactividad && (
                                                 <li
                                                     className="text-white-50 cursor-pointer itemLine2"
-                                                    onClick={() => navigate("/roles")}
+                                                    onClick={openInacModal}
                                                     style={{fontSize: "0.85rem"}}>
                                                     Inactividad
                                                 </li>
@@ -297,6 +304,12 @@ const Sidebar = () => {
                             </li>
                         )}
                     </ul>
+                    <InactivityModal
+                        show={showModal}
+                        handleClose={handleCloseModal}
+                        timeout={timeout}
+                        modifyTimeout={modifyTimeout}
+                    />
                     {/* #Menu */}
                 </div>
             </aside>
@@ -496,12 +509,26 @@ const Sidebar = () => {
                                                     Roles
                                                 </li>
                                             )}
+                                            {roleData.inactividad && (
+                                                <li
+                                                    className="text-white-50 cursor-pointer itemLine2"
+                                                    onClick={handleOpenModal}
+                                                    style={{fontSize: "0.85rem"}}>
+                                                    Inactividad
+                                                </li>
+                                            )}
                                         </ul>
                                     </div>
                                 </div>
                             </li>
                         )}
                     </ul>
+                    <InactivityModal
+                        show={showInacModal}
+                        handleClose={closeInacModal}
+                        timeout={timeout}
+                        modifyTimeout={modifyTimeout}
+                    />
                     {/* #Menu */}
                 </div>
             </aside>{" "}
