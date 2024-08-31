@@ -193,7 +193,7 @@ const RolePage = () => {
             edit_eventos_a: false,
             edit_eventos_c: false,
             edit_transportes_a: false,
-            edit_eventos_c: false,
+            edit_transportes_c: false,
             tipos_de_monitoreo: false,
             eventos: false,
             clientes: false,
