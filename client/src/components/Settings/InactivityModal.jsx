@@ -5,25 +5,36 @@ const InactivityModal = ({show, handleClose}) => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const timeout = 60;
     // Convert the initial timeout from ms to seconds
-    const [newTimeout, setNewTimeout] = useState();
+    const [newTimeout, setNewTimeout] = useState(0);
 
-    useEffect(() => {
-        // Update the state when the timeout or show prop changes
+    const getTimeoutTime = async () => {
         try {
-            const response = fetch(`${baseUrl}/inactividad`);
-            const data = response.value;
-            console.log(data);
-            
+            const response = await fetch(`${baseUrl}/inactividad`);
+            const data = await response.json();
+            setNewTimeout(data[0].value);
         } catch (e) {
             console.log(e.message);
         }
-    }, [timeout, show]);
+    };
 
     const handleSave = () => {
         // Convert the timeout back to milliseconds before saving
 
+        console.log(newTimeout);
+
+        const response = fetch(`${baseUrl}/inactividad`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            credentials: "include",
+            body: JSON.stringify({newTimeout}),
+        });
         handleClose();
     };
+
+    useEffect(() => {
+        // Update the state when the timeout or show prop changes
+        getTimeoutTime();
+    }, [timeout, show]);
 
     return (
         <Modal show={show} onHide={handleClose} centered>

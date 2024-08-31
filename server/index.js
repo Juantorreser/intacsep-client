@@ -1138,11 +1138,14 @@ app.get("/inactividad", async (req, res) => {
 
 app.post("/inactividad", async (req, res) => {
     const {newTimeout} = req.body;
+
     try {
-        const timeoutTime = await Inactividad.find({name: "timeoutTime"});
+        const timeoutTime = await Inactividad.findOne({name: "timeoutTime"});
+        if (!timeoutTime) return res.status(404).json({message: "Timeout not found"});
+
         timeoutTime.value = newTimeout;
-        await timeoutTime.save();
-        res.status(200).json(timeoutTime);
+        const newTimeoutTime = await timeoutTime.save();
+        res.status(200).json(newTimeoutTime);
     } catch (e) {
         res.status(500).json({message: "Error updating inactivity time", error: e.message});
     }
