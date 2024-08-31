@@ -14,6 +14,7 @@ const AuthProvider = ({children}) => {
     const inactivityTimeoutRef = useRef(null);
 
     const handleUserActivity = () => {
+        const seconds = 60;
         if (!user) {
             console.log("User is not logged in");
             return; // Do nothing if the user is not logged in
@@ -25,7 +26,7 @@ const AuthProvider = ({children}) => {
         inactivityTimeoutRef.current = setTimeout(() => {
             console.log("Inactivity timeout reached");
             setShowInactivityPopup(true);
-        }, 2 * 60 * 1000); // 2 minutes
+        }, seconds * 1000); // 2 minutes
     };
 
     const handleRedirectToLogin = () => {
