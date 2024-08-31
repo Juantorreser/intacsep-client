@@ -16,6 +16,7 @@ import ClientSequence from "./models/ClientSequence.js";
 import Destino from "./models/Destino.js";
 import Origen from "./models/Origen.js";
 import Operador from "./models/Operador.js";
+import Inactividad from "./models/Inactividad.js";
 import session from "express-session";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
@@ -1122,6 +1123,28 @@ app.delete("/operadores/:id", async (req, res) => {
         res.status(200).json({message: "Operador deleted successfully"});
     } catch (e) {
         res.status(500).json({message: "Error deleting operador", error: e.message});
+    }
+});
+
+//Inactividad
+app.get("/inactividad", async (req, res) => {
+    try {
+        const timeoutTime = await Inactividad.find({name: "timeoutTime"});
+        res.status(200).json(timeoutTime);
+    } catch (e) {
+        res.status(500).json({message: "Error getting inactivity time", error: e.message});
+    }
+});
+
+app.post("/inactividad", async (req, res) => {
+    const {newTimeout} = req.body;
+    try {
+        const timeoutTime = await Inactividad.find({name: "timeoutTime"});
+        timeoutTime.value = newTimeout;
+        await timeoutTime.save();
+        res.status(200).json(timeoutTime);
+    } catch (e) {
+        res.status(500).json({message: "Error updating inactivity time", error: e.message});
     }
 });
 
