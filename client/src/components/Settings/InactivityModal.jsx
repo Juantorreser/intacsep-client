@@ -2,18 +2,26 @@ import React, {useState, useEffect} from "react";
 import {Modal, Button, Form} from "react-bootstrap";
 
 const InactivityModal = ({show, handleClose}) => {
+    const baseUrl = import.meta.env.VITE_BASE_URL;
     const timeout = 60;
     // Convert the initial timeout from ms to seconds
-    const [newTimeout, setNewTimeout] = useState(timeout / 1000);
+    const [newTimeout, setNewTimeout] = useState();
 
     useEffect(() => {
         // Update the state when the timeout or show prop changes
-        setNewTimeout(timeout / 1000);
+        try {
+            const response = fetch(`${baseUrl}/inactividad`);
+            const data = response.value;
+            console.log(data);
+            
+        } catch (e) {
+            console.log(e.message);
+        }
     }, [timeout, show]);
 
     const handleSave = () => {
         // Convert the timeout back to milliseconds before saving
-        modifyTimeout(newTimeout * 1000);
+
         handleClose();
     };
 
