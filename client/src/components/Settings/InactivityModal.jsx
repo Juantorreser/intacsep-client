@@ -47,6 +47,8 @@ const InactivityModal = ({show, handleClose}) => {
                         <Form.Label>Tiempo de inactividad (Minutos)</Form.Label>
                         <Form.Control
                             type="number"
+                            min={0}
+                            max={60}
                             value={newTimeout}
                             onChange={(e) => setNewTimeout(Number(e.target.value))}
                         />
