@@ -775,11 +775,13 @@ const BitacorasPage = () => {
                                                 className="one"
                                                 onClick={() => handleSortChange("status")}
                                                 style={{cursor: "pointer"}}>
-                                                Status{" "}
+                                                Estatus <br /> Bitácora{" "}
                                                 {sortField === "status" &&
                                                     (sortOrder === "asc" ? "↑" : "↓")}
                                             </th>
-                                            <th className="text-center two">Recorrido</th>
+                                            <th className="text-center two">
+                                                Estatus <br /> Documentación
+                                            </th>
                                             <th className="text-center half">
                                                 <i className="fa fa-download"></i>
                                             </th>
