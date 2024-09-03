@@ -716,6 +716,8 @@ const BitacoraDetail = ({edited}) => {
 
         const handleEditClick = () => setShowModal(true);
         const handleClose = () => setShowModal(false);
+        const [showTransporteModal, setShowTransporteModal] = useState(false);
+        const [selectedTransporte, setSelectedTransporte] = useState(null);
 
         const handleInputChange = (e) => {
             const {name, value} = e.target;
@@ -736,6 +738,16 @@ const BitacoraDetail = ({edited}) => {
 
             handleEditSubmit(e);
         };
+
+         const handleShowTransporteModal = (transporte) => {
+             setSelectedTransporte(transporte);
+             setShowTransporteModal(true);
+         };
+
+         const handleCloseTransporteModal = () => {
+             setShowTransporteModal(false);
+             setSelectedTransporte(null);
+         };
 
         return (
             <div className="card mb-3">
@@ -788,15 +800,21 @@ const BitacoraDetail = ({edited}) => {
                             <p className="card-text">
                                 <strong>Transportes:</strong>{" "}
                                 {transportes && transportes.length > 0
-                                    ? transportes
-                                          .map(
-                                              (transporte) =>
-                                                  `${bitacora.bitacora_id}.${transporte.id}`
-                                          )
-                                          .join(", ")
+                                    ? transportes.map((transporte, index) => (
+                                          <a
+                                              href="#"
+                                              key={index}
+                                              className="transport-link"
+                                              onClick={(e) => {
+                                                  e.preventDefault();
+                                                  handleShowTransporteModal(transporte);
+                                              }}>
+                                              {`${bitacora.bitacora_id}.${transporte.id}`}
+                                              {index < transportes.length - 1 ? ", " : ""}
+                                          </a>
+                                      ))
                                     : ""}
                             </p>
-
                             <p className="card-text">
                                 <strong>Ubicación:</strong> {ubicacion}
                             </p>
@@ -818,6 +836,65 @@ const BitacoraDetail = ({edited}) => {
                         </div>
                     </div>
                 </div>
+                <Modal
+                    show={showTransporteModal}
+                    onHide={handleCloseTransporteModal}
+                    backdrop="static">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Transporte Information</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {selectedTransporte && (
+                            <div className="row mt-3">
+                                <div className="col-md-6">
+                                    <h5 className="card-subtitle mb-2 fw-semibold">Tracto:</h5>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Eco:</strong> {selectedTransporte.tracto.eco}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Placa:</strong> {selectedTransporte.tracto.placa}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Marca:</strong> {selectedTransporte.tracto.marca}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Modelo:</strong> {selectedTransporte.tracto.modelo}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Color:</strong> {selectedTransporte.tracto.color}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Tipo:</strong> {selectedTransporte.tracto.tipo}
+                                    </h6>
+                                </div>
+                                <div className="col-md-6">
+                                    <h5 className="card-subtitle mb-2 fw-semibold">Remolque:</h5>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Eco:</strong> {selectedTransporte.remolque.eco}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Placa:</strong> {selectedTransporte.remolque.placa}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Color:</strong> {selectedTransporte.remolque.color}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Capacidad:</strong>{" "}
+                                        {selectedTransporte.remolque.capacidad}
+                                    </h6>
+                                    <h6 className="card-subtitle mb-2">
+                                        <strong>Sello:</strong> {selectedTransporte.remolque.sello}
+                                    </h6>
+                                </div>
+                            </div>
+                        )}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseTransporteModal}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
                 {/* Edit Modal */}
                 <Modal show={showModal} onHide={handleClose} backdrop="static">
