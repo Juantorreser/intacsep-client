@@ -44,7 +44,7 @@ const InactivityModal = ({show, handleClose}) => {
             <Modal.Body>
                 <Form>
                     <Form.Group controlId="formTimeout">
-                        <Form.Label>Tiempo de inactividad (segundos)</Form.Label>
+                        <Form.Label>Tiempo de inactividad (Minutos)</Form.Label>
                         <Form.Control
                             type="number"
                             value={newTimeout}

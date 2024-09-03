@@ -12,7 +12,7 @@ const AuthProvider = ({children}) => {
     const navigate = useNavigate();
     const [showInactivityPopup, setShowInactivityPopup] = useState(false);
     const inactivityTimeoutRef = useRef(null);
-    const [seconds, setSeconds] = useState(40);
+    const [seconds, setSeconds] = useState(5);
 
     const handleUserActivity = async () => {
         try {
@@ -34,7 +34,7 @@ const AuthProvider = ({children}) => {
         inactivityTimeoutRef.current = setTimeout(() => {
             console.log("Inactivity timeout reached");
             setShowInactivityPopup(true);
-        }, seconds * 1000);
+        }, seconds * 60 * 1000);
     };
 
     const handleRedirectToLogin = () => {
