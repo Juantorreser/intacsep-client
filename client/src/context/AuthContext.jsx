@@ -12,15 +12,13 @@ const AuthProvider = ({children}) => {
     const navigate = useNavigate();
     const [showInactivityPopup, setShowInactivityPopup] = useState(false);
     const inactivityTimeoutRef = useRef(null);
-    const [seconds, setSeconds] = useState(0);
+    const [seconds, setSeconds] = useState(40);
 
     const handleUserActivity = async () => {
-        
         try {
             const response = await fetch(`${baseUrl}/inactividad`);
             const data = await response.json();
             setSeconds(data[0].value);
-            
         } catch (e) {
             console.log(e.message);
         }
@@ -36,7 +34,7 @@ const AuthProvider = ({children}) => {
         inactivityTimeoutRef.current = setTimeout(() => {
             console.log("Inactivity timeout reached");
             setShowInactivityPopup(true);
-        }, seconds * 1000); 
+        }, seconds * 1000);
     };
 
     const handleRedirectToLogin = () => {
@@ -49,7 +47,7 @@ const AuthProvider = ({children}) => {
 
         window.addEventListener("mousemove", handleUserActivity);
         window.addEventListener("keypress", handleUserActivity);
-
+        console.log(seconds);
         return () => {
             window.removeEventListener("mousemove", handleUserActivity);
             window.removeEventListener("keypress", handleUserActivity);
@@ -57,7 +55,7 @@ const AuthProvider = ({children}) => {
                 clearTimeout(inactivityTimeoutRef.current);
             }
         };
-    }, [user]);
+    }, [user, seconds]);
 
     const verifyToken = async () => {
         try {
