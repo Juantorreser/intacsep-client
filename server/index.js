@@ -54,6 +54,7 @@ const allowedOrigins = [
     "https://intacsep.spotynet.com", // Production
     "http://localhost:5173", // Development,
     "https://stg-app-intacsep.spotynet.com", //Staging
+    "https://www.stg-app-intacsep.spotynet.com",
 ];
 
 app.use(
