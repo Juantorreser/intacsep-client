@@ -205,9 +205,9 @@ $gray: #306eac;
             .eventsTitle {
                 position: sticky;
                 top: 0;
-                z-index: 10; 
+                z-index: 10;
                 background-color: white;
-                padding: 10px 0; 
+                padding: 10px 0;
             }
         }
     }
@@ -315,11 +315,12 @@ $gray: #306eac;
         }
     }
 
-    .transportes, .eventos{
+    .transportes,
+    .eventos {
         margin-top: 30px;
         padding-bottom: 20px;
         border-bottom: dashed $pdfBlue 2px;
-        h2{
+        h2 {
             font-size: 1.8rem;
             font-weight: 800;
             color: $pdfBlack;
@@ -331,12 +332,12 @@ $gray: #306eac;
         padding-bottom: 20px;
         border-bottom: dashed $pdfBlue 2px;
     }
-    .transportCard{
+    .transportCard {
         border-radius: 10px;
         // border: $pdfBlack solid 2px;
         margin-bottom: 15px;
         background-color: #f7f7f7;
-        .title{
+        .title {
             background: $pdfBlue;
             text-align: center;
             justify-content: center;
@@ -344,13 +345,11 @@ $gray: #306eac;
             border-radius: 10px 10px 0 0;
         }
 
-        .divider{
-            height:100px;
+        .divider {
+            height: 100px;
             width: 1px;
             background-color: $pdfBlack;
-
         }
-        
     }
     .event-card {
         width: 95%;
@@ -550,30 +549,30 @@ $gray: #306eac;
     }
 }
 
-#detailHeader{
+#detailHeader {
     padding-block: 10px;
     box-shadow: 0 8px 10px rgba(82, 82, 82, 0.1);
     z-index: 1000;
 }
 
-#profileModal{
+#profileModal {
     z-index: 1000;
 }
 
-.s-font{
+.s-font {
     font-size: 0.7rem;
 }
-.m-font{
+.m-font {
     font-size: 0.85rem;
 }
-.itemsSelector{
+.itemsSelector {
     font-size: 0.8rem !important;
-    width: fit-content  !important;
+    width: fit-content !important;
     border: none !important;
     padding: 10px 27px 10px 10px !important;
 }
 
-.pageLink{
+.pageLink {
     text-decoration: none !important;
     color: black !important;
     border: none !important;
