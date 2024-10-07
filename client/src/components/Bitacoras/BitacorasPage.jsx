@@ -539,67 +539,146 @@ const BitacorasPage = () => {
         fetchBitacoras(currentPage, newLimit);
     };
 
+    // const generatePDF = async (bitacora) => {
+    //     //FUNCIONAA
+    //     // Create a temporary container to render the BitacoraDetail component
+    //     const tempContainer = document.createElement("div");
+    //     tempContainer.classList.add("visibility-hidden");
+    //     tempContainer.style.position = "absolute";
+    //     tempContainer.style.top = "-9999px";
+    //     document.body.appendChild(tempContainer);
+
+    //     // Render the BitacoraDetail component into the temporary container
+    //     const root = createRoot(tempContainer);
+    //     root.render(<BitacoraDetail bitacora={bitacora} />);
+
+    //     // Ensure styles are applied before capturing the content
+    //     await new Promise((resolve) => setTimeout(resolve, 500)); // Adjust timeout as needed
+
+    //     html2canvas(tempContainer, {scale: 2, useCORS: true})
+    //         .then((canvas) => {
+    //             const imgData = canvas.toDataURL("image/png");
+
+    //             // Define PDF dimensions in points (1 inch = 72 points)
+    //             const letterWidth = 8.5 * 72;
+    //             const letterHeight = 11 * 72;
+
+    //             // Create a new jsPDF instance
+    //             const pdf = new jsPDF({
+    //                 orientation: "portrait",
+    //                 unit: "pt",
+    //                 format: [letterWidth, letterHeight],
+    //                 compress: true,
+    //             });
+
+    //             // Calculate image dimensions to fit the page width
+    //             const imgWidth = letterWidth;
+    //             const imgHeight = canvas.height * (letterWidth / canvas.width);
+    //             const pageHeight = letterHeight;
+
+    //             let heightLeft = imgHeight;
+    //             let position = 0;
+
+    //             // Add the first page with the image
+    //             pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    //             heightLeft -= pageHeight;
+
+    //             // Add additional pages if needed
+    //             while (heightLeft >= 0) {
+    //                 position = heightLeft - imgHeight;
+    //                 pdf.addPage();
+    //                 pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    //                 heightLeft -= pageHeight;
+    //             }
+
+    //             // Save the PDF with a filename based on the bitacora data
+    //             pdf.save(`Bitácora No.${bitacora.bitacora_id}, ${bitacora.cliente}.pdf`);
+
+    //             // Clean up by removing the temporary container
+    //             document.body.removeChild(tempContainer);
+    //         })
+    //         .catch((error) => {
+    //             console.error("Error generating PDF:", error);
+    //         });
+    // };
+
     const generatePDF = async (bitacora) => {
-        //FUNCIONAA
+      const eventos = bitacora.eventos;
+      const eventosPerPage = 30;
+      const totalEventos = eventos.length;
+
+      // Divide events into chunks of 10
+      const eventChunks = [];
+      for (let i = 0; i < totalEventos; i += eventosPerPage) {
+        eventChunks.push(eventos.slice(i, i + eventosPerPage));
+      }
+
+      for (let i = 0; i < eventChunks.length; i++) {
+        const currentChunk = eventChunks[i];
+
         // Create a temporary container to render the BitacoraDetail component
         const tempContainer = document.createElement("div");
         tempContainer.classList.add("visibility-hidden");
         tempContainer.style.position = "absolute";
-        tempContainer.style.top = "-9999px";
+        tempContainer.style.top = "-999999px";
         document.body.appendChild(tempContainer);
 
-        // Render the BitacoraDetail component into the temporary container
+        // Render the BitacoraDetail component into the temporary container with the current set of events
         const root = createRoot(tempContainer);
-        root.render(<BitacoraDetail bitacora={bitacora} />);
+        root.render(<BitacoraDetail bitacora={{...bitacora, eventos: currentChunk}} />);
 
         // Ensure styles are applied before capturing the content
         await new Promise((resolve) => setTimeout(resolve, 500)); // Adjust timeout as needed
 
-        html2canvas(tempContainer, {scale: 2, useCORS: true})
-            .then((canvas) => {
-                const imgData = canvas.toDataURL("image/png");
+        // Generate the PDF for the current chunk of events
+        await html2canvas(tempContainer, {scale: 2, useCORS: true})
+          .then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
 
-                // Define PDF dimensions in points (1 inch = 72 points)
-                const letterWidth = 8.5 * 72;
-                const letterHeight = 11 * 72;
+            // Define PDF dimensions in points (1 inch = 72 points)
+            const letterWidth = 8.5 * 72;
+            const letterHeight = 11 * 72;
 
-                // Create a new jsPDF instance
-                const pdf = new jsPDF({
-                    orientation: "portrait",
-                    unit: "pt",
-                    format: [letterWidth, letterHeight],
-                    compress: true,
-                });
-
-                // Calculate image dimensions to fit the page width
-                const imgWidth = letterWidth;
-                const imgHeight = canvas.height * (letterWidth / canvas.width);
-                const pageHeight = letterHeight;
-
-                let heightLeft = imgHeight;
-                let position = 0;
-
-                // Add the first page with the image
-                pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-
-                // Add additional pages if needed
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-
-                // Save the PDF with a filename based on the bitacora data
-                pdf.save(`Bitácora No.${bitacora.bitacora_id}, ${bitacora.cliente}.pdf`);
-
-                // Clean up by removing the temporary container
-                document.body.removeChild(tempContainer);
-            })
-            .catch((error) => {
-                console.error("Error generating PDF:", error);
+            // Create a new jsPDF instance
+            const pdf = new jsPDF({
+              orientation: "portrait",
+              unit: "pt",
+              format: [letterWidth, letterHeight],
+              compress: true,
             });
+
+            // Calculate image dimensions to fit the page width
+            const imgWidth = letterWidth;
+            const imgHeight = canvas.height * (letterWidth / canvas.width);
+            const pageHeight = letterHeight;
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            // Add the first page with the image
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            // Add additional pages if needed
+            while (heightLeft >= 0) {
+              position = heightLeft - imgHeight;
+              pdf.addPage();
+              pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+              heightLeft -= pageHeight;
+            }
+
+            // Save the PDF with a filename based on the bitacora data and chunk number
+            pdf.save(
+              `Bitácora No.${bitacora.bitacora_id}, ${bitacora.cliente} - Página ${i + 1}.pdf`
+            );
+
+            // Clean up by removing the temporary container
+            document.body.removeChild(tempContainer);
+          })
+          .catch((error) => {
+            console.error("Error generating PDF:", error);
+          });
+      }
     };
 
     const handleEditClick = (bitacoraId) => {
