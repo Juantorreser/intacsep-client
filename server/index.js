@@ -92,7 +92,7 @@ app.use((req, res, next) => {
         req.path === "/register" ||
         req.path === "/request-reset-password" ||
         req.path === "/reset-password" ||
-        (req.method === "GET" && req.path != "/user")
+        (req.method === "GET" && req.path != "/")
     ) {
         return next();
     }
