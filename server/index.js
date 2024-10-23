@@ -101,7 +101,6 @@ app.use((req, res, next) => {
 
   // Check if the token exists
   if (!token) {
-    console.log("Token is undefined");
     return res.status(401).json({message: "Unauthorized: Token missing"});
   }
 
@@ -406,15 +405,35 @@ app.delete("/user/:id", async (req, res) => {
   }
 });
 
+// app.get("/bitacoras", async (req, res) => {
+//   try {
+//     const bitacoras = await Bitacora.find();
+//     res.status(200).json(bitacoras);
+//   } catch (e) {
+//     console.error("Error fetching  bitácoras:", e);
+//     res.status(500).json({error: "An error occurred while fetching past bitácoras."});
+//   }
+// });
+
 app.get("/bitacoras", async (req, res) => {
+  const {page = 1, limit = 25} = req.query; // Get page and limit from query parameters
+  const skip = (page - 1) * limit; // Calculate how many records to skip
+
   try {
-    const bitacoras = await Bitacora.find();
-    res.status(200).json(bitacoras);
+    const totalItems = await Bitacora.countDocuments(); // Total count for pagination
+    const bitacoras = await Bitacora.find().sort({createdAt: -1}).skip(skip).limit(Number(limit)); // Paginated results
+
+    res.status(200).json({
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+      bitacoras,
+    });
   } catch (e) {
-    console.error("Error fetching  bitácoras:", e);
-    res.status(500).json({error: "An error occurred while fetching past bitácoras."});
+    console.error("Error fetching bitácoras:", e);
+    res.status(500).json({error: "An error occurred while fetching bitácoras."});
   }
 });
+
 
 app.post("/bitacora", async (req, res) => {
   const data = req.body;
