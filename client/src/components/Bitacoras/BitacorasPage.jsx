@@ -231,7 +231,7 @@ const BitacorasPage = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [bitacoras, setBitacoras] = useState([]);
-  const [currentPage, setCurrentPage] = useState(2);
+  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [totalPages, setTotalPages] = useState(1); // Track total pages
   const [totalItems, setTotalItems] = useState(25);
@@ -290,13 +290,13 @@ const BitacorasPage = () => {
   useEffect(() => {
     const initialize = async () => {
       try {
-        fetchBitacoras(currentPage, itemsPerPage);
-        fetchClients();
-        fetchMonitoreos();
-        fetchUsers();
-        fetchOrigenes();
-        fetchDestinos();
-        fetchOperadores();
+        await fetchBitacoras(currentPage, itemsPerPage);
+        await fetchClients();
+        await fetchMonitoreos();
+        await fetchUsers();
+        await fetchOrigenes();
+        await fetchDestinos();
+        await fetchOperadores();
         updateFormDataFromUser();
       } catch (e) {
         console.error("Verification failed:", e);
@@ -319,7 +319,7 @@ const BitacorasPage = () => {
         console.error("Failed to fetch origenes:", response.statusText);
       }
     } catch (e) {
-      console.error("Error fetching origenes:", e);
+      console.error("Error fetching origenes:", e.message);
     }
   };
 
@@ -400,6 +400,7 @@ const BitacorasPage = () => {
 
   const fetchBitacoras = async (page, limit) => {
     setLoadingBitacoras(true);
+    setBitacoras([]);
     try {
       const response = await fetch(`${baseUrl}/bitacoras?page=${page}&limit=${limit}`, {
         method: "GET",

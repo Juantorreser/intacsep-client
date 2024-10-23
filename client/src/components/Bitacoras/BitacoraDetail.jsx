@@ -702,7 +702,12 @@ const BitacoraDetail = ({edited}) => {
   };
 
   if (!bitacora) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loading-placeholder text-center py-5 w-full h-full flex items-center justify-center">
+        <i className="fa fa-spinner fa-spin me-1" style={{fontSize: "24px"}}></i> Cargando
+        bitacora...
+      </div>
+    );
   }
 
   const EventCard = ({event, eventos}) => {

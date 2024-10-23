@@ -77,7 +77,12 @@ const Sidebar = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>; // Add a loading indicator
+    return (
+      <div className="loading-placeholder text-center py-5 w-full h-full flex items-center justify-center">
+        <i className="fa fa-spinner fa-spin me-1" style={{fontSize: "24px"}}></i> Cargando
+      Menu...
+      </div>
+    ); // Add a loading indicator
   }
 
   return (
