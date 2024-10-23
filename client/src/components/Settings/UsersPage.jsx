@@ -30,7 +30,10 @@ const UsersPage = () => {
       console.log(user.role);
 
       try {
-        const response = await fetch(`${baseUrl}/users`);
+        const response = await fetch(`${baseUrl}/users`, {
+          method: "GET",
+          credentials: "include",
+        });
         if (response.ok) {
           const data = await response.json();
           const currentUserRole = user.role;
@@ -48,7 +51,10 @@ const UsersPage = () => {
 
     const fetchRoles = async () => {
       try {
-        const response = await fetch(`${baseUrl}/roles`);
+        const response = await fetch(`${baseUrl}/roles`, {
+          method: "GET",
+          credentials: "include",
+        });
         if (response.ok) {
           const data = await response.json();
           const currentUserRole = user.role;

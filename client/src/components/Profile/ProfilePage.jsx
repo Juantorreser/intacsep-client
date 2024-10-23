@@ -17,7 +17,8 @@ const ProfileModal = ({showModal, handleClose}) => {
             const data = await verifyToken();
             setUser(data);
             const response = await fetch(`${baseUrl}/user/${data.email}`, {
-                credentials: "include",
+              method: "GET",
+              credentials: "include",
             });
             if (response.ok) {
                 const data = await response.json();

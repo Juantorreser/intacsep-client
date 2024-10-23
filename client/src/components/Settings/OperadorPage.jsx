@@ -19,7 +19,10 @@ const OperadorPage = () => {
     useEffect(() => {
         const fetchOperadores = async () => {
             try {
-                const response = await fetch(`${baseUrl}/operadores`);
+                const response = await fetch(`${baseUrl}/operadores`, {
+                  method: "GET",
+                  credentials: "include",
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setOperadores(data);

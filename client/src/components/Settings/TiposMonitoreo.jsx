@@ -19,7 +19,10 @@ const TiposMonitoreo = () => {
     useEffect(() => {
         const fetchMonitoreos = async () => {
             try {
-                const response = await fetch(`${baseUrl}/monitoreos`);
+                const response = await fetch(`${baseUrl}/monitoreos`, {
+                  method: "GET",
+                  credentials: "include",
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setMonitoreos(data);

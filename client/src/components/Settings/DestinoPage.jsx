@@ -18,7 +18,10 @@ const DestinoPage = () => {
     useEffect(() => {
         const fetchDestinos = async () => {
             try {
-                const response = await fetch(`${baseUrl}/destinos`);
+                const response = await fetch(`${baseUrl}/destinos`, {
+                  method: "GET",
+                  credentials: "include",
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setDestinos(data);

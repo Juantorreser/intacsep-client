@@ -19,7 +19,10 @@ const EventsPage = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await fetch(`${baseUrl}/event_types`);
+                const response = await fetch(`${baseUrl}/event_types`, {
+                  method: "GET",
+                  credentials: "include",
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setEvents(data);

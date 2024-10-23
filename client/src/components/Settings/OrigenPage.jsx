@@ -19,7 +19,10 @@ const OrigenPage = () => {
     useEffect(() => {
         const fetchOrigenes = async () => {
             try {
-                const response = await fetch(`${baseUrl}/origenes`);
+                const response = await fetch(`${baseUrl}/origenes`, {
+                  method: "GET",
+                  credentials: "include",
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setOrigenes(data);
