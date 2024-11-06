@@ -12,6 +12,7 @@ const InactivityModal = ({show, handleClose}) => {
       const response = await fetch(`${baseUrl}/inactividad`, {
         method: "GET",
         credentials: "include",
+        mode: "no-cors",
       });
       const data = await response.json();
       setNewTimeout(data[0].value);
