@@ -1316,12 +1316,15 @@ const BitacoraDetail = ({edited}) => {
                   aria-controls="detalles"
                   aria-selected="true"
                   onClick={() => handleTabClick("detalles")}>
-                  Detalles
+                  <h6 className="p-0 m-0  fw-semibold">Detalles</h6>
+                  <p className="text-center p-0 m-0" style={{fontSize: "0.8rem"}}>
+                    ID: {bitacora.bitacora_id}
+                  </p>
                 </button>
               </li>
               <li className="nav-item" role="presentation">
                 <button
-                  className="nav-link"
+                  className="nav-link block"
                   id="eventos-tab"
                   data-bs-toggle="tab"
                   data-bs-target="#eventos"
@@ -1330,7 +1333,10 @@ const BitacoraDetail = ({edited}) => {
                   aria-controls="eventos"
                   aria-selected="false"
                   onClick={() => handleTabClick("eventos")}>
-                  Eventos
+                  <h6 className="p-0 m-0  fw-semibold">Eventos</h6>
+                  <p className="text-center p-0 m-0" style={{fontSize: "0.8rem"}}>
+                    Total: {bitacora.eventos.length}
+                  </p>
                 </button>
               </li>
               <li className="nav-item" role="presentation">
@@ -1344,7 +1350,10 @@ const BitacoraDetail = ({edited}) => {
                   aria-controls="transportes"
                   aria-selected="false"
                   onClick={() => handleTabClick("transportes")}>
-                  Transportes
+                  <h6 className="p-0 m-0  fw-semibold">Transportes</h6>
+                  <p className="text-center p-0 m-0" style={{fontSize: "0.8rem"}}>
+                    Total: {bitacora.transportes.length}
+                  </p>
                 </button>
               </li>
             </ul>
@@ -1477,7 +1486,6 @@ const BitacoraDetail = ({edited}) => {
                 role="tabpanel"
                 aria-labelledby="eventos-tab">
                 <div className="container mt-4">
-                  <h6 className="text-center">{bitacora.eventos.length} Eventos registrados</h6>
                   <div>
                     {events
                       .slice()
