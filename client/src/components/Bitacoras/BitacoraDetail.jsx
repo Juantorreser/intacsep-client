@@ -10,9 +10,8 @@ import {Modal, Button, Form, Row} from "react-bootstrap";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import TransporteDetails from "./TransporteDetails";
 
-const CreateTransporteModal = ({show, handleClose, addTransporte, transportes}) => {
+const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, bitacora}) => {
   const [transporteData, setTransporteData] = useState({
-    id: transportes.length + 1,
     tracto: {
       eco: "",
       placa: "",
@@ -51,11 +50,15 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes}) 
   };
 
   // Handle form submission
-  const handleSubmitTransporte = (e) => {
-    e.preventDefault();
-    addTransporte(transporteData);
-    handleClose();
-  };
+const handleSubmitTransporte = (e) => {
+  e.preventDefault();
+  const newId = transportes.length + 1; // Calculate ID dynamically based on current length
+  const newTransporteData = {id: newId, ...transporteData}; // Set the calculated ID here
+
+  addTransporte(newTransporteData, bitacora._id);
+  handleClose();
+};
+
 
   return (
     <Modal show={show} onHide={handleClose}>
@@ -276,9 +279,9 @@ const BitacoraDetail = ({edited}) => {
     }
   };
 
-  const addTransporte = async (newTransporte) => {
+  const addTransporte = async (newTransporte, id) => {
     try {
-      const response = await fetch(`${baseUrl}/bitacoras/${bitacora._id}/transportes`, {
+      const response = await fetch(`${baseUrl}/bitacoras/${id}/transportes`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -432,14 +435,64 @@ const BitacoraDetail = ({edited}) => {
           setTransportes(data.transportes);
           setSelectedTransportes(data.transportes);
         }
+
+        // Ensure that transportes is populated if it doesn't already exist
+        if (data.transportes.length == 0) {
+          console.log("Adding default transporte data...");
+          const transporteToAdd = {
+            id: transportes.length + 1,
+            tracto: {
+              eco: data.tracto.eco,
+              placa: data.tracto.placa,
+              marca: data.tracto.marca,
+              modelo: data.tracto.modelo,
+              color: data.tracto.color,
+              tipo: data.tracto.tipo,
+            },
+            remolque: {
+              eco: data.remolque.eco,
+              placa: data.remolque.placa,
+              color: data.remolque.color,
+              capacidad: data.remolque.capacidad,
+              sello: data.remolque.sello,
+            },
+          };
+          await addTransporte(transporteToAdd, data._id);
+        }
+
         setIsEventStarted(data.status === "iniciada");
-        setFinishButtonDisabled(data.status === "finalizada");
-        setFinishButtonDisabled(data.status === "cerrada");
+        setFinishButtonDisabled(data.status === "finalizada" || data.status === "cerrada");
       } else {
         console.error("Failed to fetch bitácora:", response.statusText);
       }
     } catch (e) {
       console.error("Error fetching bitácora:", e);
+    }
+  };
+
+  // Updated version of updateOldTransportes to accept 'bitacora' as a parameter
+  const updateOldTransportes = async (bitacora) => {
+    if (!bitacora.transportes) {
+      console.log("Adding default transporte data...");
+      const transporteToAdd = {
+        id: 1,
+        tracto: {
+          eco: bitacora.tracto.eco,
+          placa: bitacora.tracto.placa,
+          marca: bitacora.tracto.marca,
+          modelo: bitacora.tracto.modelo,
+          color: bitacora.tracto.color,
+          tipo: bitacora.tracto.tipo,
+        },
+        remolque: {
+          eco: bitacora.remolque.eco,
+          placa: bitacora.remolque.placa,
+          color: bitacora.remolque.color,
+          capacidad: bitacora.remolque.capacidad,
+          sello: bitacora.remolque.sello,
+        },
+      };
+      await addTransporte(transporteToAdd, bitacora._id);
     }
   };
 
@@ -1424,10 +1477,14 @@ const BitacoraDetail = ({edited}) => {
                 role="tabpanel"
                 aria-labelledby="eventos-tab">
                 <div className="container mt-4">
-                  <div className="">
-                    {events.map((event, index) => (
-                      <EventCard key={index} event={event} eventos={events} />
-                    ))}
+                  <h6 className="text-center">{bitacora.eventos.length} Eventos registrados</h6>
+                  <div>
+                    {events
+                      .slice()
+                      .reverse()
+                      .map((event, index) => (
+                        <EventCard key={index} event={event} eventos={events} />
+                      ))}
                   </div>
                 </div>
               </div>
@@ -2281,6 +2338,7 @@ const BitacoraDetail = ({edited}) => {
         handleClose={handleClose}
         addTransporte={addTransporte}
         transportes={transportes}
+        bitacora={bitacora}
       />
     </section>
   );

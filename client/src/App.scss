@@ -7,8 +7,8 @@ $secondary: #105fa5;
 $alternative: #b8ddff;
 $white: #e5e6e7;
 $bg: #181920;
-//$gray: #306eac;
-$gray: #30373e;
+$gray: #306eac;
+//$gray: #30373e;
 
 #root {
     font-family: $fontFamily;
@@ -281,7 +281,7 @@ $gray: #30373e;
 
     font-family: Arial, Helvetica, sans-serif;
     border: none;
-    padding: 20px 100px;
+    padding: 20px 10px;
     color: $pdfBlack;
     .header {
         text-align: start;
@@ -299,7 +299,7 @@ $gray: #30373e;
 
         h1 {
             font-weight: 900;
-            font-size: 4rem;
+            font-size: 3.8rem;
             position: relative; /* Ensure the h1 element is positioned relative for the pseudo-element to align correctly */
             color: $pdfBlack;
         }
