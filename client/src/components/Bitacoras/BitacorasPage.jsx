@@ -89,6 +89,13 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
     <Container className="transportes">
       <Row className="justify-content-center w-100 text-center">
         <h2>Transportes</h2>
+        <h6>
+          {bitacora.transportes && bitacora.transportes.length > 1
+            ? `${bitacora.transportes.length} Transportes registrados`
+            : bitacora.transportes
+            ? `${bitacora.transportes.length} Transporte registrado`
+            : "No transportes registrados"}
+        </h6>
       </Row>
       <Col className="mt-3">
         {bitacora.transportes.map((transporte, index) => (
