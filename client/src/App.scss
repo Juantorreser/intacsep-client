@@ -298,8 +298,9 @@ $gray: #306eac;
         }
 
         h1 {
+            text-align: center;
             font-weight: 900;
-            font-size: 3.8rem;
+            font-size: 3rem;
             position: relative; /* Ensure the h1 element is positioned relative for the pseudo-element to align correctly */
             color: $pdfBlack;
         }
