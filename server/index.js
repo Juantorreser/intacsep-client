@@ -165,13 +165,13 @@ app.post("/login", async (req, res) => {
     // Save tokens in cookies
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: "none", // or "Lax" depending on your needs
+      sameSite: "None", // or "Lax" depending on your needs
       secure: false,
     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      sameSite: "none", // or "Lax" depending on your needs
+      sameSite: "None", // or "Lax" depending on your needs
       secure: false,
     });
 
@@ -217,12 +217,12 @@ app.post("/register", async (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie("access_token", {
     httpOnly: true,
-    sameSite: "none",
+    sameSite: "None",
     secure: false,
   });
   res.clearCookie("refresh_token", {
     httpOnly: true,
-    sameSite: "none",
+    sameSite: "None",
     secure: false,
   });
   res.status(200).send("Successful");
@@ -309,7 +309,7 @@ app.post("/refresh_token", async (req, res) => {
     res.cookie("access_token", newAccessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: "strict",
+      sameSite: "None",
     });
     res.json({ message: "Access Token Refreshed", token: newAccessToken });
   } catch (e) {
