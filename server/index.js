@@ -166,13 +166,13 @@ app.post("/login", async (req, res) => {
     // Save tokens in cookies
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: "none", // or "Lax" depending on your needs
+      sameSite: "None", // or "Lax" depending on your needs
       secure: process.env.NODE_ENV === "production",
     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      sameSite: "none", // or "Lax" depending on your needs
+      sameSite: "None", // or "Lax" depending on your needs
       secure: process.env.NODE_ENV === "production",
     });
 
