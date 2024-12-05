@@ -70,6 +70,14 @@ app.use(
     credentials: true, // Allow cookies to be sent along with the request
   })
 );
+// Add Content-Security-Policy header
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'none'; img-src 'self' http://44.212.70.126:5000; script-src 'self'; style-src 'self';"
+  );
+  next(); // Proceed to the next middleware or route handler
+});
 
 app.use(express.json());
 app.use(cookieParser());
