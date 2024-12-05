@@ -309,7 +309,7 @@ app.post("/refresh_token", async (req, res) => {
     res.cookie("access_token", newAccessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: "none",
+      sameSite: "strict",
     });
     res.json({ message: "Access Token Refreshed", token: newAccessToken });
   } catch (e) {
