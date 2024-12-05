@@ -79,7 +79,11 @@ app.use(
     secret: process.env.SESSION_SECRET, // Replace with your actual secret
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // Set to true if using HTTPS
+    cookie: {
+      secure: false, // Set to false when using HTTP (not HTTPS)
+      httpOnly: true,
+      sameSite: "None", // Required for cross-origin cookies
+    },
   })
 );
 
@@ -167,13 +171,13 @@ app.post("/login", async (req, res) => {
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       sameSite: "None", // or "Lax" depending on your needs
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       sameSite: "None", // or "Lax" depending on your needs
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
     });
 
     user.refresh_token = refreshToken;
@@ -219,12 +223,12 @@ app.post("/logout", (req, res) => {
   res.clearCookie("access_token", {
     httpOnly: true,
     sameSite: "None",
-    secure: true,
+    secure: false,
   });
   res.clearCookie("refresh_token", {
     httpOnly: true,
     sameSite: "None",
-    secure: true,
+    secure: false,
   });
   res.status(200).send("Successful");
 });
@@ -309,8 +313,8 @@ app.post("/refresh_token", async (req, res) => {
     res.clearCookie("access_token");
     res.cookie("access_token", newAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: false,
+      sameSite: "None",
     });
     res.json({ message: "Access Token Refreshed", token: newAccessToken });
   } catch (e) {
