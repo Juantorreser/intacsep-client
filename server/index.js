@@ -79,11 +79,7 @@ app.use(
     secret: process.env.SESSION_SECRET, // Replace with your actual secret
     resave: false,
     saveUninitialized: true,
-    cookie: {
-      secure: true, // Set to false when using HTTP (not HTTPS)
-      httpOnly: true,
-      sameSite: "None", // Required for cross-origin cookies
-    },
+    cookie: {secure: false}, // Set to true if using HTTPS
   })
 );
 
@@ -106,7 +102,7 @@ app.use((req, res, next) => {
 
   // Check if the token exists
   if (!token) {
-    return res.status(401).json({ message: "Unauthorized: Token missing" });
+    return res.status(401).json({message: "Unauthorized: Token missing"});
   }
 
   try {
@@ -115,7 +111,7 @@ app.use((req, res, next) => {
   } catch (e) {
     console.log(e);
     req.session.user = null;
-    return res.status(401).json({ message: "Unauthorized: Invalid token" }); // Return response on error
+    return res.status(401).json({message: "Unauthorized: Invalid token"}); // Return response on error
   }
 
   next(); // Proceed to the next middleware
@@ -130,9 +126,9 @@ app.get("/", (req, res) => {
 
 app.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const {email, password} = req.body;
 
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({email: email});
 
     if (!user) {
       throw new Error("User Does Not Exist");
@@ -154,48 +150,44 @@ app.post("/login", async (req, res) => {
     };
 
     // Create Access Token
-    const accessToken = jwt.sign({ user: publicUser }, JWT_SECRET, {
+    const accessToken = jwt.sign({user: publicUser}, JWT_SECRET, {
       expiresIn: "60m",
     });
 
     // Create Refresh Token
-    const refreshToken = jwt.sign(
-      { id: user._id, email: user.email },
-      JWT_SECRET_REFRESH,
-      {
-        expiresIn: "5d",
-      }
-    );
+    const refreshToken = jwt.sign({id: user._id, email: user.email}, JWT_SECRET_REFRESH, {
+      expiresIn: "5d",
+    });
 
     // Save tokens in cookies
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: "None", // or "Lax" depending on your needs
-      secure: true,
+      sameSite: "none", // or "Lax" depending on your needs
+      secure: process.env.NODE_ENV === "production",
     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      sameSite: "None", // or "Lax" depending on your needs
-      secure: true,
+      sameSite: "none", // or "Lax" depending on your needs
+      secure: process.env.NODE_ENV === "production",
     });
 
     user.refresh_token = refreshToken;
     await user.save();
 
-    res.json({ user: publicUser });
+    res.json({user: publicUser});
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: "An error occurred" });
+    res.status(500).json({error: "An error occurred"});
   }
 });
 
 app.post("/register", async (req, res) => {
   try {
-    const { email, password, phone, firstName, lastName } = req.body;
+    const {email, password, phone, firstName, lastName} = req.body;
 
     //   Check if user already exists
-    const userExists = await User.findOne({ email: email });
+    const userExists = await User.findOne({email: email});
     if (userExists) {
       throw new Error("Email Already Registered");
     }
@@ -205,17 +197,11 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     //newUser
-    const newUser = new User({
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-      phone,
-    });
+    const newUser = new User({email, password: hashedPassword, firstName, lastName, phone});
     await newUser.save();
-    res.status(200).json({ id: newUser.id });
+    res.status(200).json({id: newUser.id});
   } catch (e) {
-    res.status(401).json({ message: `${e}` });
+    res.status(401).json({message: `${e}`});
   }
 });
 
@@ -234,29 +220,25 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/request-reset-password", async (req, res) => {
-  const { email } = req.body;
+  const {email} = req.body;
   // Find the user by email
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).send({ message: "User not found" });
+  const user = await User.findOne({email});
+  if (!user) return res.status(404).send({message: "User not found"});
 
   // Create a reset token
   const resetToken = crypto.randomBytes(32).toString("hex");
-  const resetPasswordToken = jwt.sign(
-    { id: user._id, token: resetToken },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1h",
-    }
-  );
+  const resetPasswordToken = jwt.sign({id: user._id, token: resetToken}, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
 
   // Send email
 
   await sendPasswordResetEmail(email, resetPasswordToken);
-  res.status(200).send({ message: "Password reset email sent" });
+  res.status(200).send({message: "Password reset email sent"});
 });
 
 app.post("/reset-password", async (req, res) => {
-  const { token, newPassword } = req.body;
+  const {token, newPassword} = req.body;
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -277,19 +259,18 @@ app.post("/reset-password", async (req, res) => {
 });
 
 app.post("/protected", (req, res) => {
-  const { user } = req.session;
+  const {user} = req.session;
 
   if (!user) return res.send("Access Denied").status(401);
-  res.json({ user: user }).status(200);
+  res.json({user: user}).status(200);
 });
 
 app.post("/refresh_token", async (req, res) => {
   //create new access token
   try {
-    const { refresh_token } = req.cookies;
+    const {refresh_token} = req.cookies;
 
-    if (!refresh_token)
-      return res.status(403).json({ message: "No Token Refreshed" });
+    if (!refresh_token) return res.status(403).json({message: "No Token Refreshed"});
 
     const data = jwt.verify(refresh_token, JWT_SECRET_REFRESH);
     //Check if user exists
@@ -305,7 +286,7 @@ app.post("/refresh_token", async (req, res) => {
       role: user.role,
     };
 
-    const newAccessToken = jwt.sign({ user: publicUser }, JWT_SECRET, {
+    const newAccessToken = jwt.sign({user: publicUser}, JWT_SECRET, {
       expiresIn: "15m",
     });
 
@@ -313,12 +294,12 @@ app.post("/refresh_token", async (req, res) => {
     res.clearCookie("access_token");
     res.cookie("access_token", newAccessToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
     });
-    res.json({ message: "Access Token Refreshed", token: newAccessToken });
+    res.json({message: "Access Token Refreshed", token: newAccessToken});
   } catch (e) {
-    res.status(403).json({ message: "No Token Refreshed" });
+    res.status(403).json({message: "No Token Refreshed"});
   }
 });
 
@@ -332,9 +313,9 @@ app.get("/user", async (req, res) => {
 });
 
 app.get("/user/:id", async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   try {
-    const user = await User.findOne({ email: id });
+    const user = await User.findOne({email: id});
     res.status(200).json(user);
   } catch (e) {
     console.log(e);
@@ -342,18 +323,18 @@ app.get("/user/:id", async (req, res) => {
 });
 
 app.post("/user/:id", async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   const data = req.body;
 
   if (data.password) {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-    await User.updateOne({ email: id }, { password: hashedPassword });
+    await User.updateOne({email: id}, {password: hashedPassword});
   }
 
   try {
     const userToUpdate = await User.updateOne(
-      { email: id },
+      {email: id},
       {
         name: data.name,
         username: data.username,
@@ -368,62 +349,60 @@ app.post("/user/:id", async (req, res) => {
     );
 
     console.log(userToUpdate);
-    res.status(200).json({ message: "User Updated" });
+    res.status(200).json({message: "User Updated"});
   } catch (e) {
     console.log(e);
-    res.json({ message: "User NOT Updated" });
+    res.json({message: "User NOT Updated"});
   }
 });
 
 app.patch("/user/:id", async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   const updates = req.body;
 
   try {
     const user = await User.updateOne(
-      { email: id },
+      {email: id},
       {
         admin: updates.admin,
       }
     );
     if (!user) {
-      return res.status(404).send({ error: "User not found" });
+      return res.status(404).send({error: "User not found"});
     }
     res.send(user);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(400).send({error: error.message});
   }
 });
 
 app.patch("/profile/:id", async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   const updatedData = req.body;
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(id, updatedData, {
-      new: true,
-    });
+    const updatedUser = await User.findByIdAndUpdate(id, updatedData, {new: true});
     if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({message: "User not found"});
     }
     res.json(updatedUser);
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({message: "Internal server error"});
   }
 });
 
 app.delete("/user/:id", async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
 
   try {
-    const user = await User.deleteOne({ email: id });
+    const user = await User.deleteOne({email: id});
     if (!user) {
-      return res.status(404).send({ error: "User not found" });
+      return res.status(404).send({error: "User not found"});
     }
     res.send(user);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(400).send({error: error.message});
   }
 });
 
@@ -450,10 +429,7 @@ app.get("/bitacoras", async (req, res) => {
     const totalItems = await Bitacora.countDocuments();
 
     // Fetch paginated bitacoras
-    const bitacoras = await Bitacora.find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    const bitacoras = await Bitacora.find().sort({createdAt: -1}).skip(skip).limit(limit);
 
     res.status(200).json({
       bitacoras,
@@ -462,9 +438,7 @@ app.get("/bitacoras", async (req, res) => {
     });
   } catch (e) {
     console.error("Error fetching bitacoras:", e);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching bitacoras." });
+    res.status(500).json({error: "An error occurred while fetching bitacoras."});
   }
 });
 
@@ -474,9 +448,9 @@ app.post("/bitacora", async (req, res) => {
   try {
     // Fetch and update the sequence number
     const sequence = await BitSequence.findOneAndUpdate(
-      { name: "bitacora_id" },
-      { $inc: { sequence_value: 1 } },
-      { new: true, upsert: true } // Create if not exists
+      {name: "bitacora_id"},
+      {$inc: {sequence_value: 1}},
+      {new: true, upsert: true} // Create if not exists
     );
 
     const sequenceNumber = sequence.sequence_value.toString().padStart(6, "0");
@@ -510,12 +484,8 @@ app.post("/bitacora", async (req, res) => {
       },
       operador: data.operador,
       telefono: data.telefono,
-      inicioMonitoreo: data.inicioMonitoreo
-        ? new Date(data.inicioMonitoreo)
-        : null,
-      finalMonitoreo: data.finalMonitoreo
-        ? new Date(data.finalMonitoreo)
-        : null,
+      inicioMonitoreo: data.inicioMonitoreo ? new Date(data.inicioMonitoreo) : null,
+      finalMonitoreo: data.finalMonitoreo ? new Date(data.finalMonitoreo) : null,
       status: data.status || "creada",
       eventos: data.eventos || [],
     });
@@ -532,16 +502,16 @@ app.get("/bitacora/:id", async (req, res) => {
   try {
     const bitacora = await Bitacora.findById(req.params.id);
     if (!bitacora) {
-      return res.status(404).json({ message: "Bitacora not found" });
+      return res.status(404).json({message: "Bitacora not found"});
     }
     res.json(bitacora);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({message: "Server error"});
   }
 });
 
 app.patch("/bitacora/:id/event", async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   const {
     nombre,
     descripcion,
@@ -558,7 +528,7 @@ app.patch("/bitacora/:id/event", async (req, res) => {
     // Find the bitacora by its ID
     const bitacora = await Bitacora.findById(id);
     if (!bitacora) {
-      return res.status(404).json({ message: "Bitacora not found" });
+      return res.status(404).json({message: "Bitacora not found"});
     }
 
     // Create a new event
@@ -584,13 +554,13 @@ app.patch("/bitacora/:id/event", async (req, res) => {
     res.status(200).json(bitacora);
   } catch (error) {
     console.error("Error adding event:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({message: "Internal server error"});
   }
 });
 
 //Update Bitacora
 app.patch("/bitacora/:id", async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   const edited_bitacora = req.body;
 
   console.log("Received edited_bitacora:", edited_bitacora.transportes); // Add this line to debug
@@ -598,7 +568,7 @@ app.patch("/bitacora/:id", async (req, res) => {
   try {
     const bitacora = await Bitacora.findById(id);
     if (!bitacora) {
-      return res.status(404).json({ message: "Bitacora not found" });
+      return res.status(404).json({message: "Bitacora not found"});
     }
 
     bitacora.edited_bitacora = edited_bitacora;
@@ -607,7 +577,7 @@ app.patch("/bitacora/:id", async (req, res) => {
     res.json(updatedBitacora);
   } catch (error) {
     console.error("Error updating bitacora:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({message: "Internal server error"});
   }
 });
 
@@ -615,12 +585,12 @@ app.patch("/bitacora/:id", async (req, res) => {
 app.post("/bitacoras/:id/transportes", async (req, res) => {
   try {
     const bitacoraId = req.params.id;
-    const { id, tracto, remolque } = req.body;
+    const {id, tracto, remolque} = req.body;
 
     // Find the bitacora by ID
-    const bitacora = await Bitacora.findOne({ _id: bitacoraId });
+    const bitacora = await Bitacora.findOne({_id: bitacoraId});
     if (!bitacora) {
-      return res.status(404).json({ message: "Bitacora not found" });
+      return res.status(404).json({message: "Bitacora not found"});
     }
 
     // Create a new Transporte object
@@ -640,7 +610,7 @@ app.post("/bitacoras/:id/transportes", async (req, res) => {
     res.status(200).json(bitacora);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({message: "Server error", error});
   }
 });
 
@@ -649,7 +619,7 @@ app.patch("/bitacora/:id/start", async (req, res) => {
   try {
     const bitacora = await Bitacora.findById(req.params.id);
     if (!bitacora) {
-      return res.status(404).json({ message: "Bitacora not found" });
+      return res.status(404).json({message: "Bitacora not found"});
     }
 
     const date = new Date();
@@ -659,7 +629,7 @@ app.patch("/bitacora/:id/start", async (req, res) => {
 
     res.json(bitacora);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({message: "Server error"});
   }
 });
 
@@ -668,7 +638,7 @@ app.patch("/bitacora/:id/finish", async (req, res) => {
   try {
     const bitacora = await Bitacora.findById(req.params.id);
     if (!bitacora) {
-      return res.status(404).json({ message: "Bitacora not found" });
+      return res.status(404).json({message: "Bitacora not found"});
     }
     const date = new Date();
     bitacora.activa = false;
@@ -677,43 +647,41 @@ app.patch("/bitacora/:id/finish", async (req, res) => {
 
     res.json(bitacora);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({message: "Server error"});
   }
 });
 
 app.patch("/bitacora/:id/status", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { status } = req.body;
+    const {id} = req.params;
+    const {status} = req.body;
 
     const bitacora = await Bitacora.findById(id);
-    if (!bitacora)
-      return res.status(404).json({ message: "Bitacora not found" });
+    if (!bitacora) return res.status(404).json({message: "Bitacora not found"});
 
     bitacora.status = status;
     await bitacora.save();
 
     res.json(bitacora);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({message: error.message});
   }
 });
 
 app.patch("/bitacora/:id/edited", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { edited } = req.body;
+    const {id} = req.params;
+    const {edited} = req.body;
 
     const bitacora = await Bitacora.findById(id);
-    if (!bitacora)
-      return res.status(404).json({ message: "Bitacora not found" });
+    if (!bitacora) return res.status(404).json({message: "Bitacora not found"});
 
     bitacora.edited = edited;
     await bitacora.save();
 
     res.json(bitacora);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({message: error.message});
   }
 });
 
@@ -724,56 +692,50 @@ app.get("/monitoreos", async (req, res) => {
     res.status(200).json(monitoreos);
   } catch (error) {
     console.error("Error fetching monitoreos:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({message: "Internal server error"});
   }
 });
 
 // Edit an existing origen
 app.put("/monitoreos/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { tipoMonitoreo } = req.body;
-    const updatedMonitoreo = await Monitoreo.findByIdAndUpdate(
-      id,
-      { tipoMonitoreo },
-      { new: true }
-    );
+    const {id} = req.params;
+    const {tipoMonitoreo} = req.body;
+    const updatedMonitoreo = await Monitoreo.findByIdAndUpdate(id, {tipoMonitoreo}, {new: true});
     res.json(updatedMonitoreo);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Failed to edit origen", error: e.message });
+    res.status(500).json({message: "Failed to edit origen", error: e.message});
   }
 });
 
 app.delete("/monitoreos/:id", async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   try {
     const result = await Monitoreo.findByIdAndDelete(id);
     if (result) {
-      res.status(200).json({ message: "Monitoreo deleted successfully" });
+      res.status(200).json({message: "Monitoreo deleted successfully"});
     } else {
-      res.status(404).json({ message: "Monitoreo not found" });
+      res.status(404).json({message: "Monitoreo not found"});
     }
   } catch (error) {
     console.error("Error deleting monitoreo:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({message: "Internal server error"});
   }
 });
 
 app.post("/monitoreos", async (req, res) => {
-  const { tipoMonitoreo } = req.body;
+  const {tipoMonitoreo} = req.body;
   if (!tipoMonitoreo) {
-    return res.status(400).json({ message: "Tipo de monitoreo is required" });
+    return res.status(400).json({message: "Tipo de monitoreo is required"});
   }
 
   try {
-    const newMonitoreo = new Monitoreo({ tipoMonitoreo });
+    const newMonitoreo = new Monitoreo({tipoMonitoreo});
     const savedMonitoreo = await newMonitoreo.save();
     res.status(201).json(savedMonitoreo);
   } catch (error) {
     console.error("Error creating monitoreo:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({message: "Internal server error"});
   }
 });
 
@@ -784,20 +746,19 @@ app.get("/users", async (req, res) => {
     const users = await User.find();
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({message: error.message});
   }
 });
 
 //CREATE users
 app.post("/users", async (req, res) => {
-  const { email, password, firstName, lastName, phone, countryKey, role } =
-    req.body;
+  const {email, password, firstName, lastName, phone, countryKey, role} = req.body;
 
   try {
     // Check if user already exists
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({email});
     if (userExists) {
-      return res.status(400).json({ message: "Email Already Registered" });
+      return res.status(400).json({message: "Email Already Registered"});
     }
 
     // Hash Password
@@ -818,31 +779,31 @@ app.post("/users", async (req, res) => {
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({message: error.message});
   }
 });
 
 // DELETE /users/:id
 app.delete("/users/:id", async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
 
   try {
     const deletedUser = await User.findByIdAndDelete(id);
     if (!deletedUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({message: "User not found"});
     }
     res.status(200).json(deletedUser);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({message: error.message});
   }
 });
 
 //UPDATE user
 app.put("/users/:id", async (req, res) => {
-  const { password, firstName, lastName, phone } = req.body;
+  const {password, firstName, lastName, phone} = req.body;
 
   try {
-    const updateData = { firstName, lastName, phone };
+    const updateData = {firstName, lastName, phone};
 
     // Hash the password if it is provided
     if (password) {
@@ -854,17 +815,15 @@ app.put("/users/:id", async (req, res) => {
       }
     }
 
-    const user = await User.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-    });
+    const user = await User.findByIdAndUpdate(req.params.id, updateData, {new: true});
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({message: "User not found"});
     }
-    res.status(200).json({ message: "SAVED" });
+    res.status(200).json({message: "SAVED"});
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({message: "Server error"});
   }
 });
 
@@ -875,7 +834,7 @@ app.get("/clients", async (req, res) => {
     const clients = await Client.find();
     res.json(clients);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({message: error.message});
   }
 });
 
@@ -884,16 +843,16 @@ app.post("/clients", async (req, res) => {
   try {
     // Get the next sequence value
     const nextID = await ClientSequence.findOneAndUpdate(
-      { name: "Client_id" },
-      { $inc: { sequence_value: 1 } },
-      { new: true, upsert: true }
+      {name: "Client_id"},
+      {$inc: {sequence_value: 1}},
+      {new: true, upsert: true}
     );
 
     // Format the ID as a 6-digit number with leading zeros
     const formattedID = nextID.sequence_value.toString().padStart(6, "0");
 
     // Add formatted ID to request body
-    const clientData = { ...req.body, ID_Cliente: formattedID };
+    const clientData = {...req.body, ID_Cliente: formattedID};
 
     // Create new client with ID_Cliente
     const client = new Client(clientData);
@@ -903,24 +862,20 @@ app.post("/clients", async (req, res) => {
     res.status(201).json(newClient);
   } catch (error) {
     // Handle errors
-    res.status(400).json({ message: error.message });
+    res.status(400).json({message: error.message});
   }
 });
 
 // Update a client
 app.put("/clients/:id", async (req, res) => {
   try {
-    const updatedClient = await Client.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const updatedClient = await Client.findByIdAndUpdate(req.params.id, req.body, {new: true});
     if (!updatedClient) {
-      return res.status(404).json({ message: "Client not found" });
+      return res.status(404).json({message: "Client not found"});
     }
     res.json(updatedClient);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({message: error.message});
   }
 });
 
@@ -929,11 +884,11 @@ app.delete("/clients/:id", async (req, res) => {
   try {
     const deletedClient = await Client.findByIdAndDelete(req.params.id);
     if (!deletedClient) {
-      return res.status(404).json({ message: "Client not found" });
+      return res.status(404).json({message: "Client not found"});
     }
-    res.json({ message: "Client deleted" });
+    res.json({message: "Client deleted"});
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({message: error.message});
   }
 });
 
@@ -943,7 +898,7 @@ app.get("/event_types", async (req, res) => {
     const eventsTypes = await EventType.find();
     res.json(eventsTypes);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({message: err.message});
   }
 });
 
@@ -951,14 +906,13 @@ app.put("/event_types/:id", async (req, res) => {
   try {
     const updatedEvent = await EventType.findByIdAndUpdate(
       req.params.id,
-      { eventType: req.body.name },
-      { new: true } // Return the updated document
+      {eventType: req.body.name},
+      {new: true} // Return the updated document
     );
-    if (!updatedEvent)
-      return res.status(404).json({ message: "Event not found" });
+    if (!updatedEvent) return res.status(404).json({message: "Event not found"});
     res.json(updatedEvent);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({message: err.message});
   }
 });
 
@@ -970,17 +924,17 @@ app.post("/event_types", async (req, res) => {
     const newEvent = await event.save();
     res.status(201).json(newEvent);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({message: err.message});
   }
 });
 
 app.delete("/event_types/:id", async (req, res) => {
   try {
     const result = await EventType.findByIdAndDelete(req.params.id);
-    if (!result) return res.status(404).json({ message: "Event not found" });
-    res.json({ message: "Event deleted" });
+    if (!result) return res.status(404).json({message: "Event not found"});
+    res.json({message: "Event deleted"});
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({message: err.message});
   }
 });
 
@@ -994,7 +948,7 @@ app.get("/roles", async (req, res) => {
   } catch (error) {
     // Handle errors and send appropriate response
     console.error("Error fetching roles:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({message: "Internal Server Error"});
   }
 });
 
@@ -1018,34 +972,32 @@ app.post("/roles", async (req, res) => {
     const newRole = await role.save();
     res.status(201).json(newRole);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({message: error.message});
   }
 });
 
 // PUT update a role
 app.put("/roles/:id", async (req, res) => {
   try {
-    const updatedRole = await Role.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const updatedRole = await Role.findByIdAndUpdate(req.params.id, req.body, {new: true});
     res.json(updatedRole);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({message: error.message});
   }
 });
 
 app.get("/roles/:roleName", async (req, res) => {
   try {
     const roleName = req.params.roleName;
-    const role = await Role.findOne({ name: roleName });
+    const role = await Role.findOne({name: roleName});
 
     if (!role) {
-      return res.status(404).json({ message: "Role not found" });
+      return res.status(404).json({message: "Role not found"});
     }
 
     res.json(role);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({message: "Server error", error});
   }
 });
 
@@ -1053,9 +1005,9 @@ app.get("/roles/:roleName", async (req, res) => {
 app.delete("/roles/:id", async (req, res) => {
   try {
     await Role.findByIdAndDelete(req.params.id);
-    res.json({ message: "Role deleted" });
+    res.json({message: "Role deleted"});
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({message: error.message});
   }
 });
 
@@ -1066,54 +1018,42 @@ app.get("/origenes", async (req, res) => {
     const origenes = await Origen.find();
     res.json(origenes);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch origenes", error: e.message });
+    res.status(500).json({message: "Failed to fetch origenes", error: e.message});
   }
 });
 
 // Create a new origen
 app.post("/origenes", async (req, res) => {
   try {
-    const { name } = req.body;
-    const newOrigen = new Origen({ name });
+    const {name} = req.body;
+    const newOrigen = new Origen({name});
     const savedOrigen = await newOrigen.save();
     res.status(201).json(savedOrigen);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Failed to create origen", error: e.message });
+    res.status(500).json({message: "Failed to create origen", error: e.message});
   }
 });
 
 // Edit an existing origen
 app.put("/origenes/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name } = req.body;
-    const updatedOrigen = await Origen.findByIdAndUpdate(
-      id,
-      { name },
-      { new: true }
-    );
+    const {id} = req.params;
+    const {name} = req.body;
+    const updatedOrigen = await Origen.findByIdAndUpdate(id, {name}, {new: true});
     res.json(updatedOrigen);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Failed to edit origen", error: e.message });
+    res.status(500).json({message: "Failed to edit origen", error: e.message});
   }
 });
 
 // Delete an origen
 app.delete("/origenes/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
     await Origen.findByIdAndDelete(id);
     res.status(204).end();
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Failed to delete origen", error: e.message });
+    res.status(500).json({message: "Failed to delete origen", error: e.message});
   }
 });
 
@@ -1123,22 +1063,18 @@ app.get("/destinos", async (req, res) => {
     const destinos = await Destino.find();
     res.status(200).json(destinos);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error fetching destinos", error: e.message });
+    res.status(500).json({message: "Error fetching destinos", error: e.message});
   }
 });
 
 // Create a new destino
 app.post("/destinos", async (req, res) => {
   try {
-    const newDestino = new Destino({ name: req.body.name });
+    const newDestino = new Destino({name: req.body.name});
     const savedDestino = await newDestino.save();
     res.status(201).json(savedDestino);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error creating destino", error: e.message });
+    res.status(500).json({message: "Error creating destino", error: e.message});
   }
 });
 
@@ -1147,14 +1083,12 @@ app.put("/destinos/:id", async (req, res) => {
   try {
     const updatedDestino = await Destino.findByIdAndUpdate(
       req.params.id,
-      { name: req.body.name },
-      { new: true }
+      {name: req.body.name},
+      {new: true}
     );
     res.status(200).json(updatedDestino);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error updating destino", error: e.message });
+    res.status(500).json({message: "Error updating destino", error: e.message});
   }
 });
 
@@ -1162,11 +1096,9 @@ app.put("/destinos/:id", async (req, res) => {
 app.delete("/destinos/:id", async (req, res) => {
   try {
     await Destino.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Destino deleted successfully" });
+    res.status(200).json({message: "Destino deleted successfully"});
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error deleting destino", error: e.message });
+    res.status(500).json({message: "Error deleting destino", error: e.message});
   }
 });
 
@@ -1177,22 +1109,18 @@ app.get("/operadores", async (req, res) => {
     const operadores = await Operador.find();
     res.status(200).json(operadores);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error fetching operadores", error: e.message });
+    res.status(500).json({message: "Error fetching operadores", error: e.message});
   }
 });
 
 // Create a new operador
 app.post("/operadores", async (req, res) => {
   try {
-    const newOperador = new Operador({ name: req.body.name });
+    const newOperador = new Operador({name: req.body.name});
     const savedOperador = await newOperador.save();
     res.status(201).json(savedOperador);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error creating operador", error: e.message });
+    res.status(500).json({message: "Error creating operador", error: e.message});
   }
 });
 
@@ -1201,14 +1129,12 @@ app.put("/operadores/:id", async (req, res) => {
   try {
     const updatedOperador = await Operador.findByIdAndUpdate(
       req.params.id,
-      { name: req.body.name },
-      { new: true }
+      {name: req.body.name},
+      {new: true}
     );
     res.status(200).json(updatedOperador);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error updating operador", error: e.message });
+    res.status(500).json({message: "Error updating operador", error: e.message});
   }
 });
 
@@ -1216,41 +1142,34 @@ app.put("/operadores/:id", async (req, res) => {
 app.delete("/operadores/:id", async (req, res) => {
   try {
     await Operador.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Operador deleted successfully" });
+    res.status(200).json({message: "Operador deleted successfully"});
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error deleting operador", error: e.message });
+    res.status(500).json({message: "Error deleting operador", error: e.message});
   }
 });
 
 //Inactividad
 app.get("/inactividad", async (req, res) => {
   try {
-    const timeoutTime = await Inactividad.find({ name: "timeoutTime" });
+    const timeoutTime = await Inactividad.find({name: "timeoutTime"});
     res.status(200).json(timeoutTime);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error getting inactivity time", error: e.message });
+    res.status(500).json({message: "Error getting inactivity time", error: e.message});
   }
 });
 
 app.post("/inactividad", async (req, res) => {
-  const { newTimeout } = req.body;
+  const {newTimeout} = req.body;
 
   try {
-    const timeoutTime = await Inactividad.findOne({ name: "timeoutTime" });
-    if (!timeoutTime)
-      return res.status(404).json({ message: "Timeout not found" });
+    const timeoutTime = await Inactividad.findOne({name: "timeoutTime"});
+    if (!timeoutTime) return res.status(404).json({message: "Timeout not found"});
 
     timeoutTime.value = newTimeout;
     const newTimeoutTime = await timeoutTime.save();
     res.status(200).json(newTimeoutTime);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error updating inactivity time", error: e.message });
+    res.status(500).json({message: "Error updating inactivity time", error: e.message});
   }
 });
 
