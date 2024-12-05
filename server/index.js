@@ -61,23 +61,16 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (allowedOrigins.indexOf(origin) !== -1) {
+      // Allow requests with no origin (like mobile apps or Postman)
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // Allow cookies to be sent along with the request
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   })
 );
-// Add Content-Security-Policy header
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'none'; img-src 'self' http://44.212.70.126:5000; script-src 'self'; style-src 'self';"
-  );
-  next(); // Proceed to the next middleware or route handler
-});
 
 app.use(express.json());
 app.use(cookieParser());
@@ -173,14 +166,14 @@ app.post("/login", async (req, res) => {
     // Save tokens in cookies
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: "None", // or "Lax" depending on your needs
-      secure: true,
+      sameSite: "none", // or "Lax" depending on your needs
+      secure: process.env.NODE_ENV === "production",
     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      sameSite: "None", // or "Lax" depending on your needs
-      secure: true,
+      sameSite: "none", // or "Lax" depending on your needs
+      secure: process.env.NODE_ENV === "production",
     });
 
     user.refresh_token = refreshToken;
@@ -316,8 +309,8 @@ app.post("/refresh_token", async (req, res) => {
     res.clearCookie("access_token");
     res.cookie("access_token", newAccessToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
     });
     res.json({ message: "Access Token Refreshed", token: newAccessToken });
   } catch (e) {
