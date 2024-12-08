@@ -8,7 +8,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="opacity-25 text-white mb-5">
-                Powered by © Spotynet 2024
+                Powered by © Spotynet 2024 on AWS
             </a>
         </footer>
     );
