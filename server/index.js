@@ -57,6 +57,7 @@ const allowedOrigins = [
   "https://www.stg-app-intacsep.spotynet.com",
   "http://44.212.70.126", //AWS stg
   "https://intacsep.ilbento.com", //AWS test
+  "https://www.intacsep.spotynet.com", //AWS PROD
 ];
 
 app.use(
