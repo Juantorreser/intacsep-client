@@ -45,7 +45,7 @@ const sendPasswordResetEmail = (email, resetToken) => {
 };
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_SECRET_REFRESH = process.env.JWT_SECRET_REFRESH;
 
@@ -57,19 +57,29 @@ const allowedOrigins = [
   "https://www.stg-app-intacsep.spotynet.com",
   "http://44.212.70.126", //AWS stg
   "https://intacsep.ilbento.com", //AWS test
+  "https://intacsep-app.ilbento.com",
 ];
+
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       // Allow requests with no origin (like mobile apps or Postman)
+//       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+//   })
+// );
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or Postman)
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    origin: "*", // Allows all origins
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allow all methods
+    allowedHeaders: "*", // Allow all headers
+    credentials: true, // Allow cookies (if required)
   })
 );
 
