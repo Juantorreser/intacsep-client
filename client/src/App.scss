@@ -56,6 +56,10 @@ $gray: #223b53;
   footer {
     height: 15%;
     margin-top: auto;
+    font-size: 0.85rem;
+    position: absolute;
+    bottom: 5px;
+    left: 0;
   }
 
   #login {
@@ -138,7 +142,7 @@ $gray: #223b53;
     margin-top: 80px;
     width: 83%; /* Adjust based on your sidebar width */
     padding: 0;
-    min-height: 85svh;
+    min-height: 83svh;
   }
 
   @media (max-width: 768px) {
@@ -600,4 +604,11 @@ $gray: #223b53;
   color: black !important;
   border: none !important;
   font-size: 0.9rem !important;
+}
+
+.icon-btn {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }

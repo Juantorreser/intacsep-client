@@ -89,7 +89,7 @@ const PastBits = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
+
         </section>
     );
 };

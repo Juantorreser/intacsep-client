@@ -233,7 +233,6 @@ const TiposMonitoreo = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Footer />
         </section>
     );
 };

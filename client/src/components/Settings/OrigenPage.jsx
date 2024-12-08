@@ -234,7 +234,6 @@ const OrigenPage = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Footer />
         </section>
     );
 };

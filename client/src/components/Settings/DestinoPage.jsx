@@ -236,8 +236,6 @@ const DestinoPage = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-            <Footer />
         </section>
     );
 };

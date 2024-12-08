@@ -409,7 +409,6 @@ const UsersPage = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Footer />
     </section>
   );
 };

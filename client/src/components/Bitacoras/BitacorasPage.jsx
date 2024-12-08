@@ -1,18 +1,18 @@
-import React, {useState, useEffect} from "react";
-import {createRoot} from "react-dom/client";
-import {useAuth} from "../../context/AuthContext";
-import {useNavigate} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { createRoot } from "react-dom/client";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
-import {formatDate} from "../../utils/dateUtils"; // Ensure you have a utility to format dates
+import { formatDate } from "../../utils/dateUtils"; // Ensure you have a utility to format dates
 import jsPDF from "jspdf";
 import "jspdf-autotable"; // For table support in jsPDF
 import html2canvas from "html2canvas";
-import {Container, Row, Col, Card} from "react-bootstrap";
-import {getPaginatedBitacoras, sortBitacoras} from "../../utils/utils"; // Assume these functions exist
+import { Container, Row, Col, Card } from "react-bootstrap";
+import { getPaginatedBitacoras, sortBitacoras } from "../../utils/utils"; // Assume these functions exist
 
-const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
+const BitacoraDetail = React.forwardRef(({ bitacora }, ref) => (
   <Container ref={ref} id="pdfBitacora">
     <Container className="my-4">
       <Container className="header">
@@ -28,7 +28,9 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
               <strong>Inicio Monitoreo:</strong>{" "}
               {`${formatDate(bitacora.inicioMonitoreo)}, ${new Date(
                 bitacora.inicioMonitoreo
-              ).toLocaleTimeString("es-MX", {timeZone: "America/Mexico_City"})}`}
+              ).toLocaleTimeString("es-MX", {
+                timeZone: "America/Mexico_City",
+              })}`}
             </p>
           </Col>
           <Col>
@@ -36,7 +38,9 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
               <strong>Final Monitoreo:</strong>{" "}
               {`${formatDate(bitacora.finalMonitoreo)}, ${new Date(
                 bitacora.finalMonitoreo
-              ).toLocaleTimeString("es-MX", {timeZone: "America/Mexico_City"})}`}
+              ).toLocaleTimeString("es-MX", {
+                timeZone: "America/Mexico_City",
+              })}`}
             </p>
           </Col>
         </Row>
@@ -154,7 +158,8 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
                         <strong>Color:</strong> {transporte.remolque.color}
                       </h6>
                       <h6 className="card-subtitle mb-2">
-                        <strong>Capacidad:</strong> {transporte.remolque.capacidad}
+                        <strong>Capacidad:</strong>{" "}
+                        {transporte.remolque.capacidad}
                       </h6>
                     </div>
                     <div className="col-4">
@@ -203,7 +208,8 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
                     <strong>Ubicación: </strong> {evento.ubicacion}
                   </p>
                   <p className="mt-4">
-                    <strong>Último Posicionamiento: </strong> {evento.ultimo_posicionamiento}
+                    <strong>Último Posicionamiento: </strong>{" "}
+                    {evento.ultimo_posicionamiento}
                   </p>
                   <p className="mt-4">
                     <strong>Velocidad: </strong> {evento.velocidad}
@@ -235,7 +241,7 @@ const BitacoraDetail = React.forwardRef(({bitacora}, ref) => (
 
 const BitacorasPage = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
-  const {user, verifyToken, logout} = useAuth();
+  const { user, verifyToken, logout } = useAuth();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [bitacoras, setBitacoras] = useState([]);
@@ -410,10 +416,13 @@ const BitacorasPage = () => {
     setLoadingBitacoras(true);
     setBitacoras([]);
     try {
-      const response = await fetch(`${baseUrl}/bitacoras?page=${page}&limit=${limit}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${baseUrl}/bitacoras?page=${page}&limit=${limit}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       if (response.ok) {
         const data = await response.json();
         console.log(data.bitacoras);
@@ -480,7 +489,7 @@ const BitacorasPage = () => {
   };
 
   const handleChange = (e) => {
-    const {id, value} = e.target;
+    const { id, value } = e.target;
     if (id.startsWith("remolque") || id.startsWith("tracto")) {
       const [field, key] = id.split("_");
       setFormData((prevData) => ({
@@ -503,7 +512,7 @@ const BitacorasPage = () => {
     try {
       const response = await fetch(`${baseUrl}/bitacora`, {
         method: "POST",
-        headers: {"content-type": "application/json"},
+        headers: { "content-type": "application/json" },
         credentials: "include",
         body: JSON.stringify(formData),
       });
@@ -523,36 +532,51 @@ const BitacorasPage = () => {
     let filtered = bitacoras;
 
     if (idFilter) {
-      filtered = filtered.filter((bitacora) => bitacora.bitacora_id.toString().includes(idFilter));
+      filtered = filtered.filter((bitacora) =>
+        bitacora.bitacora_id.toString().includes(idFilter)
+      );
     }
 
     if (statusFilter) {
-      filtered = filtered.filter((bitacora) => bitacora.status === statusFilter);
+      filtered = filtered.filter(
+        (bitacora) => bitacora.status === statusFilter
+      );
     }
 
     if (clienteFilter) {
-      filtered = filtered.filter((bitacora) => bitacora.cliente === clienteFilter);
+      filtered = filtered.filter(
+        (bitacora) => bitacora.cliente === clienteFilter
+      );
     }
 
     if (operadorFilter) {
-      filtered = filtered.filter((bitacora) => bitacora.operador === operadorFilter);
+      filtered = filtered.filter(
+        (bitacora) => bitacora.operador === operadorFilter
+      );
     }
 
     if (monitoreoFilter) {
-      filtered = filtered.filter((bitacora) => bitacora.monitoreo === monitoreoFilter);
+      filtered = filtered.filter(
+        (bitacora) => bitacora.monitoreo === monitoreoFilter
+      );
     }
 
     if (creationDateFilter) {
       filtered = filtered.filter(
         (bitacora) =>
-          new Date(bitacora.createdAt).toISOString().split("T")[0] === creationDateFilter
+          new Date(bitacora.createdAt).toISOString().split("T")[0] ===
+          creationDateFilter
       );
     }
 
     return filtered;
   };
 
-  const sortedFilteredBitacoras = sortBitacoras(getFilteredBitacoras(), sortField, sortOrder);
+  const sortedFilteredBitacoras = sortBitacoras(
+    getFilteredBitacoras(),
+    sortField,
+    sortOrder
+  );
 
   const filteredBitacoras = bitacoras.filter((bitacora) => {
     return (
@@ -814,7 +838,9 @@ const BitacorasPage = () => {
     if (bitacora.eventos.length > 0) {
       // Find the latest event by comparing createdAt timestamps
       const latestEvent = bitacora.eventos.reduce((latest, current) =>
-        new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
+        new Date(latest.createdAt) > new Date(current.createdAt)
+          ? latest
+          : current
       );
       return latestEvent.frecuencia;
     } else {
@@ -828,7 +854,9 @@ const BitacorasPage = () => {
     }
 
     const latestEvent = bitacora.eventos.reduce((latest, current) =>
-      new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
+      new Date(latest.createdAt) > new Date(current.createdAt)
+        ? latest
+        : current
     );
 
     const frecuencia = latestEvent.frecuencia;
@@ -873,7 +901,9 @@ const BitacorasPage = () => {
     }
 
     const latestEvent = bitacora.eventos.reduce((latest, current) =>
-      new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
+      new Date(latest.createdAt) > new Date(current.createdAt)
+        ? latest
+        : current
     );
 
     const recorrido = latestEvent.nombre;
@@ -891,8 +921,13 @@ const BitacorasPage = () => {
         </div>
         <div className="content-wrapper">
           <div className="d-flex justify-content-between align-items-center mx-3">
-            <h1 className="text-center flex-grow-1 fs-3 fw-semibold text-black">Bitácoras</h1>
-            <button className="btn btn-primary rounded-5" onClick={() => setShowModal(!showModal)}>
+            <h1 className="text-center flex-grow-1 fs-3 fw-semibold text-black">
+              Bitácoras
+            </h1>
+            <button
+              className="btn btn-primary rounded-5"
+              onClick={() => setShowModal(!showModal)}
+            >
               <i className="fa fa-plus"></i>
             </button>
           </div>
@@ -907,52 +942,70 @@ const BitacorasPage = () => {
                       <th
                         className="half"
                         onClick={() => handleSortChange("frecuencia")}
-                        style={{cursor: "pointer"}}>
-                        Frec {sortField === "frecuencia" && (sortOrder === "asc" ? "↑" : "↓")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        Frec{" "}
+                        {sortField === "frecuencia" &&
+                          (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="one"
                         onClick={() => handleSortChange("bitacora_id")}
-                        style={{cursor: "pointer"}}>
-                        ID {sortField === "bitacora_id" && (sortOrder === "asc" ? "↑" : "↓")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        ID{" "}
+                        {sortField === "bitacora_id" &&
+                          (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="two"
                         onClick={() => handleSortChange("cliente")}
-                        style={{cursor: "pointer"}}>
-                        Cliente {sortField === "cliente" && (sortOrder === "asc" ? "↑" : "↓")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        Cliente{" "}
+                        {sortField === "cliente" &&
+                          (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="two"
                         onClick={() => handleSortChange("monitoreo")}
-                        style={{cursor: "pointer"}}>
+                        style={{ cursor: "pointer" }}
+                      >
                         Tipo Monitoreo{" "}
-                        {sortField === "monitoreo" && (sortOrder === "asc" ? "↑" : "↓")}
+                        {sortField === "monitoreo" &&
+                          (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="two"
                         onClick={() => handleSortChange("operador")}
-                        style={{cursor: "pointer"}}>
-                        Operador {sortField === "operador" && (sortOrder === "asc" ? "↑" : "↓")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        Operador{" "}
+                        {sortField === "operador" &&
+                          (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="two"
                         onClick={() => handleSortChange("createdAt")}
-                        style={{cursor: "pointer"}}>
+                        style={{ cursor: "pointer" }}
+                      >
                         Fecha Creación{" "}
-                        {sortField === "createdAt" && (sortOrder === "asc" ? "↑" : "↓")}
+                        {sortField === "createdAt" &&
+                          (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="one"
                         onClick={() => handleSortChange("status")}
-                        style={{cursor: "pointer"}}>
+                        style={{ cursor: "pointer" }}
+                      >
                         Estatus <br /> Bitácora{" "}
-                        {sortField === "status" && (sortOrder === "asc" ? "↑" : "↓")}
+                        {sortField === "status" &&
+                          (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th className="text-center two">
                         Estatus <br /> Documentación
                       </th>
-                      <th className="text-center half">
+                      <th className="text-center half relative">
                         <i className="fa fa-download"></i>
                       </th>
                       <th className="text-center half">
@@ -981,7 +1034,8 @@ const BitacorasPage = () => {
                           id="clienteFilter"
                           className="form-select"
                           value={clienteFilter}
-                          onChange={(e) => setClienteFilter(e.target.value)}>
+                          onChange={(e) => setClienteFilter(e.target.value)}
+                        >
                           <option value="">Todos</option>
                           {clients.map((client, id) => (
                             <option key={id} value={client.razon_social}>
@@ -995,7 +1049,8 @@ const BitacorasPage = () => {
                           id="clienteFilter"
                           className="form-select"
                           value={monitoreoFilter}
-                          onChange={(e) => setMonitoreoFilter(e.target.value)}>
+                          onChange={(e) => setMonitoreoFilter(e.target.value)}
+                        >
                           <option value="">Todos</option>
                           {monitoreos.map((monitreo, id) => (
                             <option key={id} value={monitreo.tipoMonitoreo}>
@@ -1009,7 +1064,8 @@ const BitacorasPage = () => {
                           id="operadorFilter"
                           className="form-select"
                           value={operadorFilter}
-                          onChange={(e) => setOperadorFilter(e.target.value)}>
+                          onChange={(e) => setOperadorFilter(e.target.value)}
+                        >
                           <option value="">Todos</option>
                           {operadores.map((operador, id) => (
                             <option key={id} value={operador.name}>
@@ -1025,7 +1081,9 @@ const BitacorasPage = () => {
                             type="date"
                             className="form-control"
                             value={creationDateFilter}
-                            onChange={(e) => setCreationDateFilter(e.target.value)}
+                            onChange={(e) =>
+                              setCreationDateFilter(e.target.value)
+                            }
                           />
                         </div>
                       </th>
@@ -1035,7 +1093,8 @@ const BitacorasPage = () => {
                             id="statusFilter"
                             className="form-select"
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}>
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                          >
                             <option value="">Todos</option>
                             <option value="nueva">Nueva</option>
                             <option value="validada">Validada</option>
@@ -1055,7 +1114,10 @@ const BitacorasPage = () => {
                   <tbody>
                     {loadingBitacoras ? (
                       <div className="loading-placeholder text-center py-5 w-full h-full flex items-center justify-center">
-                        <i className="fa fa-spinner fa-spin me-1" style={{fontSize: "24px"}}></i>{" "}
+                        <i
+                          className="fa fa-spinner fa-spin me-1"
+                          style={{ fontSize: "24px" }}
+                        ></i>{" "}
                         Cargando bitacoras...
                       </div>
                     ) : (
@@ -1069,12 +1131,16 @@ const BitacorasPage = () => {
                                   className={`circle`}
                                   style={{
                                     backgroundColor: color,
-                                  }}></div>
+                                  }}
+                                ></div>
                               ))}
                             </div>
                           </td>
                           <td className="one">
-                            <a href={`/bitacora/${bitacora._id}`} className="text-decoration-none">
+                            <a
+                              href={`/bitacora/${bitacora._id}`}
+                              className="text-decoration-none"
+                            >
                               {bitacora.bitacora_id}
                             </a>
                           </td>
@@ -1089,41 +1155,50 @@ const BitacorasPage = () => {
                             {bitacora.edited ? " (e)" : ""}
                           </td>
                           <td className="two">{getRecorrido(bitacora)}</td>
-                          <td className="text-center half">
+                          <td className="text-center half position-relative">
                             <button
                               className={
                                 bitacora.status !== "finalizada" &&
                                 bitacora.status !== "cerrada" &&
                                 bitacora.status !== "cerrada (e)"
-                                  ? "btn btn-secondary"
-                                  : "btn btn-danger"
+                                  ? "btn btn-secondary icon-btn"
+                                  : "btn btn-danger icon-btn"
                               }
                               onClick={() => generatePDF(bitacora)}
                               disabled={
                                 bitacora.status !== "finalizada" &&
                                 bitacora.status !== "cerrada" &&
                                 bitacora.status !== "cerrada (e)"
-                              }>
-                              <i className="fa fa-file-pdf"></i>
-                            </button>
-                          </td>
-                          <td className="text-center half">
-                            <button
-                              className={
-                                bitacora.edited === false ? "btn btn-secondary" : "btn btn-warning"
                               }
-                              onClick={() => generatePDF(bitacora.edited_bitacora)}
-                              disabled={bitacora.edited == false}>
+                            >
                               <i className="fa fa-file-pdf"></i>
                             </button>
                           </td>
-                          <td className="text-center half">
+                          <td className="text-center half position-relative">
                             <button
                               className={
-                                bitacora.edited == false ? "btn btn-secondary" : "btn btn-primary"
+                                bitacora.edited === false
+                                  ? "btn btn-secondary icon-btn"
+                                  : "btn btn-warning icon-btn"
+                              }
+                              onClick={() =>
+                                generatePDF(bitacora.edited_bitacora)
+                              }
+                              disabled={bitacora.edited == false}
+                            >
+                              <i className="fa fa-file-pdf"></i>
+                            </button>
+                          </td>
+                          <td className="text-center half position-relative">
+                            <button
+                              className={
+                                bitacora.edited == false
+                                  ? "btn btn-secondary icon-btn"
+                                  : "btn btn-primary icon-btn"
                               }
                               onClick={() => handleEditClick(bitacora._id)}
-                              disabled={bitacora.edited == false}>
+                              disabled={bitacora.edited == false}
+                            >
                               <i className="fa fa-eye"></i>
                             </button>
                           </td>
@@ -1139,14 +1214,18 @@ const BitacorasPage = () => {
           {/* Pagination Controls */}
           <div className="d-flex justify-content-between align-items-center mx-3 my-3 gap-4">
             <div className="d-flex align-items-center justify-content-start">
-              <label htmlFor="itemsPerPage" className="form-label p-0 m-0 s-font fw-bold">
+              <label
+                htmlFor="itemsPerPage"
+                className="form-label p-0 m-0 s-font fw-bold"
+              >
                 Items Por Página:
               </label>
               <select
                 id="itemsPerPage"
                 className="form-select itemsSelector s-font ms-2"
                 value={itemsPerPage}
-                onChange={handleItemsPerPageChange}>
+                onChange={handleItemsPerPageChange}
+              >
                 <option value={25}>25</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
@@ -1163,24 +1242,30 @@ const BitacorasPage = () => {
               <button
                 className="btn border-0"
                 disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}>
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
                 <i className="fa fa-chevron-left s-font"></i>
               </button>
 
               <div className="mx-0 s-font">
-                {Array.from({length: Math.min(3, totalPages)}).map((_, index) => {
-                  const pageNum = index + 1;
-                  return (
-                    <button
-                      key={pageNum}
-                      className={`btn pageLink s-font ${
-                        pageNum === currentPage ? "fw-bold fs-6" : "opacity-75"
-                      }`}
-                      onClick={() => handlePageChange(pageNum)}>
-                      {pageNum}
-                    </button>
-                  );
-                })}
+                {Array.from({ length: Math.min(3, totalPages) }).map(
+                  (_, index) => {
+                    const pageNum = index + 1;
+                    return (
+                      <button
+                        key={pageNum}
+                        className={`btn pageLink s-font ${
+                          pageNum === currentPage
+                            ? "fw-bold fs-6"
+                            : "opacity-75"
+                        }`}
+                        onClick={() => handlePageChange(pageNum)}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  }
+                )}
                 {totalPages > 3 && (
                   <>
                     <span className="mx-1">...</span>
@@ -1188,7 +1273,8 @@ const BitacorasPage = () => {
                       className={`btn  pageLink s-font ${
                         totalPages === currentPage ? "fw-bold" : ""
                       }`}
-                      onClick={() => handlePageChange(totalPages)}>
+                      onClick={() => handlePageChange(totalPages)}
+                    >
                       {totalPages}
                     </button>
                   </>
@@ -1198,7 +1284,8 @@ const BitacorasPage = () => {
               <button
                 className="btn border-0"
                 disabled={currentPage === totalPages}
-                onClick={() => handlePageChange(currentPage + 1)}>
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
                 <i className="fa fa-chevron-right s-font"></i>
               </button>
             </div>
@@ -1214,7 +1301,8 @@ const BitacorasPage = () => {
             id="exampleModal"
             tabIndex="-1"
             aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
+            aria-hidden="true"
+          >
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-body w-100">
@@ -1227,7 +1315,8 @@ const BitacorasPage = () => {
                       position: "absolute",
                       top: "15px",
                       right: "15px",
-                    }}></button>
+                    }}
+                  ></button>
                   <div className="w-100 col justify-content-center align-items-center">
                     <img src="/logo2.png" alt="" width={50} />
                     <p className="p-0 m-0"> Nueva Bitácora</p>
@@ -1245,10 +1334,14 @@ const BitacorasPage = () => {
                         aria-label="Tipo de Monitoreo"
                         value={formData.monitoreo}
                         onChange={handleChange}
-                        required>
+                        required
+                      >
                         <option value="">Selecciona una opción</option>
                         {monitoreos.map((monitoreo) => (
-                          <option key={monitoreo._id} value={monitoreo.tipoMonitoreo}>
+                          <option
+                            key={monitoreo._id}
+                            value={monitoreo.tipoMonitoreo}
+                          >
                             {monitoreo.tipoMonitoreo}
                           </option>
                         ))}
@@ -1266,7 +1359,8 @@ const BitacorasPage = () => {
                         aria-label="Cliente"
                         value={formData.cliente}
                         onChange={handleChange}
-                        required>
+                        required
+                      >
                         <option value="">Selecciona una opción</option>
                         {clients.map((client) => (
                           <option key={client._id} value={client.razon_social}>
@@ -1288,7 +1382,9 @@ const BitacorasPage = () => {
                       />
                     </div>
                     <div className="form-group mb-3">
-                      <label htmlFor="linea_transporte">Línea de Transporte</label>
+                      <label htmlFor="linea_transporte">
+                        Línea de Transporte
+                      </label>
                       <input
                         id="linea_transporte"
                         type="text"
@@ -1308,7 +1404,8 @@ const BitacorasPage = () => {
                         className="form-select"
                         value={formData.origen}
                         onChange={handleChange}
-                        required>
+                        required
+                      >
                         <option value="">Seleccionar</option>
                         {origenes.map((origen) => (
                           <option key={origen._id} value={origen.name}>
@@ -1327,7 +1424,8 @@ const BitacorasPage = () => {
                         className="form-select"
                         value={formData.destino}
                         onChange={handleChange}
-                        required>
+                        required
+                      >
                         <option value="">Seleccionar</option>
                         {destinos.map((destino) => (
                           <option key={destino._id} value={destino.name}>
@@ -1346,7 +1444,8 @@ const BitacorasPage = () => {
                         className="form-select"
                         value={formData.operador}
                         onChange={handleChange}
-                        required>
+                        required
+                      >
                         <option value="">Seleccionar</option>
                         {operadores.map((operador) => (
                           <option key={operador._id} value={operador.name}>
@@ -1391,7 +1490,9 @@ const BitacorasPage = () => {
                       />
                     </div>
                     <div className="form-group mb-3">
-                      <label htmlFor="contra_acceso">Contraseña de Acceso</label>
+                      <label htmlFor="contra_acceso">
+                        Contraseña de Acceso
+                      </label>
                       <input
                         id="contra_acceso"
                         type="text"
@@ -1525,7 +1626,8 @@ const BitacorasPage = () => {
                       <button
                         type="button"
                         className="btn btn-danger me-3 px-2"
-                        onClick={handleModalToggle}>
+                        onClick={handleModalToggle}
+                      >
                         Cancelar
                       </button>
                       <button type="submit" className="btn btn-success px-4">
@@ -1540,7 +1642,6 @@ const BitacorasPage = () => {
           <div className="modal-backdrop fade show"></div>
         </>
       )}
-      <Footer />
     </section>
   );
 };

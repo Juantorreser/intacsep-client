@@ -234,7 +234,6 @@ const OperadorPage = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Footer />
         </section>
     );
 };

@@ -527,7 +527,6 @@ const RolePage = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Footer />
         </section>
     );
 };

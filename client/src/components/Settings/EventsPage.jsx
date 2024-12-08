@@ -244,8 +244,6 @@ const EventsPage = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-            <Footer />
         </section>
     );
 };

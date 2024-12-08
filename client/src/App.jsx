@@ -20,8 +20,6 @@ import DestinoPage from "./components/Settings/DestinoPage";
 import OperadorPage from "./components/Settings/OperadorPage";
 import ProfilePage from "./components/Profile/ProfilePage";
 import ResetPassword from "./components/ResetPassword";
-import Footer from "./components/Footer";
-
 
 function App() {
     return (

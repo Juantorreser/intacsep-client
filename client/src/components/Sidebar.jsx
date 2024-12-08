@@ -1,14 +1,15 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import {useAuth} from "../context/AuthContext";
-import {useNavigate} from "react-router-dom";
-import {faL} from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 import ProfileModal from "./Profile/ProfilePage";
 import InactivityModal from "./Settings/InactivityModal";
+import Footer from "./Footer";
 
 const Sidebar = () => {
-  const {user, verifyToken, setUser} = useAuth();
+  const { user, verifyToken, setUser } = useAuth();
   const navigate = useNavigate();
   const [roleData, setRoleData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -79,37 +80,45 @@ const Sidebar = () => {
   if (loading) {
     return (
       <div className="loading-placeholder text-center py-5 w-full h-full flex items-center justify-center">
-        <i className="fa fa-spinner fa-spin me-1" style={{fontSize: "24px"}}></i> Cargando
-      Menu...
+        <i
+          className="fa fa-spinner fa-spin me-1"
+          style={{ fontSize: "24px" }}
+        ></i>{" "}
+        Cargando Menu...
       </div>
     ); // Add a loading indicator
   }
 
   return (
     <>
-      <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 h-100">
+      <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 h-100 relative">
         <div className="d-flex flex-column align-items-start p-3">
           {/* User Info */}
           <div
             className="d-flex align-items-center text-white-50 w-100 justify-content-start cursor-pointer"
-            style={{height: "100px"}}
-            onClick={handleOpenModal}>
+            style={{ height: "100px" }}
+            onClick={handleOpenModal}
+          >
             {/* <div className="d-flex justify-content-center align-items-center w-25 h-100">
                             <i className="fa fa-user" style={{fontSize: "3em"}}></i>
                         </div> */}
             <div className="d-flex flex-column justify-content-center align-items-start ms-2 mb-3">
-              <span className="d-block mb-1" style={{fontSize: "0.75rem"}}>
-                Bienvenido (a)
+              <span className="d-block mb-1" style={{ fontSize: "0.75rem" }}>
+                Bienvenido (a)aa
               </span>
-              <h5 style={{fontSize: "1rem"}}>
+              <h5 style={{ fontSize: "1rem" }}>
                 {user && user.firstName && user.lastName
                   ? `${user.firstName} ${user.lastName}`
                   : "Usuario"}
               </h5>
               {user && (
                 <>
-                  <span style={{fontSize: "0.75rem"}}>{user.email || "Email no disponible"}</span>
-                  <span style={{fontSize: "0.75rem"}}>{user.role || "Rol no disponible"}</span>
+                  <span style={{ fontSize: "0.75rem" }}>
+                    {user.email || "Email no disponible"}
+                  </span>
+                  <span style={{ fontSize: "0.75rem" }}>
+                    {user.role || "Rol no disponible"}
+                  </span>
                 </>
               )}
             </div>
@@ -120,7 +129,9 @@ const Sidebar = () => {
           <ul className="nav flex-column w-100">
             <li className="nav-item mb-2">
               <hr className="my-1 text-white" />
-              <span className="nav-link text-white-50 fw-bold letter-spacing-lg">MENÚ</span>
+              <span className="nav-link text-white-50 fw-bold letter-spacing-lg">
+                MENÚ
+              </span>
               <hr className="my-1 text-white" />
             </li>
 
@@ -132,20 +143,29 @@ const Sidebar = () => {
                     className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center"
                     role="button"
                     onClick={() => toggleCollapse("bitacorasCollapse")}
-                    style={{fontSize: "0.95rem"}}>
+                    style={{ fontSize: "0.95rem" }}
+                  >
                     Monitoreo
                     <i
                       className={`fa ${
-                        collapsedItems.bitacorasCollapse ? "fa-minus" : "fa-plus"
-                      } text-white-50 my-auto icon-toggle me-2`}></i>
+                        collapsedItems.bitacorasCollapse
+                          ? "fa-minus"
+                          : "fa-plus"
+                      } text-white-50 my-auto icon-toggle me-2`}
+                    ></i>
                   </a>
                 </p>
-                <div className={`collapse ${collapsedItems.bitacorasCollapse ? "show" : ""}`}>
+                <div
+                  className={`collapse ${
+                    collapsedItems.bitacorasCollapse ? "show" : ""
+                  }`}
+                >
                   <ul className="nav flex-column w-75 gap-2">
                     <li
                       className="text-white-50 cursor-pointer mb-3 ms-2 mt-0"
                       onClick={() => navigate("/bitacoras")}
-                      style={{fontSize: "0.92rem"}}>
+                      style={{ fontSize: "0.92rem" }}
+                    >
                       Bitácoras
                     </li>
                   </ul>
@@ -161,36 +181,51 @@ const Sidebar = () => {
                     className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
                     role="button"
                     onClick={() => toggleCollapse("settingsCollapse")}
-                    style={{fontSize: "0.95rem"}}>
+                    style={{ fontSize: "0.95rem" }}
+                  >
                     Configuración
                     <i
                       className={`fa ${
                         collapsedItems.settingsCollapse ? "fa-minus" : "fa-plus"
-                      } text-white-50 my-auto icon-toggle`}></i>
+                      } text-white-50 my-auto icon-toggle`}
+                    ></i>
                   </a>
                 </p>
-                <div className={`collapse ms-2 ${collapsedItems.settingsCollapse ? "show" : ""}`}>
+                <div
+                  className={`collapse ms-2 ${
+                    collapsedItems.settingsCollapse ? "show" : ""
+                  }`}
+                >
                   {/* Catálogos Collapsible */}
                   <p className="mb-2">
                     <a
                       className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2 itemLine"
                       role="button"
                       onClick={() => toggleCollapse("catalogosCollapse")}
-                      style={{fontSize: "0.92rem"}}>
+                      style={{ fontSize: "0.92rem" }}
+                    >
                       Catálogos
                       <i
                         className={`fa ${
-                          collapsedItems.catalogosCollapse ? "fa-minus" : "fa-plus"
-                        } text-white-50 my-auto icon-toggle`}></i>
+                          collapsedItems.catalogosCollapse
+                            ? "fa-minus"
+                            : "fa-plus"
+                        } text-white-50 my-auto icon-toggle`}
+                      ></i>
                     </a>
                   </p>
-                  <div className={`collapse ${collapsedItems.catalogosCollapse ? "show" : ""}`}>
+                  <div
+                    className={`collapse ${
+                      collapsedItems.catalogosCollapse ? "show" : ""
+                    }`}
+                  >
                     <ul className="nav flex-column w-75 ms-3 gap-2">
                       {roleData.tipos_de_monitoreo && (
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
                           onClick={() => navigate("/tipos_monitoreo")}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Tipos Monitoreo
                         </li>
                       )}
@@ -198,7 +233,8 @@ const Sidebar = () => {
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
                           onClick={() => navigate("/eventos")}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Eventos
                         </li>
                       )}
@@ -206,7 +242,8 @@ const Sidebar = () => {
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
                           onClick={() => navigate("/clientes")}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Clientes
                         </li>
                       )}
@@ -215,7 +252,8 @@ const Sidebar = () => {
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
                           onClick={() => navigate("/origenes")}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Origenes
                         </li>
                       )}
@@ -223,7 +261,8 @@ const Sidebar = () => {
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
                           onClick={() => navigate("/destinos")}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Destinos
                         </li>
                       )}
@@ -231,7 +270,8 @@ const Sidebar = () => {
                         <li
                           className="text-white-50 cursor-pointer mb-3 itemLine2"
                           onClick={() => navigate("/operadores")}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Operadores
                         </li>
                       )}
@@ -244,21 +284,30 @@ const Sidebar = () => {
                       className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2 itemLine p-0 mb-0"
                       role="button"
                       onClick={() => toggleCollapse("sistemaCollapse")}
-                      style={{fontSize: "0.92rem"}}>
+                      style={{ fontSize: "0.92rem" }}
+                    >
                       Sistema
                       <i
                         className={`fa ${
-                          collapsedItems.sistemaCollapse ? "fa-minus" : "fa-plus"
-                        } text-white-50 my-auto icon-toggle`}></i>
+                          collapsedItems.sistemaCollapse
+                            ? "fa-minus"
+                            : "fa-plus"
+                        } text-white-50 my-auto icon-toggle`}
+                      ></i>
                     </a>
                   </p>
-                  <div className={`collapse ${collapsedItems.sistemaCollapse ? "show" : ""}`}>
+                  <div
+                    className={`collapse ${
+                      collapsedItems.sistemaCollapse ? "show" : ""
+                    }`}
+                  >
                     <ul className="nav flex-column w-75 ms-4 gap-2 itemLine2">
                       {roleData.usuarios && (
                         <li
                           className="text-white-50 cursor-pointer"
                           onClick={() => navigate("/usuarios")}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Usuarios
                         </li>
                       )}
@@ -266,7 +315,8 @@ const Sidebar = () => {
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
                           onClick={() => navigate("/roles")}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Roles
                         </li>
                       )}
@@ -274,7 +324,8 @@ const Sidebar = () => {
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
                           onClick={openInacModal}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Inactividad
                         </li>
                       )}
@@ -284,67 +335,84 @@ const Sidebar = () => {
               </li>
             )}
           </ul>
+          <Footer />
 
           {/* #Menu */}
         </div>
       </aside>
-      <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 h-100">
+      {/* <aside id="leftsidebar" className="sidebar bg-body-tertiary w-100 h-100">
         <div className="d-flex flex-column align-items-start p-3">
-          {/* User Info */}
+          
           <div
             className="d-flex align-items-center text-white-50 w-100 justify-content-start cursor-pointer"
-            style={{height: "100px"}}
-            onClick={handleOpenModal}>
+            style={{ height: "100px" }}
+            onClick={handleOpenModal}
+          >
             <div className="d-flex justify-content-center align-items-center w-25 h-100">
-              <i className="fa fa-user" style={{fontSize: "3em"}}></i>
+              <i className="fa fa-user" style={{ fontSize: "3em" }}></i>
             </div>
             <div className="d-flex flex-column justify-content-center align-items-start ms-2">
-              <span className="d-block" style={{fontSize: "0.8rem"}}>
+              <span className="d-block" style={{ fontSize: "0.8rem" }}>
                 Bienvenido (a)
               </span>
-              <h5 style={{fontSize: "1.2rem"}}>
+              <h5 style={{ fontSize: "1.2rem" }}>
                 {user && user.firstName && user.lastName
                   ? `${user.firstName} ${user.lastName}`
                   : "Usuario"}
               </h5>
               {user && (
                 <>
-                  <span style={{fontSize: "0.8rem"}}>{user.email || "Email no disponible"}</span>
-                  <span style={{fontSize: "0.8rem"}}>{user.role || "Rol no disponible"}</span>
+                  <span style={{ fontSize: "0.8rem" }}>
+                    {user.email || "Email no disponible"}
+                  </span>
+                  <span style={{ fontSize: "0.8rem" }}>
+                    {user.role || "Rol no disponible"}
+                  </span>
                 </>
               )}
             </div>
           </div>
-          {/* #User Info */}
 
-          {/* Menu */}
+
+
           <ul className="nav flex-column w-100">
             <li className="nav-item mb-2">
               <hr className="my-1 text-white" />
-              <span className="nav-link text-white-50 fw-bold letter-spacing-lg">MENÚ</span>
+              <span className="nav-link text-white-50 fw-bold letter-spacing-lg">
+                MENÚ
+              </span>
               <hr className="my-1 text-white" />
             </li>
 
-            {/* Monitoreo Menu */}
+
             {roleData && roleData.bitacoras && (
               <li className="nav-item ms-3">
                 <p className="">
                   <a
                     className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center"
                     role="button"
-                    onClick={() => toggleCollapse("bitacorasCollapse")}>
+                    onClick={() => toggleCollapse("bitacorasCollapse")}
+                  >
                     Monitoreo
                     <i
                       className={`fa ${
-                        collapsedItems.bitacorasCollapse ? "fa-minus" : "fa-plus"
-                      } text-white-50 my-auto icon-toggle me-2`}></i>
+                        collapsedItems.bitacorasCollapse
+                          ? "fa-minus"
+                          : "fa-plus"
+                      } text-white-50 my-auto icon-toggle me-2`}
+                    ></i>
                   </a>
                 </p>
-                <div className={`collapse ${collapsedItems.bitacorasCollapse ? "show" : ""}`}>
+                <div
+                  className={`collapse ${
+                    collapsedItems.bitacorasCollapse ? "show" : ""
+                  }`}
+                >
                   <ul className="nav flex-column w-75 gap-2">
                     <li
                       className="text-white-50 cursor-pointer mb-3 ms-3 mt-0"
-                      onClick={() => navigate("/bitacoras")}>
+                      onClick={() => navigate("/bitacoras")}
+                    >
                       Bitácoras
                     </li>
                   </ul>
@@ -352,55 +420,72 @@ const Sidebar = () => {
               </li>
             )}
 
-            {/* Settings Menu */}
+
             {roleData && (
               <li className="nav-item ms-3">
                 <p className="">
                   <a
                     className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2"
                     role="button"
-                    onClick={() => toggleCollapse("settingsCollapse")}>
+                    onClick={() => toggleCollapse("settingsCollapse")}
+                  >
                     Configuración
                     <i
                       className={`fa ${
                         collapsedItems.settingsCollapse ? "fa-minus" : "fa-plus"
-                      } text-white-50 my-auto icon-toggle`}></i>
+                      } text-white-50 my-auto icon-toggle`}
+                    ></i>
                   </a>
                 </p>
-                <div className={`collapse ms-3 ${collapsedItems.settingsCollapse ? "show" : ""}`}>
-                  {/* Catálogos Collapsible */}
+                <div
+                  className={`collapse ms-3 ${
+                    collapsedItems.settingsCollapse ? "show" : ""
+                  }`}
+                >
+                  
                   <p className="mb-2">
                     <a
                       className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2 itemLine"
                       role="button"
-                      onClick={() => toggleCollapse("catalogosCollapse")}>
+                      onClick={() => toggleCollapse("catalogosCollapse")}
+                    >
                       Catálogos
                       <i
                         className={`fa ${
-                          collapsedItems.catalogosCollapse ? "fa-minus" : "fa-plus"
-                        } text-white-50 my-auto icon-toggle`}></i>
+                          collapsedItems.catalogosCollapse
+                            ? "fa-minus"
+                            : "fa-plus"
+                        } text-white-50 my-auto icon-toggle`}
+                      ></i>
                     </a>
                   </p>
-                  <div className={`collapse ${collapsedItems.catalogosCollapse ? "show" : ""}`}>
+                  <div
+                    className={`collapse ${
+                      collapsedItems.catalogosCollapse ? "show" : ""
+                    }`}
+                  >
                     <ul className="nav flex-column w-75 ms-4 gap-2">
                       {roleData.tipos_de_monitoreo && (
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
-                          onClick={() => navigate("/tipos_monitoreo")}>
+                          onClick={() => navigate("/tipos_monitoreo")}
+                        >
                           Tipos Monitoreo
                         </li>
                       )}
                       {roleData.eventos && (
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
-                          onClick={() => navigate("/eventos")}>
+                          onClick={() => navigate("/eventos")}
+                        >
                           Eventos
                         </li>
                       )}
                       {roleData.clientes && (
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
-                          onClick={() => navigate("/clientes")}>
+                          onClick={() => navigate("/clientes")}
+                        >
                           Clientes
                         </li>
                       )}
@@ -408,53 +493,66 @@ const Sidebar = () => {
                       {roleData.origenes && (
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
-                          onClick={() => navigate("/origenes")}>
+                          onClick={() => navigate("/origenes")}
+                        >
                           Origenes
                         </li>
                       )}
                       {roleData.destinos && (
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
-                          onClick={() => navigate("/destinos")}>
+                          onClick={() => navigate("/destinos")}
+                        >
                           Destinos
                         </li>
                       )}
                       {roleData.operadores && (
                         <li
                           className="text-white-50 cursor-pointer mb-3 itemLine2"
-                          onClick={() => navigate("/operadores")}>
+                          onClick={() => navigate("/operadores")}
+                        >
                           Operadores
                         </li>
                       )}
                     </ul>
                   </div>
 
-                  {/* Sistema Collapsible */}
+                  {/* Sistema Collapsible *
                   <p className="">
                     <a
                       className="text-white-50 text-decoration-none d-flex justify-content-between align-items-center me-2 itemLine"
                       role="button"
-                      onClick={() => toggleCollapse("sistemaCollapse")}>
+                      onClick={() => toggleCollapse("sistemaCollapse")}
+                    >
                       Sistema
                       <i
                         className={`fa ${
-                          collapsedItems.sistemaCollapse ? "fa-minus" : "fa-plus"
-                        } text-white-50 my-auto icon-toggle`}></i>
+                          collapsedItems.sistemaCollapse
+                            ? "fa-minus"
+                            : "fa-plus"
+                        } text-white-50 my-auto icon-toggle`}
+                      ></i>
                     </a>
                   </p>
-                  <div className={`collapse ${collapsedItems.sistemaCollapse ? "show" : ""}`}>
+                  <div
+                    className={`collapse ${
+                      collapsedItems.sistemaCollapse ? "show" : ""
+                    }`}
+                  >
                     <ul className="nav flex-column w-75 ms-4 gap-2 itemLine2">
                       {roleData.usuarios && (
                         <li
                           className="text-white-50 cursor-pointer"
-                          onClick={() => navigate("/usuarios")}>
+                          onClick={() => navigate("/usuarios")}
+                        >
                           Usuarios
                         </li>
                       )}
                       {roleData.roles && (
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
-                          onClick={() => navigate("/roles")}>
+                          onClick={() => navigate("/roles")}
+                        >
                           Roles
                         </li>
                       )}
@@ -462,7 +560,8 @@ const Sidebar = () => {
                         <li
                           className="text-white-50 cursor-pointer itemLine2"
                           onClick={handleOpenModal}
-                          style={{fontSize: "0.85rem"}}>
+                          style={{ fontSize: "0.85rem" }}
+                        >
                           Inactividad
                         </li>
                       )}
@@ -472,10 +571,11 @@ const Sidebar = () => {
               </li>
             )}
           </ul>
-          <InactivityModal show={showInacModal} handleClose={closeInacModal} />
-          {/* #Menu */}
+          <Footer />
+          
         </div>
-      </aside>{" "}
+      </aside> */}
+      <InactivityModal show={showInacModal} handleClose={closeInacModal} />
       <ProfileModal showModal={showModal} handleClose={handleCloseModal} />
     </>
   );

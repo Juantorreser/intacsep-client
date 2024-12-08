@@ -1588,7 +1588,6 @@ const BitacoraDetail = ({edited}) => {
           </div>
         </div>
       </div>
-      <Footer />
 
       {/* Bootstrap Modal for adding a new event */}
       <div
