@@ -59,10 +59,32 @@ $gray: #223b53;
   }
 
   #login {
+    background-image: url("/loginBg.webp");
+    background-size: cover;
+    background-position: center center;
     background-color: $bg;
+    width: 100%;
     height: 100vh;
     display: flex;
     color: $white;
+    padding: 0;
+    margin: 0;
+
+    .loginCard {
+      background-color: $bg;
+      border-radius: 5px;
+      z-index: 10;
+    }
+
+    .backdrop {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100svh;
+      background-color: #000000af;
+      z-index: 1;
+    }
 
     input {
       color: white;

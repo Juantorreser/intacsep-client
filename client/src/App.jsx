@@ -4,7 +4,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import {Route, Routes} from "react-router-dom";
 import Header from "./components/Header";
-import Login from "./components/Login";
+import Login from "./components/LoginPage";
 import Home from "./components/Home";
 import ActiveBits from "./components/Bitacoras/BitacorasPage";
 import PastBits from "./components/Bitacoras/PastBits";
@@ -21,6 +21,7 @@ import OperadorPage from "./components/Settings/OperadorPage";
 import ProfilePage from "./components/Profile/ProfilePage";
 import ResetPassword from "./components/ResetPassword";
 import Footer from "./components/Footer";
+
 
 function App() {
     return (
