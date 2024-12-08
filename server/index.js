@@ -439,6 +439,7 @@ app.get("/bitacoras", async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
+    const extraLimit = limit * 1000;
     const skip = (page - 1) * limit;
 
     console.log(page);
@@ -451,7 +452,7 @@ app.get("/bitacoras", async (req, res) => {
     const bitacoras = await Bitacora.find()
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(extraLimit);
 
     res.status(200).json({
       bitacoras,

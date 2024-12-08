@@ -390,26 +390,26 @@ const BitacorasPage = () => {
   };
 
   // const fetchBitacoras = async (page = 1, limit = 25) => {
-  //     try {
-  //         const response = await fetch(`${baseUrl}/bitacoras`);
-  //         if (response.ok) {
-  //             const data = await response.json();
+  //   try {
+  //     const response = await fetch(`${baseUrl}/bitacoras`);
+  //     if (response.ok) {
+  //       const data = await response.json();
 
-  //             const itemsPerPage = Number(limit) || 25;
-  //             // Sort bitacoras by createdAt in descending order (newest first)
-  //             const sortedData = data.sort(
-  //                 (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  //             );
-  //             setBitacoras(sortedData);
-  //             setTotalItems(data.length); // Update total items
+  //       const itemsPerPage = Number(limit) || 25;
+  //       // Sort bitacoras by createdAt in descending order (newest first)
+  //       const sortedData = data.sort(
+  //         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  //       );
+  //       setBitacoras(sortedData);
+  //       setTotalItems(data.length); // Update total items
 
-  //             setTotalPages(Math.ceil(totalItems / itemsPerPage)); // Calculate total pages
-  //         } else {
-  //             console.error("Failed to fetch bitácoras:", response.statusText);
-  //         }
-  //     } catch (e) {
-  //         console.error("Error fetching bitácoras:", e);
+  //       setTotalPages(Math.ceil(totalItems / itemsPerPage)); // Calculate total pages
+  //     } else {
+  //       console.error("Failed to fetch bitácoras:", response.statusText);
   //     }
+  //   } catch (e) {
+  //     console.error("Error fetching bitácoras:", e);
+  //   }
   // };
 
   const fetchBitacoras = async (page, limit) => {
@@ -1121,7 +1121,7 @@ const BitacorasPage = () => {
                         Cargando bitacoras...
                       </div>
                     ) : (
-                      bitacoras.map((bitacora) => (
+                      sortedFilteredBitacoras.map((bitacora) => (
                         <tr key={bitacora._id}>
                           <td className="half text-capitalize">
                             <div className="semaforo">
