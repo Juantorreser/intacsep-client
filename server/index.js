@@ -132,7 +132,7 @@ app.use((req, res, next) => {
 mongoose.connect(process.env.MONGO_URI);
 
 app.get("/", (req, res) => {
-  res.send(`Node.js version: ${process.version}`);
+  res.send(`Node.js version running: ${process.version}`);
 });
 
 app.post("/login", async (req, res) => {
