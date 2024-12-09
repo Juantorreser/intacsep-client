@@ -452,7 +452,7 @@ app.get("/bitacoras", async (req, res) => {
     const bitacoras = await Bitacora.find()
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(lomit);
+      .limit(limit);
 
     res.status(200).json({
       bitacoras,
