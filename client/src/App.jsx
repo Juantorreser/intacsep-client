@@ -20,30 +20,32 @@ import DestinoPage from "./components/Settings/DestinoPage";
 import OperadorPage from "./components/Settings/OperadorPage";
 import ProfilePage from "./components/Profile/ProfilePage";
 import ResetPassword from "./components/ResetPassword";
+import WialonTracker from "./components/wialon/WialonTracker";
 
 function App() {
-    return (
-        <>
-            <Routes>
-                <Route path="/" element={<Login />}></Route>
-                <Route path="/login" element={<Login />}></Route>
-                <Route path="/inicio" element={<Home />}></Route>
-                <Route path="/bitacoras" element={<BitacorasPage />}></Route>
-                <Route path="/bitacora/:id" element={<BitacoraDetail edited={false} />} />
-                <Route path="/bitacoras/:id/editada" element={<BitacoraDetail edited={true} />} />
-                <Route path="/tipos_monitoreo" element={<TiposMonitoreo />}></Route>
-                <Route path="/usuarios" element={<UsersPage />}></Route>
-                <Route path="/roles" element={<UserRolePage />}></Route>
-                <Route path="/clientes" element={<ClientsPage />}></Route>
-                <Route path="/eventos" element={<EventsPage />}></Route>
-                <Route path="/origenes" element={<OrigenPage />}></Route>
-                <Route path="/destinos" element={<DestinoPage />}></Route>
-                <Route path="/operadores" element={<OperadorPage />}></Route>
-                <Route path="/perfil" element={<ProfilePage />}></Route>
-                <Route path="/reset-password" element={<ResetPassword />} />
-            </Routes>
-        </>
-    );
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<Login />}></Route>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/inicio" element={<Home />}></Route>
+        <Route path="/bitacoras" element={<BitacorasPage />}></Route>
+        <Route path="/bitacora/:id" element={<BitacoraDetail edited={false} />} />
+        <Route path="/bitacoras/:id/editada" element={<BitacoraDetail edited={true} />} />
+        <Route path="/tipos_monitoreo" element={<TiposMonitoreo />}></Route>
+        <Route path="/usuarios" element={<UsersPage />}></Route>
+        <Route path="/roles" element={<UserRolePage />}></Route>
+        <Route path="/clientes" element={<ClientsPage />}></Route>
+        <Route path="/eventos" element={<EventsPage />}></Route>
+        <Route path="/origenes" element={<OrigenPage />}></Route>
+        <Route path="/destinos" element={<DestinoPage />}></Route>
+        <Route path="/operadores" element={<OperadorPage />}></Route>
+        <Route path="/perfil" element={<ProfilePage />}></Route>
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/wialon" element={<WialonTracker />} />
+      </Routes>
+    </>
+  );
 }
 
 export default App;

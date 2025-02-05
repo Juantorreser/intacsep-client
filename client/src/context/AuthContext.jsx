@@ -27,7 +27,7 @@ const AuthProvider = ({children}) => {
     }
 
     if (!user) {
-      console.log("User is not logged in");
+      // console.log("User is not logged in");
       return; // Do nothing if the user is not logged in
     }
     // console.log("User activity detected");
@@ -50,7 +50,6 @@ const AuthProvider = ({children}) => {
 
     window.addEventListener("mousemove", handleUserActivity);
     window.addEventListener("keypress", handleUserActivity);
-    console.log(seconds);
     return () => {
       window.removeEventListener("mousemove", handleUserActivity);
       window.removeEventListener("keypress", handleUserActivity);
