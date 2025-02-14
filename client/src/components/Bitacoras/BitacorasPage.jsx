@@ -1,16 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { createRoot } from "react-dom/client";
-import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import {createRoot} from "react-dom/client";
+import {useAuth} from "../../context/AuthContext";
+import {useNavigate} from "react-router-dom";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import "jspdf-autotable"; // For table support in jsPDF
-import { sortBitacoras } from "../../utils/utils"; // Assume these functions exist
+import {sortBitacoras} from "../../utils/utils"; // Assume these functions exist
 import BitacoraDetail from "./BitacoraDetail";
+import {
+  fetchBitacoras,
+  fetchClients,
+  fetchMonitoreos,
+  fetchUsers,
+  fetchOrigenes,
+  fetchDestinos,
+  fetchOperadores,
+} from "../../utils/api";
 
 const BitacorasPage = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
-  const { user } = useAuth();
+  const {user} = useAuth();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [bitacoras, setBitacoras] = useState([]);
@@ -73,175 +82,207 @@ const BitacorasPage = () => {
   useEffect(() => {
     const initialize = async () => {
       try {
-        await fetchBitacoras(currentPage, itemsPerPage);
-        await fetchClients();
-        await fetchMonitoreos();
-        await fetchUsers();
-        await fetchOrigenes();
-        await fetchDestinos();
-        await fetchOperadores();
+        setLoadingBitacoras(true);
+        const [
+          bitacorasData,
+          clientsData,
+          monitoreosData,
+          usersData,
+          origenesData,
+          destinosData,
+          operadoresData,
+        ] = await Promise.all([
+          fetchBitacoras(currentPage, itemsPerPage),
+          fetchClients(),
+          fetchMonitoreos(),
+          fetchUsers(),
+          fetchOrigenes(),
+          fetchDestinos(),
+          fetchOperadores(),
+        ]);
+
+        setBitacoras(bitacorasData.bitacoras);
+        setTotalItems(bitacorasData.totalItems);
+        setTotalPages(bitacorasData.totalPages);
+        setClients(clientsData);
+        setMonitoreos(monitoreosData);
+        setUsers(usersData);
+        setOrigenes(origenesData);
+        setDestinos(destinosData);
+        setOperadores(operadoresData);
+
+        updateFormDataFromUser();
+        setBitacoras(bitacorasData.bitacoras);
+        setTotalItems(bitacorasData.totalItems);
+        setTotalPages(bitacorasData.totalPages);
+        setClients(clientsData);
+        setMonitoreos(monitoreosData);
+        setUsers(usersData);
+        setOrigenes(origenesData);
+        setDestinos(destinosData);
+        setOperadores(operadoresData);
+
         updateFormDataFromUser();
       } catch (e) {
         console.error("Verification failed:", e);
+      } finally {
+        setLoadingBitacoras(false);
       }
     };
 
     initialize();
   }, [currentPage, itemsPerPage]);
 
-  const fetchOrigenes = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/origenes`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setOrigenes(data);
-      } else {
-        console.error("Failed to fetch origenes:", response.statusText);
-      }
-    } catch (e) {
-      console.error("Error fetching origenes:", e.message);
-    }
-  };
-
-  const fetchDestinos = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/destinos`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setDestinos(data);
-      } else {
-        console.error("Failed to fetch destinos:", response.statusText);
-      }
-    } catch (e) {
-      console.error("Error fetching destinos:", e);
-    }
-  };
-
-  const fetchOperadores = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/operadores`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setOperadores(data);
-      } else {
-        console.error("Failed to fetch operadores:", response.statusText);
-      }
-    } catch (e) {
-      console.error("Error fetching operadores:", e);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/users/`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const operadores = data.filter((user) => user.role === "Monitorista");
-        setUsers(operadores);
-      } else {
-        console.error("Failed to fetch users:", response.statusText);
-      }
-    } catch (e) {
-      console.error("Error fetching users:", e);
-    }
-  };
-
-  // const fetchBitacoras = async (page = 1, limit = 25) => {
+  // const fetchOrigenes = async () => {
   //   try {
-  //     const response = await fetch(`${baseUrl}/bitacoras`);
+  //     const response = await fetch(`${baseUrl}/origenes`, {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
   //     if (response.ok) {
   //       const data = await response.json();
-
-  //       const itemsPerPage = Number(limit) || 25;
-  //       // Sort bitacoras by createdAt in descending order (newest first)
-  //       const sortedData = data.sort(
-  //         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  //       );
-  //       setBitacoras(sortedData);
-  //       setTotalItems(data.length); // Update total items
-
-  //       setTotalPages(Math.ceil(totalItems / itemsPerPage)); // Calculate total pages
+  //       setOrigenes(data);
   //     } else {
-  //       console.error("Failed to fetch bitácoras:", response.statusText);
+  //       console.error("Failed to fetch origenes:", response.statusText);
   //     }
   //   } catch (e) {
-  //     console.error("Error fetching bitácoras:", e);
+  //     console.error("Error fetching origenes:", e.message);
   //   }
   // };
 
-  const fetchBitacoras = async (page, limit) => {
-    setLoadingBitacoras(true);
-    setBitacoras([]);
-    try {
-      const response = await fetch(
-        `${baseUrl}/bitacoras?page=${page}&limit=${limit}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data.bitacoras);
+  // const fetchDestinos = async () => {
+  //   try {
+  //     const response = await fetch(`${baseUrl}/destinos`, {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setDestinos(data);
+  //     } else {
+  //       console.error("Failed to fetch destinos:", response.statusText);
+  //     }
+  //   } catch (e) {
+  //     console.error("Error fetching destinos:", e);
+  //   }
+  // };
 
-        setBitacoras(data.bitacoras); // Update bitacoras
-        setTotalItems(data.totalItems); // Update total items
-        setTotalPages(data.totalPages); // Update total pages
-      } else {
-        console.error("Failed to fetch bitacoras:", response.statusText);
-      }
-    } catch (e) {
-      console.error("Error fetching bitacoras:", e);
-    } finally {
-      setLoadingBitacoras(false);
-    }
-  };
+  // const fetchOperadores = async () => {
+  //   try {
+  //     const response = await fetch(`${baseUrl}/operadores`, {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setOperadores(data);
+  //     } else {
+  //       console.error("Failed to fetch operadores:", response.statusText);
+  //     }
+  //   } catch (e) {
+  //     console.error("Error fetching operadores:", e);
+  //   }
+  // };
 
-  const fetchClients = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/clients`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setClients(data);
-      } else {
-        console.error("Failed to fetch clients:", response.statusText);
-      }
-    } catch (e) {
-      console.error("Error fetching clients:", e);
-    }
-  };
+  // const fetchUsers = async () => {
+  //   try {
+  //     const response = await fetch(`${baseUrl}/users/`, {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       const operadores = data.filter((user) => user.role === "Monitorista");
+  //       setUsers(operadores);
+  //     } else {
+  //       console.error("Failed to fetch users:", response.statusText);
+  //     }
+  //   } catch (e) {
+  //     console.error("Error fetching users:", e);
+  //   }
+  // };
 
-  const fetchMonitoreos = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/monitoreos`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setMonitoreos(data);
-      } else {
-        console.error("Failed to fetch monitoreos:", response.statusText);
-      }
-    } catch (e) {
-      console.error("Error fetching monitoreos:", e);
-    }
-  };
+  // // const fetchBitacoras = async (page = 1, limit = 25) => {
+  // //   try {
+  // //     const response = await fetch(`${baseUrl}/bitacoras`);
+  // //     if (response.ok) {
+  // //       const data = await response.json();
+
+  // //       const itemsPerPage = Number(limit) || 25;
+  // //       // Sort bitacoras by createdAt in descending order (newest first)
+  // //       const sortedData = data.sort(
+  // //         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  // //       );
+  // //       setBitacoras(sortedData);
+  // //       setTotalItems(data.length); // Update total items
+
+  // //       setTotalPages(Math.ceil(totalItems / itemsPerPage)); // Calculate total pages
+  // //     } else {
+  // //       console.error("Failed to fetch bitácoras:", response.statusText);
+  // //     }
+  // //   } catch (e) {
+  // //     console.error("Error fetching bitácoras:", e);
+  // //   }
+  // // };
+
+  // const fetchBitacoras = async (page, limit) => {
+  //   setLoadingBitacoras(true);
+  //   setBitacoras([]);
+  //   try {
+  //     const response = await fetch(`${baseUrl}/bitacoras?page=${page}&limit=${limit}`, {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       console.log(data.bitacoras);
+
+  //       setBitacoras(data.bitacoras); // Update bitacoras
+  //       setTotalItems(data.totalItems); // Update total items
+  //       setTotalPages(data.totalPages); // Update total pages
+  //     } else {
+  //       console.error("Failed to fetch bitacoras:", response.statusText);
+  //     }
+  //   } catch (e) {
+  //     console.error("Error fetching bitacoras:", e);
+  //   } finally {
+  //     setLoadingBitacoras(false);
+  //   }
+  // };
+
+  // const fetchClients = async () => {
+  //   try {
+  //     const response = await fetch(`${baseUrl}/clients`, {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setClients(data);
+  //     } else {
+  //       console.error("Failed to fetch clients:", response.statusText);
+  //     }
+  //   } catch (e) {
+  //     console.error("Error fetching clients:", e);
+  //   }
+  // };
+
+  // const fetchMonitoreos = async () => {
+  //   try {
+  //     const response = await fetch(`${baseUrl}/monitoreos`, {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setMonitoreos(data);
+  //     } else {
+  //       console.error("Failed to fetch monitoreos:", response.statusText);
+  //     }
+  //   } catch (e) {
+  //     console.error("Error fetching monitoreos:", e);
+  //   }
+  // };
 
   const updateFormDataFromUser = () => {
     if (user) {
@@ -258,7 +299,7 @@ const BitacorasPage = () => {
   };
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
+    const {id, value} = e.target;
     if (id.startsWith("remolque") || id.startsWith("tracto")) {
       const [field, key] = id.split("_");
       setFormData((prevData) => ({
@@ -281,7 +322,7 @@ const BitacorasPage = () => {
     try {
       const response = await fetch(`${baseUrl}/bitacora`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: {"content-type": "application/json"},
         credentials: "include",
         body: JSON.stringify(formData),
       });
@@ -301,51 +342,36 @@ const BitacorasPage = () => {
     let filtered = bitacoras;
 
     if (idFilter) {
-      filtered = filtered.filter((bitacora) =>
-        bitacora.bitacora_id.toString().includes(idFilter)
-      );
+      filtered = filtered.filter((bitacora) => bitacora.bitacora_id.toString().includes(idFilter));
     }
 
     if (statusFilter) {
-      filtered = filtered.filter(
-        (bitacora) => bitacora.status === statusFilter
-      );
+      filtered = filtered.filter((bitacora) => bitacora.status === statusFilter);
     }
 
     if (clienteFilter) {
-      filtered = filtered.filter(
-        (bitacora) => bitacora.cliente === clienteFilter
-      );
+      filtered = filtered.filter((bitacora) => bitacora.cliente === clienteFilter);
     }
 
     if (operadorFilter) {
-      filtered = filtered.filter(
-        (bitacora) => bitacora.operador === operadorFilter
-      );
+      filtered = filtered.filter((bitacora) => bitacora.operador === operadorFilter);
     }
 
     if (monitoreoFilter) {
-      filtered = filtered.filter(
-        (bitacora) => bitacora.monitoreo === monitoreoFilter
-      );
+      filtered = filtered.filter((bitacora) => bitacora.monitoreo === monitoreoFilter);
     }
 
     if (creationDateFilter) {
       filtered = filtered.filter(
         (bitacora) =>
-          new Date(bitacora.createdAt).toISOString().split("T")[0] ===
-          creationDateFilter
+          new Date(bitacora.createdAt).toISOString().split("T")[0] === creationDateFilter
       );
     }
 
     return filtered;
   };
 
-  const sortedFilteredBitacoras = sortBitacoras(
-    getFilteredBitacoras(),
-    sortField,
-    sortOrder
-  );
+  const sortedFilteredBitacoras = sortBitacoras(getFilteredBitacoras(), sortField, sortOrder);
 
   const filteredBitacoras = bitacoras.filter((bitacora) => {
     return (
@@ -607,9 +633,7 @@ const BitacorasPage = () => {
     if (bitacora.eventos.length > 0) {
       // Find the latest event by comparing createdAt timestamps
       const latestEvent = bitacora.eventos.reduce((latest, current) =>
-        new Date(latest.createdAt) > new Date(current.createdAt)
-          ? latest
-          : current
+        new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
       );
       return latestEvent.frecuencia;
     } else {
@@ -623,9 +647,7 @@ const BitacorasPage = () => {
     }
 
     const latestEvent = bitacora.eventos.reduce((latest, current) =>
-      new Date(latest.createdAt) > new Date(current.createdAt)
-        ? latest
-        : current
+      new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
     );
 
     const frecuencia = latestEvent.frecuencia;
@@ -670,9 +692,7 @@ const BitacorasPage = () => {
     }
 
     const latestEvent = bitacora.eventos.reduce((latest, current) =>
-      new Date(latest.createdAt) > new Date(current.createdAt)
-        ? latest
-        : current
+      new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
     );
 
     const recorrido = latestEvent.nombre;
@@ -690,13 +710,8 @@ const BitacorasPage = () => {
         </div>
         <div className="content-wrapper">
           <div className="d-flex justify-content-between align-items-center mx-3">
-            <h1 className="text-center flex-grow-1 fs-3 fw-semibold text-black">
-              Bitácoras
-            </h1>
-            <button
-              className="btn btn-primary rounded-5"
-              onClick={() => setShowModal(!showModal)}
-            >
+            <h1 className="text-center flex-grow-1 fs-3 fw-semibold text-black">Bitácoras</h1>
+            <button className="btn btn-primary rounded-5" onClick={() => setShowModal(!showModal)}>
               <i className="fa fa-plus"></i>
             </button>
           </div>
@@ -711,65 +726,47 @@ const BitacorasPage = () => {
                       <th
                         className="half"
                         onClick={() => handleSortChange("frecuencia")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        Frec{" "}
-                        {sortField === "frecuencia" &&
-                          (sortOrder === "asc" ? "↑" : "↓")}
+                        style={{cursor: "pointer"}}>
+                        Frec {sortField === "frecuencia" && (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="one"
                         onClick={() => handleSortChange("bitacora_id")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        ID{" "}
-                        {sortField === "bitacora_id" &&
-                          (sortOrder === "asc" ? "↑" : "↓")}
+                        style={{cursor: "pointer"}}>
+                        ID {sortField === "bitacora_id" && (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="two"
                         onClick={() => handleSortChange("cliente")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        Cliente{" "}
-                        {sortField === "cliente" &&
-                          (sortOrder === "asc" ? "↑" : "↓")}
+                        style={{cursor: "pointer"}}>
+                        Cliente {sortField === "cliente" && (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="two"
                         onClick={() => handleSortChange("monitoreo")}
-                        style={{ cursor: "pointer" }}
-                      >
+                        style={{cursor: "pointer"}}>
                         Tipo Monitoreo{" "}
-                        {sortField === "monitoreo" &&
-                          (sortOrder === "asc" ? "↑" : "↓")}
+                        {sortField === "monitoreo" && (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="two"
                         onClick={() => handleSortChange("operador")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        Operador{" "}
-                        {sortField === "operador" &&
-                          (sortOrder === "asc" ? "↑" : "↓")}
+                        style={{cursor: "pointer"}}>
+                        Operador {sortField === "operador" && (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="two"
                         onClick={() => handleSortChange("createdAt")}
-                        style={{ cursor: "pointer" }}
-                      >
+                        style={{cursor: "pointer"}}>
                         Fecha Creación{" "}
-                        {sortField === "createdAt" &&
-                          (sortOrder === "asc" ? "↑" : "↓")}
+                        {sortField === "createdAt" && (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="one"
                         onClick={() => handleSortChange("status")}
-                        style={{ cursor: "pointer" }}
-                      >
+                        style={{cursor: "pointer"}}>
                         Estatus <br /> Bitácora{" "}
-                        {sortField === "status" &&
-                          (sortOrder === "asc" ? "↑" : "↓")}
+                        {sortField === "status" && (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th className="text-center two">
                         Estatus <br /> Documentación
@@ -803,8 +800,7 @@ const BitacorasPage = () => {
                           id="clienteFilter"
                           className="form-select"
                           value={clienteFilter}
-                          onChange={(e) => setClienteFilter(e.target.value)}
-                        >
+                          onChange={(e) => setClienteFilter(e.target.value)}>
                           <option value="">Todos</option>
                           {clients.map((client, id) => (
                             <option key={id} value={client.razon_social}>
@@ -818,8 +814,7 @@ const BitacorasPage = () => {
                           id="clienteFilter"
                           className="form-select"
                           value={monitoreoFilter}
-                          onChange={(e) => setMonitoreoFilter(e.target.value)}
-                        >
+                          onChange={(e) => setMonitoreoFilter(e.target.value)}>
                           <option value="">Todos</option>
                           {monitoreos.map((monitreo, id) => (
                             <option key={id} value={monitreo.tipoMonitoreo}>
@@ -833,8 +828,7 @@ const BitacorasPage = () => {
                           id="operadorFilter"
                           className="form-select"
                           value={operadorFilter}
-                          onChange={(e) => setOperadorFilter(e.target.value)}
-                        >
+                          onChange={(e) => setOperadorFilter(e.target.value)}>
                           <option value="">Todos</option>
                           {operadores.map((operador, id) => (
                             <option key={id} value={operador.name}>
@@ -850,9 +844,7 @@ const BitacorasPage = () => {
                             type="date"
                             className="form-control"
                             value={creationDateFilter}
-                            onChange={(e) =>
-                              setCreationDateFilter(e.target.value)
-                            }
+                            onChange={(e) => setCreationDateFilter(e.target.value)}
                           />
                         </div>
                       </th>
@@ -862,8 +854,7 @@ const BitacorasPage = () => {
                             id="statusFilter"
                             className="form-select"
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                          >
+                            onChange={(e) => setStatusFilter(e.target.value)}>
                             <option value="">Todos</option>
                             <option value="nueva">Nueva</option>
                             <option value="validada">Validada</option>
@@ -883,10 +874,7 @@ const BitacorasPage = () => {
                   <tbody>
                     {loadingBitacoras ? (
                       <div className="loading-placeholder text-center py-5 w-full h-full flex items-center justify-center">
-                        <i
-                          className="fa fa-spinner fa-spin me-1"
-                          style={{ fontSize: "24px" }}
-                        ></i>{" "}
+                        <i className="fa fa-spinner fa-spin me-1" style={{fontSize: "24px"}}></i>{" "}
                         Cargando bitacoras...
                       </div>
                     ) : (
@@ -900,16 +888,12 @@ const BitacorasPage = () => {
                                   className={`circle`}
                                   style={{
                                     backgroundColor: color,
-                                  }}
-                                ></div>
+                                  }}></div>
                               ))}
                             </div>
                           </td>
                           <td className="one">
-                            <a
-                              href={`/bitacora/${bitacora._id}`}
-                              className="text-decoration-none"
-                            >
+                            <a href={`/bitacora/${bitacora._id}`} className="text-decoration-none">
                               {bitacora.bitacora_id}
                             </a>
                           </td>
@@ -938,8 +922,7 @@ const BitacorasPage = () => {
                                 bitacora.status !== "finalizada" &&
                                 bitacora.status !== "cerrada" &&
                                 bitacora.status !== "cerrada (e)"
-                              }
-                            >
+                              }>
                               <i className="fa fa-file-pdf"></i>
                             </button>
                           </td>
@@ -950,11 +933,8 @@ const BitacorasPage = () => {
                                   ? "btn btn-secondary icon-btn"
                                   : "btn btn-warning icon-btn"
                               }
-                              onClick={() =>
-                                generatePDF(bitacora.edited_bitacora)
-                              }
-                              disabled={bitacora.edited == false}
-                            >
+                              onClick={() => generatePDF(bitacora.edited_bitacora)}
+                              disabled={bitacora.edited == false}>
                               <i className="fa fa-file-pdf"></i>
                             </button>
                           </td>
@@ -966,8 +946,7 @@ const BitacorasPage = () => {
                                   : "btn btn-primary icon-btn"
                               }
                               onClick={() => handleEditClick(bitacora._id)}
-                              disabled={bitacora.edited == false}
-                            >
+                              disabled={bitacora.edited == false}>
                               <i className="fa fa-eye"></i>
                             </button>
                           </td>
@@ -983,18 +962,14 @@ const BitacorasPage = () => {
           {/* Pagination Controls */}
           <div className="d-flex justify-content-between align-items-center mx-3 my-3 gap-4">
             <div className="d-flex align-items-center justify-content-start">
-              <label
-                htmlFor="itemsPerPage"
-                className="form-label p-0 m-0 s-font fw-bold"
-              >
+              <label htmlFor="itemsPerPage" className="form-label p-0 m-0 s-font fw-bold">
                 Items Por Página:
               </label>
               <select
                 id="itemsPerPage"
                 className="form-select itemsSelector s-font ms-2"
                 value={itemsPerPage}
-                onChange={handleItemsPerPageChange}
-              >
+                onChange={handleItemsPerPageChange}>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
@@ -1011,30 +986,24 @@ const BitacorasPage = () => {
               <button
                 className="btn border-0"
                 disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
+                onClick={() => handlePageChange(currentPage - 1)}>
                 <i className="fa fa-chevron-left s-font"></i>
               </button>
 
               <div className="mx-0 s-font">
-                {Array.from({ length: Math.min(3, totalPages) }).map(
-                  (_, index) => {
-                    const pageNum = index + 1;
-                    return (
-                      <button
-                        key={pageNum}
-                        className={`btn pageLink s-font ${
-                          pageNum === currentPage
-                            ? "fw-bold fs-6"
-                            : "opacity-75"
-                        }`}
-                        onClick={() => handlePageChange(pageNum)}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  }
-                )}
+                {Array.from({length: Math.min(3, totalPages)}).map((_, index) => {
+                  const pageNum = index + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      className={`btn pageLink s-font ${
+                        pageNum === currentPage ? "fw-bold fs-6" : "opacity-75"
+                      }`}
+                      onClick={() => handlePageChange(pageNum)}>
+                      {pageNum}
+                    </button>
+                  );
+                })}
                 {totalPages > 3 && (
                   <>
                     <span className="mx-1">...</span>
@@ -1042,8 +1011,7 @@ const BitacorasPage = () => {
                       className={`btn  pageLink s-font ${
                         totalPages === currentPage ? "fw-bold" : ""
                       }`}
-                      onClick={() => handlePageChange(totalPages)}
-                    >
+                      onClick={() => handlePageChange(totalPages)}>
                       {totalPages}
                     </button>
                   </>
@@ -1053,8 +1021,7 @@ const BitacorasPage = () => {
               <button
                 className="btn border-0"
                 disabled={currentPage === totalPages}
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
+                onClick={() => handlePageChange(currentPage + 1)}>
                 <i className="fa fa-chevron-right s-font"></i>
               </button>
             </div>
@@ -1070,8 +1037,7 @@ const BitacorasPage = () => {
             id="exampleModal"
             tabIndex="-1"
             aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-          >
+            aria-hidden="true">
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-body w-100">
@@ -1084,8 +1050,7 @@ const BitacorasPage = () => {
                       position: "absolute",
                       top: "15px",
                       right: "15px",
-                    }}
-                  ></button>
+                    }}></button>
                   <div className="w-100 col justify-content-center align-items-center">
                     <img src="/logo2.png" alt="" width={50} />
                     <p className="p-0 m-0"> Nueva Bitácora</p>
@@ -1103,14 +1068,10 @@ const BitacorasPage = () => {
                         aria-label="Tipo de Monitoreo"
                         value={formData.monitoreo}
                         onChange={handleChange}
-                        required
-                      >
+                        required>
                         <option value="">Selecciona una opción</option>
                         {monitoreos.map((monitoreo) => (
-                          <option
-                            key={monitoreo._id}
-                            value={monitoreo.tipoMonitoreo}
-                          >
+                          <option key={monitoreo._id} value={monitoreo.tipoMonitoreo}>
                             {monitoreo.tipoMonitoreo}
                           </option>
                         ))}
@@ -1128,8 +1089,7 @@ const BitacorasPage = () => {
                         aria-label="Cliente"
                         value={formData.cliente}
                         onChange={handleChange}
-                        required
-                      >
+                        required>
                         <option value="">Selecciona una opción</option>
                         {clients.map((client) => (
                           <option key={client._id} value={client.razon_social}>
@@ -1151,9 +1111,7 @@ const BitacorasPage = () => {
                       />
                     </div>
                     <div className="form-group mb-3">
-                      <label htmlFor="linea_transporte">
-                        Línea de Transporte
-                      </label>
+                      <label htmlFor="linea_transporte">Línea de Transporte</label>
                       <input
                         id="linea_transporte"
                         type="text"
@@ -1173,8 +1131,7 @@ const BitacorasPage = () => {
                         className="form-select"
                         value={formData.origen}
                         onChange={handleChange}
-                        required
-                      >
+                        required>
                         <option value="">Seleccionar</option>
                         {origenes.map((origen) => (
                           <option key={origen._id} value={origen.name}>
@@ -1193,8 +1150,7 @@ const BitacorasPage = () => {
                         className="form-select"
                         value={formData.destino}
                         onChange={handleChange}
-                        required
-                      >
+                        required>
                         <option value="">Seleccionar</option>
                         {destinos.map((destino) => (
                           <option key={destino._id} value={destino.name}>
@@ -1213,8 +1169,7 @@ const BitacorasPage = () => {
                         className="form-select"
                         value={formData.operador}
                         onChange={handleChange}
-                        required
-                      >
+                        required>
                         <option value="">Seleccionar</option>
                         {operadores.map((operador) => (
                           <option key={operador._id} value={operador.name}>
@@ -1259,9 +1214,7 @@ const BitacorasPage = () => {
                       />
                     </div>
                     <div className="form-group mb-3">
-                      <label htmlFor="contra_acceso">
-                        Contraseña de Acceso
-                      </label>
+                      <label htmlFor="contra_acceso">Contraseña de Acceso</label>
                       <input
                         id="contra_acceso"
                         type="text"
@@ -1395,8 +1348,7 @@ const BitacorasPage = () => {
                       <button
                         type="button"
                         className="btn btn-danger me-3 px-2"
-                        onClick={handleModalToggle}
-                      >
+                        onClick={handleModalToggle}>
                         Cancelar
                       </button>
                       <button type="submit" className="btn btn-success px-4">
