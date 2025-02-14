@@ -1,95 +1,83 @@
-import {useEffect, useState} from "react";
+import React, {useState} from "react";
 
-const WialonTracker = () => {
+const WialonLogin = () => {
   const [loginStatus, setLoginStatus] = useState("");
-  const [units, setUnits] = useState([]);
+  const [userName, setUserName] = useState("");
 
-  useEffect(() => {
-    if (window.wialon) {
-      console.log("Wialon SDK is loaded!");
+  // Get the token from the environment variable
+  const token = import.meta.env.VITE_WIALON_TOKEN;
 
-      // Initialize Wialon session
-      const session = window.wialon.core.Session.getInstance();
-      session.initSession("https://hst-api.wialon.com", "", "", {force: 1});
-      console.log("Session initialized");
+  const login = () => {
+    const sess = window.wialon.core.Session.getInstance(); // Get instance of current session
+    const user = sess.getCurrUser(); // Get current user
 
-      // Login using token (replace with your token if needed)
-      session.loginToken(
-        "f5870843e01215ce6c07f1619bf78b40C8E8F954C9630B45F91EFC53EC403ED29CA82F82",
-        (code) => {
-          if (code) {
-            console.error("Login failed with code:", code);
-            setLoginStatus("Login failed");
-          } else {
-            console.log("Successfully logged into Wialon");
-            setLoginStatus("Login successful");
-
-            // Load the 'itemIcon' library and then update data flags for units
-            session.loadLibrary("itemIcon", () => {
-              // flags to specify what kind of data should be returned
-              const flags =
-                window.wialon.item.Item.dataFlag.base |
-                window.wialon.item.Unit.dataFlag.lastMessage;
-
-              // Update data flags for avl_unit items
-              session.updateDataFlags(
-                [{type: "type", data: "avl_unit", flags: flags, mode: 0}],
-                (updCode) => {
-                  if (updCode) {
-                    alert(window.wialon.core.Errors.getErrorText(updCode));
-                    return;
-                  }
-                  // Get loaded 'avl_unit' items
-                  const items = session.getItems("avl_unit");
-                  if (!items || !items.length) {
-                    alert("Units not found");
-                    return;
-                  }
-                  // Map the items to an array of objects containing id and name
-                  const unitsData = items.map((item) => ({
-                    id: item.getId(),
-                    name: item.getName(),
-                  }));
-                  setUnits(unitsData);
-                }
-              );
-            });
-          }
-        }
-      );
-    } else {
-      console.error("Wialon SDK not loaded yet");
-      setLoginStatus("Wialon SDK not loaded");
+    if (user) {
+      setLoginStatus(`You are logged in as '${user.getName()}', click logout first`);
+      return;
     }
-  }, []);
 
-  function getUser() {
-    const session = window.wialon.core.Session.getInstance();
-    var user = session.getCurrUser(); // get current user
-    if (!user) alert("You are not logged, click 'login' button");
-    else alert("You are logged as '" + user.getName() + "'");
-  }
+    if (!token) {
+      setLoginStatus("Token not found in environment variables.");
+      return;
+    }
+
+    setLoginStatus(`Trying to login with token '${token}'...`);
+    sess.initSession("https://hst-api.wialon.com"); // Initialize Wialon session
+
+    sess.loginToken(token, "", (code) => {
+      if (code) {
+        setLoginStatus(`Login failed: ${window.wialon.core.Errors.getErrorText(code)}`);
+      } else {
+        setLoginStatus("Logged in successfully!");
+        const user = sess.getCurrUser();
+        if (user) {
+          setUserName(user.getName());
+        }
+      }
+    });
+  };
+
+  const logout = () => {
+    const sess = window.wialon.core.Session.getInstance();
+    const user = sess.getCurrUser();
+    if (!user) {
+      setLoginStatus("You are not logged in, click 'login' first.");
+      return;
+    }
+
+    sess.logout((code) => {
+      if (code) {
+        setLoginStatus(`Logout failed: ${window.wialon.core.Errors.getErrorText(code)}`);
+      } else {
+        setLoginStatus("Logged out successfully!");
+        setUserName(""); // Clear the current user name
+      }
+    });
+  };
+
+  const getUser = () => {
+    const sess = window.wialon.core.Session.getInstance();
+    const user = sess.getCurrUser();
+    if (!user) {
+      setLoginStatus("You are not logged in, click 'login' first.");
+    } else {
+      setLoginStatus(`You are logged in as '${user.getName()}'`);
+    }
+  };
 
   return (
     <div>
-      <h1>{loginStatus}</h1>
-      {units.length > 0 ? (
-        <div>
-          <h2>Units:</h2>
-          <ul>
-            {units.map((unit) => (
-              <li key={unit.id}>
-                ID: {unit.id} - Name: {unit.name}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p>No units available.</p>
-      )}
+      <h1>Wialon Login</h1>
+      <button onClick={login}>Login</button>
+      <button onClick={logout}>Logout</button>
       <button onClick={getUser}>Get User</button>
+      <div>
+        <h3>Status:</h3>
+        <p>{loginStatus}</p>
+        {userName && <p>Logged in as: {userName}</p>}
+      </div>
     </div>
   );
 };
 
-export default WialonTracker;
+export default WialonLogin;

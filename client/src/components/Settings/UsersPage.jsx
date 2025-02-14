@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
-import Footer from "../Footer";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import {useAuth} from "../../context/AuthContext";
@@ -59,7 +58,7 @@ const UsersPage = () => {
           const data = await response.json();
           const currentUserRole = user.role;
           console.log(data);
-          
+
           const filteredRoles =
             currentUserRole !== "Máster"
               ? data.filter((role) => role.name != "Máster" && role.name != "Owner")
@@ -73,7 +72,7 @@ const UsersPage = () => {
         console.error("Error fetching roles:", e);
       }
     };
-    
+
     fetchUsers();
     fetchRoles();
   }, [baseUrl]);

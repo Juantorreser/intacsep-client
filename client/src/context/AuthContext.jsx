@@ -1,4 +1,3 @@
-import {ReactNode} from "react";
 import {createContext, useState, useEffect, useContext, useRef} from "react";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
@@ -7,7 +6,6 @@ const AuthContext = createContext(undefined);
 
 const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
-  const [cookies, setCookie, removeCookie] = useCookies(["access_token", "refresh_token"]);
   const baseUrl = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const [showInactivityPopup, setShowInactivityPopup] = useState(false);

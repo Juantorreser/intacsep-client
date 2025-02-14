@@ -5,21 +5,21 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 const Home = () => {
-    const {user, logout, verifyToken} = useAuth();
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (!user) {
-            navigate("/");
-        }
-    }, []);
-    return (
-        <section id="homeScreen" className="vh-100">
-            <Header />
-            <div className="d-none d-lg-flex w-[15%] h-100">
-                <Sidebar />
-            </div>
-        </section>
-    );
+  const {user} = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, []);
+  return (
+    <section id="homeScreen" className="vh-100">
+      <Header />
+      <div className="d-none d-lg-flex w-[15%] h-100">
+        <Sidebar />
+      </div>
+    </section>
+  );
 };
 
 export default Home;

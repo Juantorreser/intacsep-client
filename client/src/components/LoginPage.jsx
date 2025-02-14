@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import React, {useState} from "react";
+import {useAuth} from "../context/AuthContext";
+import {useNavigate} from "react-router-dom";
 
 const Login = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
-  const { user, login } = useAuth();
+  const {login} = useAuth();
   const [isRegistered, setIsRegistered] = useState(true);
   const [formData, setFormData] = useState({
     email: "",
@@ -31,8 +31,8 @@ const Login = () => {
     try {
       const response = await fetch(`${baseUrl}/request-reset-password`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: resetEmail }),
+        headers: {"content-type": "application/json"},
+        body: JSON.stringify({email: resetEmail}),
       });
       const data = await response.json();
       setIsLoading(false);
@@ -49,7 +49,7 @@ const Login = () => {
   };
 
   const handleForm = (e) => {
-    const { name, value } = e.target;
+    const {name, value} = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -63,7 +63,7 @@ const Login = () => {
 
     const response = await fetch(`${baseUrl}/register`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {"content-type": "application/json"},
       body: JSON.stringify(formData),
     });
 
@@ -103,8 +103,7 @@ const Login = () => {
             <p>Registrarse</p>
             <form
               onSubmit={registerUser}
-              className="d-flex flex-column justify-content-center align-items-center"
-            >
+              className="d-flex flex-column justify-content-center align-items-center">
               <div className="form-floating mb-3">
                 <input
                   type="email"
@@ -171,22 +170,13 @@ const Login = () => {
                 />
                 <label htmlFor="password">Contraseña</label>
               </div>
-              <button
-                type="submit"
-                className="btn btn-primary mt-3"
-                disabled={isLoading}
-              >
+              <button type="submit" className="btn btn-primary mt-3" disabled={isLoading}>
                 {isLoading ? "..." : "Registrarse"}
               </button>
-              {errorMessage && (
-                <p className="text-danger mt-3">{errorMessage}</p>
-              )}
+              {errorMessage && <p className="text-danger mt-3">{errorMessage}</p>}
             </form>
 
-            <p
-              className="mt-3 registerSwitch"
-              onClick={() => setIsRegistered(true)}
-            >
+            <p className="mt-3 registerSwitch" onClick={() => setIsRegistered(true)}>
               Iniciar sesión
             </p>
             <p className="opacity-25 mt-3">© Spotynet 2024</p>
@@ -202,8 +192,7 @@ const Login = () => {
           <p>Inicio de sesión</p>
           <form
             onSubmit={loginUser}
-            className="d-flex flex-column justify-content-center align-items-center"
-          >
+            className="d-flex flex-column justify-content-center align-items-center">
             <div className="form-floating mb-3">
               <input
                 type="email"
@@ -236,11 +225,7 @@ const Login = () => {
             <a href="" className="mt-0">
               Olvidaste tu contraseña?
             </a>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isLoading}
-            >
+            <button type="submit" className="btn btn-primary" disabled={isLoading}>
               {isLoading ? "Iniciando Sesión ..." : "Iniciar sesión"}
             </button>
           </form>
@@ -248,8 +233,7 @@ const Login = () => {
             href="https://www.spotynet.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="opacity-25 mt-5"
-          >
+            className="opacity-25 mt-5">
             Powered by © Spotynet 2024
           </a>
         </div>
@@ -266,8 +250,7 @@ const Login = () => {
             <p>Cambiar Contraseña</p>
             <form
               onSubmit={requestPasswordReset}
-              className="d-flex flex-column justify-content-center align-items-center"
-            >
+              className="d-flex flex-column justify-content-center align-items-center">
               <div className="form-floating mb-3">
                 <input
                   type="email"
@@ -282,18 +265,13 @@ const Login = () => {
               </div>
               {resetError && <p className="text-danger">{resetError}</p>}
               {resetSuccess && <p className="text-success">{resetSuccess}</p>}
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={isLoading}
-              >
+              <button type="submit" className="btn btn-primary" disabled={isLoading}>
                 {isLoading ? "Cargando..." : "Recuperar"}
               </button>
               <button
                 type="button"
                 className="btn btn-link mt-3"
-                onClick={() => setIsResettingPassword(false)}
-              >
+                onClick={() => setIsResettingPassword(false)}>
                 Volver a Inicio de Sesión
               </button>
             </form>
@@ -304,8 +282,7 @@ const Login = () => {
             <p>Inicio de sesión</p>
             <form
               onSubmit={loginUser}
-              className="d-flex flex-column justify-content-center align-items-center mb-5 pb-3"
-            >
+              className="d-flex flex-column justify-content-center align-items-center mb-5 pb-3">
               <div className="form-floating mb-3">
                 <input
                   type="email"
@@ -341,15 +318,10 @@ const Login = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   setIsResettingPassword(true);
-                }}
-              >
+                }}>
                 Olvidaste tu contraseña?
               </a>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={isLoading}
-              >
+              <button type="submit" className="btn btn-primary" disabled={isLoading}>
                 {isLoading ? "Iniciando Sesión ..." : "Iniciar sesión"}
               </button>
             </form>
@@ -357,8 +329,7 @@ const Login = () => {
               href="https://www.spotynet.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="opacity-25 mt-5 pt-5"
-            >
+              className="opacity-25 mt-5 pt-5">
               Powered by © Spotynet 2024 on AWS
             </a>
           </div>

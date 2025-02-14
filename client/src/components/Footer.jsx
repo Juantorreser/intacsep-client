@@ -7,8 +7,7 @@ const Footer = () => {
         href="https://www.spotynet.com/"
         target="_blank"
         rel="noopener noreferrer"
-        className="opacity-25 text-white mb-5"
-      >
+        className="opacity-25 text-white mb-5">
         Powered by © Spotynet 2024 on AWS
       </a>
       <p className="opacity-25 text-white mb-5 footer">V1.2.1</p>

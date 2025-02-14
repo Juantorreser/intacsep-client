@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import ClientCard from "./ClientCard";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
-import Footer from "../Footer";
 
 const ClientsPage = () => {
   const [clients, setClients] = useState([]);
@@ -123,7 +122,7 @@ const ClientsPage = () => {
 
   // Handle form input changes
   const handleChange = (e) => {
-    const { id, value } = e.target;
+    const {id, value} = e.target;
     if (id.startsWith("contacto_")) {
       setFormData((prevData) => ({
         ...prevData,
@@ -145,13 +144,11 @@ const ClientsPage = () => {
     e.preventDefault();
     try {
       const method = isEditing ? "PUT" : "POST"; // Determine method based on edit mode
-      const url = isEditing
-        ? `${baseUrl}/clients/${currentClient._id}`
-        : `${baseUrl}/clients`;
+      const url = isEditing ? `${baseUrl}/clients/${currentClient._id}` : `${baseUrl}/clients`;
 
       const response = await fetch(url, {
         method: method,
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         credentials: "include",
         body: JSON.stringify(formData),
       });
@@ -160,9 +157,7 @@ const ClientsPage = () => {
         const result = await response.json();
         if (isEditing) {
           setClients((prevClients) =>
-            prevClients.map((client) =>
-              client._id === result._id ? result : client
-            )
+            prevClients.map((client) => (client._id === result._id ? result : client))
           );
         } else {
           setClients((prevClients) => [...prevClients, result]);
@@ -190,10 +185,7 @@ const ClientsPage = () => {
               <h1 className="fs-3 fw-semibold text-black">Clientes</h1>
             </div>
             <div className="col-auto ms-auto">
-              <button
-                className="btn btn-primary rounded-5"
-                onClick={() => setShowModal(true)}
-              >
+              <button className="btn btn-primary rounded-5" onClick={() => setShowModal(true)}>
                 <i className="fa fa-plus"></i>
               </button>
             </div>
@@ -219,8 +211,7 @@ const ClientsPage = () => {
                 id="clientModal"
                 tabIndex="-1"
                 aria-labelledby="clientModalLabel"
-                aria-hidden="true"
-              >
+                aria-hidden="true">
                 <div className="modal-dialog">
                   <div className="modal-content">
                     <div className="modal-header">
@@ -231,8 +222,7 @@ const ClientsPage = () => {
                         type="button"
                         className="btn-close"
                         onClick={handleModalToggle}
-                        aria-label="Close"
-                      ></button>
+                        aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
                       <form onSubmit={handleSubmit}>
@@ -366,10 +356,7 @@ const ClientsPage = () => {
                         <p>Contacto:</p>
                         <hr />
                         <div className="mb-3">
-                          <label
-                            htmlFor="contacto_nombres"
-                            className="form-label"
-                          >
+                          <label htmlFor="contacto_nombres" className="form-label">
                             Nombres
                           </label>
                           <input
@@ -382,10 +369,7 @@ const ClientsPage = () => {
                           />
                         </div>
                         <div className="mb-3">
-                          <label
-                            htmlFor="contacto_apellidos"
-                            className="form-label"
-                          >
+                          <label htmlFor="contacto_apellidos" className="form-label">
                             Apellidos
                           </label>
                           <input
@@ -398,10 +382,7 @@ const ClientsPage = () => {
                           />
                         </div>
                         <div className="mb-3">
-                          <label
-                            htmlFor="contacto_email"
-                            className="form-label"
-                          >
+                          <label htmlFor="contacto_email" className="form-label">
                             Email
                           </label>
                           <input
@@ -414,10 +395,7 @@ const ClientsPage = () => {
                           />
                         </div>
                         <div className="mb-3">
-                          <label
-                            htmlFor="contacto_telefono"
-                            className="form-label"
-                          >
+                          <label htmlFor="contacto_telefono" className="form-label">
                             Teléfono
                           </label>
                           <input
@@ -442,10 +420,7 @@ const ClientsPage = () => {
                             required
                           />
                         </div>
-                        <button
-                          type="button"
-                          className="btn btn-danger ms-auto"
-                        >
+                        <button type="button" className="btn btn-danger ms-auto">
                           Cancelar
                         </button>
                         <button type="submit" className="btn btn-success ms-3">

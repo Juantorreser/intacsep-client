@@ -3,12 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import {Route, Routes} from "react-router-dom";
-import Header from "./components/Header";
 import Login from "./components/LoginPage";
 import Home from "./components/Home";
-import ActiveBits from "./components/Bitacoras/BitacorasPage";
-import PastBits from "./components/Bitacoras/PastBits";
-import BitacoraDetail from "./components/Bitacoras/BitacoraDetail";
+import BitacoraDetail from "./components/Bitacoras/BitacoraDetailPage";
 import TiposMonitoreo from "./components/Settings/TiposMonitoreo";
 import UsersPage from "./components/Settings/UsersPage";
 import UserRolePage from "./components/Settings/RolePage";
@@ -21,6 +18,7 @@ import OperadorPage from "./components/Settings/OperadorPage";
 import ProfilePage from "./components/Profile/ProfilePage";
 import ResetPassword from "./components/ResetPassword";
 import WialonTracker from "./components/wialon/WialonTracker";
+import WialonUnits from "./components/wialon/WialonUnits";
 
 function App() {
   return (
@@ -43,6 +41,7 @@ function App() {
         <Route path="/perfil" element={<ProfilePage />}></Route>
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/wialon" element={<WialonTracker />} />
+        <Route path="/units" element={<WialonUnits />} />
       </Routes>
     </>
   );
