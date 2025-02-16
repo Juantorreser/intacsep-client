@@ -1,6 +1,5 @@
-import React from "react";
-import {useState} from "react";
-import { Modal, Form } from "react-bootstrap";
+import React, {useState, useEffect} from "react";
+import {Modal, Form} from "react-bootstrap";
 
 const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, bitacora}) => {
   const [transporteData, setTransporteData] = useState({
@@ -20,6 +19,36 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
       sello: "",
     },
   });
+
+  //ID Variables
+  const [idMethod, setIdMethod] = useState("automatic");
+  const [unitInfo, setUnitInfo] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedUnitId, setSelectedUnitId] = useState("");
+  const token = import.meta.env.VITE_WIALON_TOKEN;
+
+  useEffect(() => {
+    fetchAllUnits();
+  }, []);
+
+  //Get Wialon Units
+  const fetchAllUnits = () => {
+    const sess = window.wialon.core.Session.getInstance();
+    if (!token) return;
+
+    sess.initSession("https://hst-api.wialon.com");
+    sess.loginToken(token, "", (code) => {
+      if (!code) {
+        const flags = window.wialon.item.Item.dataFlag.base;
+        sess.updateDataFlags([{type: "type", data: "avl_unit", flags, mode: 0}], (code) => {
+          if (!code) {
+            const units = sess.getItems("avl_unit") || [];
+            setUnitInfo(units.map((unit) => ({id: unit.getId(), name: unit.getName()})));
+          }
+        });
+      }
+    });
+  };
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -44,8 +73,19 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
   // Handle form submission
   const handleSubmitTransporte = (e) => {
     e.preventDefault();
-    const newId = transportes.length + 1; // Calculate ID dynamically based on current length
-    const newTransporteData = {id: newId, ...transporteData}; // Set the calculated ID here
+
+    let newId;
+    if (idMethod === "wialon") {
+      if (!selectedUnitId) {
+        alert("Por favor, seleccione una unidad de Wialon.");
+        return;
+      }
+      newId = selectedUnitId;
+    } else {
+      newId = (transportes.length + 1).toString().padStart(2, "0");
+    }
+
+    const newTransporteData = {id: newId, ...transporteData};
 
     addTransporte(newTransporteData, bitacora._id);
     handleClose();
@@ -59,16 +99,68 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
       <Modal.Body>
         <Form onSubmit={handleSubmitTransporte}>
           <Form.Group className="mb-3">
-            <Form.Label>ID</Form.Label>
-            <Form.Control
+            <Form.Label>Método de ID</Form.Label>
+            <div>
+              <Form.Check
+                type="radio"
+                label="Automático"
+                name="idMethod"
+                value="automatic"
+                checked={idMethod === "automatic"}
+                onChange={() => setIdMethod("automatic")}
+              />
+              <Form.Check
+                type="radio"
+                label="Wialon ID"
+                name="idMethod"
+                value="wialon"
+                checked={idMethod === "wialon"}
+                onChange={() => setIdMethod("wialon")}
+              />
+            </div>
+            {/* <Form.Control
               type="text"
               name="id"
               value={(transportes.length + 1).toString().padStart(2, "0")}
               onChange={handleChange}
               required
               disabled
-            />
+            /> */}
           </Form.Group>
+
+          {idMethod === "automatic" ? (
+            <Form.Group className="mb-3">
+              <Form.Label>ID</Form.Label>
+              <Form.Control
+                type="text"
+                value={(transportes.length + 1).toString().padStart(2, "0")}
+                disabled
+              />
+            </Form.Group>
+          ) : (
+            <Form.Group className="mb-3">
+              <Form.Label>Seleccionar Wialon ID</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Buscar unidad..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setSelectedUnitId(e.target.value); // Aquí se guarda el ID seleccionado
+                }}
+                list="unitList"
+              />
+              <datalist id="unitList">
+                {unitInfo
+                  .filter((unit) => unit.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .map((unit) => (
+                    <option key={unit.id} value={unit.id}>
+                      {unit.name}
+                    </option>
+                  ))}
+              </datalist>
+            </Form.Group>
+          )}
 
           {/* Tracto Fields */}
           <h5>Tracto</h5>
