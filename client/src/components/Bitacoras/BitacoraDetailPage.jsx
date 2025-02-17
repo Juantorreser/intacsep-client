@@ -8,6 +8,7 @@ import {useAuth} from "../../context/AuthContext";
 import {Modal, Button, Form, Row} from "react-bootstrap";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import CreateTransporteModal from "./Transportes/CreateTransporteModal";
+import NewEventModal from "./Eventos/NewEventModal";
 
 const BitacoraDetailPage = ({edited}) => {
   const {id} = useParams();
@@ -268,32 +269,6 @@ const BitacoraDetailPage = ({edited}) => {
       }
     } catch (e) {
       console.error("Error fetching bitácora:", e);
-    }
-  };
-
-  // Updated version of updateOldTransportes to accept 'bitacora' as a parameter
-  const updateOldTransportes = async (bitacora) => {
-    if (!bitacora.transportes) {
-      console.log("Adding default transporte data...");
-      const transporteToAdd = {
-        id: 1,
-        tracto: {
-          eco: bitacora.tracto.eco,
-          placa: bitacora.tracto.placa,
-          marca: bitacora.tracto.marca,
-          modelo: bitacora.tracto.modelo,
-          color: bitacora.tracto.color,
-          tipo: bitacora.tracto.tipo,
-        },
-        remolque: {
-          eco: bitacora.remolque.eco,
-          placa: bitacora.remolque.placa,
-          color: bitacora.remolque.color,
-          capacidad: bitacora.remolque.capacidad,
-          sello: bitacora.remolque.sello,
-        },
-      };
-      await addTransporte(transporteToAdd, bitacora._id);
     }
   };
 
@@ -1027,14 +1002,8 @@ const BitacoraDetailPage = ({edited}) => {
     const elapsedTimeMs = currentTimeMs - eventTimeMs;
 
     const greenColor = "#51FF4E"; // Green
-    const greenColor2 = "#3DDC3B"; // Green
-    const greenColor3 = "#3C933B"; // Green
     const yellowColor = "#ECEC27"; // Yellow
-    const yellowColor2 = "#D8D811"; // Yellow
-    const yellowColor3 = "#ACAC2A"; // Yellow
     const redColor = "#F82929"; // Red
-    const redColor2 = "#B82F2F"; // Red
-    const redColor3 = "#883B3B"; // Red
 
     // Determine the color
     if (elapsedTimeMs < frecuenciaMs) {
@@ -1046,19 +1015,6 @@ const BitacoraDetailPage = ({edited}) => {
       }
     } else {
       return [redColor]; // Red
-    }
-  };
-
-  const handleSelectChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-    if (selectedOptions.includes("all")) {
-      if (selectedTransportes.length === bitacora.transportes.length) {
-        setSelectedTransportes([]);
-      } else {
-        setSelectedTransportes(bitacora.transportes.map((t) => t.id));
-      }
-    } else {
-      setSelectedTransportes(selectedOptions);
     }
   };
 
@@ -1391,7 +1347,7 @@ const BitacoraDetailPage = ({edited}) => {
       </div>
 
       {/* Bootstrap Modal for adding a new event */}
-      <div
+      {/* <div
         className="modal fade"
         id="eventModal"
         tabIndex="-1"
@@ -1582,7 +1538,9 @@ const BitacoraDetailPage = ({edited}) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
+      <NewEventModal edited={edited} eventTypes={eventTypes} />
+
       {editModalVisible && (
         <>
           <Modal
@@ -1773,122 +1731,7 @@ const BitacoraDetailPage = ({edited}) => {
                     onChange={handleEditChange}
                   />
                 </Form.Group>
-                {/* TRACTO */}
-                {/* <hr />
-                                <h5 className="mb-2">Tracto</h5>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="tracto.eco">ECO</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="tracto.eco"
-                                        name="tracto.eco"
-                                        value={edited_bitacora.tracto.eco}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="tracto.placa">Placa</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="tracto.placa"
-                                        name="tracto.placa"
-                                        value={edited_bitacora.tracto.placa}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="tracto.marca">Marca</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="tracto.marca"
-                                        name="tracto.marca"
-                                        value={edited_bitacora.tracto.marca}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="tracto.modelo">Modelo</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="tracto.modelo"
-                                        name="tracto.modelo"
-                                        value={edited_bitacora.tracto.modelo}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="tracto.color">Color</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="tracto.color"
-                                        name="tracto.color"
-                                        value={edited_bitacora.tracto.color}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="tracto.tipo">Tipo</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="tracto.tipo"
-                                        name="tracto.tipo"
-                                        value={edited_bitacora.tracto.tipo}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group> */}
-                {/* REMOLQUE */}
-                <hr />
-                {/* <h5 className="mb-2">Remolque</h5>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="remolque.eco">ECO</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="remolque.eco"
-                                        name="remolque.eco"
-                                        value={edited_bitacora.remolque.eco}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="remolque.placa">Placa</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="remolque.placa"
-                                        name="remolque.placa"
-                                        value={edited_bitacora.remolque.placa}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="remolque.color">Color</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="remolque.color"
-                                        name="remolque.color"
-                                        value={edited_bitacora.remolque.color}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="remolque.capacidad">Capacidad</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="remolque.capacidad"
-                                        name="remolque.capacidad"
-                                        value={edited_bitacora.remolque.capacidad}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="remolque.sello">Sello</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        id="remolque.sello"
-                                        name="remolque.sello"
-                                        value={edited_bitacora.remolque.sello}
-                                        onChange={handleEditChange}
-                                    />
-                                </Form.Group> */}
+
                 <div className="w-100 d-flex flex-row justify-content-end">
                   <button
                     type="button"
