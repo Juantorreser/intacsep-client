@@ -22,7 +22,13 @@ const BitacorasPage = () => {
   const {user} = useAuth();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("all");
+  const [PDFOption, setPDFOption] = useState({
+    selectValue: "",
+  });
   const [bitacoras, setBitacoras] = useState([]);
+  const [selectedBitacora, setSelectedBitacora] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [totalPages, setTotalPages] = useState(1); // Track total pages
@@ -44,7 +50,7 @@ const BitacorasPage = () => {
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
   const [loadingBitacoras, setLoadingBitacoras] = useState(false);
-
+  const [selectedTransporte, setSelectedTransporte] = useState(null);
   const [formData, setFormData] = useState({
     bitacora_id: "",
     folio_servicio: "",
@@ -143,8 +149,9 @@ const BitacorasPage = () => {
     }
   };
 
-  const handleModalToggle = () => {
-    setShowModal(!showModal);
+  const handleModalToggle = (bitacora) => {
+    setShowPrintModal(!showPrintModal);
+    setSelectedBitacora(bitacora);
   };
 
   const handleChange = (e) => {
@@ -184,6 +191,29 @@ const BitacorasPage = () => {
       }
     } catch (e) {
       console.error("Error creating bitácora:", e);
+    }
+  };
+
+  const handleRadioChange = (e) => {
+    setSelectedOption(e.target.value);
+    if (e.target.value === "option2") {
+      setFormData({...formData, selectValue: ""}); // Reset select value when "option2" is selected
+    }
+  };
+
+  const handleSelectChange = (e) => {
+    setSelectedTransporte(e.target.value);
+  };
+
+  const handlePDFSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission
+    if (selectedOption === "all") {
+      console.log(selectedBitacora?.bitacora_id);
+      generatePDF(selectedBitacora);
+    } else if (selectedOption === "one") {
+      console.log(selectedTransporte);
+      generatePDF(selectedBitacora, selectedTransporte);
     }
   };
 
@@ -247,96 +277,7 @@ const BitacorasPage = () => {
     fetchBitacoras(currentPage, newLimit); // Refetch with new limit
   };
 
-  // const generatePDF = async (bitacora) => {
-  //   //FUNCIONAA
-  //   // Create a temporary container to render the BitacoraDetail component
-  //   const tempContainer = document.createElement("div");
-  //   tempContainer.style.position = "absolute";
-  //   tempContainer.style.top = "-999999999px";
-  //   document.body.appendChild(tempContainer);
-
-  //   // Render the BitacoraDetail component into the temporary container
-  //   const root = createRoot(tempContainer);
-  //   root.render(<BitacoraDetail bitacora={bitacora} />);
-
-  //   // Ensure styles are applied before capturing the content
-  //   await new Promise((resolve) => setTimeout(resolve, 3000)); // Adjust timeout as needed
-
-  //   // html2canvas(tempContainer, {scale: 2, useCORS: true})
-  //   await html2canvas(tempContainer, {scale: 1.5, useCORS: true, allowTaint: true, logging: false})
-  //     .then((canvas) => {
-  //       const imgData = canvas.toDataURL("image/png");
-
-  //       // Define PDF dimensions in points (1 inch = 72 points)
-  //       const letterWidth = 8.5 * 72;
-  //       const letterHeight = 11 * 72;
-
-  //       // Create a new jsPDF instance
-  //       const pdf = new jsPDF({
-  //         orientation: "portrait",
-  //         unit: "pt",
-  //         format: [letterWidth, letterHeight],
-  //         compress: true,
-  //       });
-
-  //       // Calculate image dimensions to fit the page width
-  //       const imgWidth = letterWidth;
-  //       const imgHeight = canvas.height * (letterWidth / canvas.width);
-  //       const pageHeight = letterHeight;
-
-  //       let heightLeft = imgHeight;
-  //       let position = 0;
-
-  //       // Add the first page with the image
-  //       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  //       heightLeft -= pageHeight;
-
-  //       // Add additional pages if needed
-  //       while (heightLeft >= 0) {
-  //         position = heightLeft - imgHeight;
-  //         pdf.addPage();
-  //         pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  //         heightLeft -= pageHeight;
-  //       }
-
-  //       // Save the PDF with a filename based on the bitacora data
-  //       pdf.save(`Bitácora No.${bitacora.bitacora_id}, ${bitacora.cliente}.pdf`);
-
-  //       // Clean up by removing the temporary container
-  //       document.body.removeChild(tempContainer);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error generating PDF:", error);
-  //     });
-  // };
-
-  // const generatePDF = async (bitacora) => { //BROWSER PDF
-  //   // Create a temporary container to render the BitacoraDetail component
-  //   const tempContainer = document.createElement("div");
-  //   tempContainer.style.position = "fixed";
-  //   tempContainer.style.top = "0";
-  //   tempContainer.style.left = "0";
-  //   tempContainer.style.width = "100%";
-  //   tempContainer.style.backgroundColor = "#fff";
-  //   tempContainer.style.zIndex = "10000"; // Ensure it appears on top of everything else
-  //   document.body.appendChild(tempContainer);
-
-  //   // Render the BitacoraDetail component into the temporary container
-  //   const root = createRoot(tempContainer);
-  //   root.render(<BitacoraDetail bitacora={bitacora} />);
-
-  //   // Give time for rendering and styles to load
-  //   await new Promise((resolve) => setTimeout(resolve, 3000));
-
-  //   // Trigger the print dialog
-  //   window.print();
-
-  //   // Clean up by removing the temporary container after print
-  //   root.unmount();
-  //   document.body.removeChild(tempContainer);
-  // };
-
-  const generatePDF = async (bitacora) => {
+  const generatePDF = async (bitacora, transporteId = "") => {
     const tempContainer = document.createElement("div");
     tempContainer.id = "tempContainer";
     tempContainer.style.position = "absolute";
@@ -348,7 +289,11 @@ const BitacorasPage = () => {
     document.body.appendChild(tempContainer);
 
     const root = createRoot(tempContainer);
-    root.render(<BitacoraDetail bitacora={bitacora} />);
+    if (transporteId == "") {
+      root.render(<BitacoraDetail bitacora={bitacora} />);
+    } else {
+      root.render(<BitacoraDetail bitacora={bitacora} transporteId={selectedTransporte} />);
+    }
 
     const style = document.createElement("style");
     style.textContent = `
@@ -367,85 +312,6 @@ const BitacorasPage = () => {
       document.head.removeChild(style);
     }, 10); // Adjusted delay to ensure rendering completion
   };
-
-  // const generatePDF = async (bitacora) => {
-  //   const eventos = bitacora.eventos;
-  //   const eventosPerPage = 30;
-  //   const totalEventos = eventos.length;
-
-  //   // Divide events into chunks of 10
-  //   const eventChunks = [];
-  //   for (let i = 0; i < totalEventos; i += eventosPerPage) {
-  //     eventChunks.push(eventos.slice(i, i + eventosPerPage));
-  //   }
-
-  //   for (let i = 0; i < eventChunks.length; i++) {
-  //     const currentChunk = eventChunks[i];
-
-  //     // Create a temporary container to render the BitacoraDetail component
-  //     const tempContainer = document.createElement("div");
-  //     tempContainer.classList.add("visibility-hidden");
-  //     tempContainer.style.position = "absolute";
-  //     tempContainer.style.top = "-999999px";
-  //     document.body.appendChild(tempContainer);
-
-  //     // Render the BitacoraDetail component into the temporary container with the current set of events
-  //     const root = createRoot(tempContainer);
-  //     root.render(<BitacoraDetail bitacora={{...bitacora, eventos: currentChunk}} />);
-
-  //     // Ensure styles are applied before capturing the content
-  //     await new Promise((resolve) => setTimeout(resolve, 500)); // Adjust timeout as needed
-
-  //     // Generate the PDF for the current chunk of events
-  //     await html2canvas(tempContainer, {scale: 2, useCORS: true})
-  //       .then((canvas) => {
-  //         const imgData = canvas.toDataURL("image/png");
-
-  //         // Define PDF dimensions in points (1 inch = 72 points)
-  //         const letterWidth = 8.5 * 72;
-  //         const letterHeight = 11 * 72;
-
-  //         // Create a new jsPDF instance
-  //         const pdf = new jsPDF({
-  //           orientation: "portrait",
-  //           unit: "pt",
-  //           format: [letterWidth, letterHeight],
-  //           compress: true,
-  //         });
-
-  //         // Calculate image dimensions to fit the page width
-  //         const imgWidth = letterWidth;
-  //         const imgHeight = canvas.height * (letterWidth / canvas.width);
-  //         const pageHeight = letterHeight;
-
-  //         let heightLeft = imgHeight;
-  //         let position = 0;
-
-  //         // Add the first page with the image
-  //         pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  //         heightLeft -= pageHeight;
-
-  //         // Add additional pages if needed
-  //         while (heightLeft >= 0) {
-  //           position = heightLeft - imgHeight;
-  //           pdf.addPage();
-  //           pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  //           heightLeft -= pageHeight;
-  //         }
-
-  //         // Save the PDF with a filename based on the bitacora data and chunk number
-  //         pdf.save(
-  //           `Bitácora No.${bitacora.bitacora_id}, ${bitacora.cliente} - Página ${i + 1}.pdf`
-  //         );
-
-  //         // Clean up by removing the temporary container
-  //         document.body.removeChild(tempContainer);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error generating PDF:", error);
-  //       });
-  //   }
-  // };
 
   const handleEditClick = (bitacoraId) => {
     navigate(`/bitacoras/${bitacoraId}/editada`);
@@ -758,7 +624,8 @@ const BitacorasPage = () => {
                                   ? "btn btn-secondary icon-btn"
                                   : "btn btn-danger icon-btn"
                               }
-                              onClick={() => generatePDF(bitacora)}
+                              // onClick={() => generatePDF(bitacora)}
+                              onClick={() => handleModalToggle(bitacora)}
                               disabled={
                                 bitacora.status !== "finalizada" &&
                                 bitacora.status !== "cerrada" &&
@@ -774,7 +641,8 @@ const BitacorasPage = () => {
                                   ? "btn btn-secondary icon-btn"
                                   : "btn btn-warning icon-btn"
                               }
-                              onClick={() => generatePDF(bitacora.edited_bitacora)}
+                              // onClick={() => generatePDF(bitacora.edited_bitacora)}
+                              onClick={() => handleModalToggle(bitacora)}
                               disabled={bitacora.edited == false}>
                               <i className="fa fa-file-pdf"></i>
                             </button>
@@ -869,6 +737,103 @@ const BitacorasPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Print PDF Select Modal */}
+      <>
+        {showPrintModal && (
+          <>
+            <div
+              className="modal fade show d-block"
+              tabIndex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="modal-body w-100">
+                    <button
+                      type="button"
+                      className="btn-close"
+                      aria-label="Close"
+                      onClick={handleModalToggle}
+                      style={{
+                        position: "absolute",
+                        top: "15px",
+                        right: "15px",
+                      }}></button>
+                    <div className="w-100 col justify-content-center align-items-center">
+                      <img src="/logo2.png" alt="" width={50} />
+                      <p className="p-0 m-0"> Metodo de Impresion</p>
+                    </div>
+                    <hr />
+                    <form onSubmit={handlePDFSubmit}>
+                      {/* Radio Buttons */}
+                      <div className="mb-3">
+                        <div>
+                          <input
+                            type="radio"
+                            id="all"
+                            name="radioOption"
+                            value="all"
+                            checked={selectedOption === "all"}
+                            onChange={handleRadioChange}
+                          />
+                          <label htmlFor="all">Todos los transportes</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            id="one"
+                            name="radioOption"
+                            value="one"
+                            checked={selectedOption === "one"}
+                            onChange={handleRadioChange}
+                          />
+                          <label htmlFor="one">Seleccionar transporte</label>
+                        </div>
+                      </div>
+
+                      {/* Conditionally Render Select Dropdown */}
+                      {selectedOption === "one" && selectedBitacora?.transportes?.length > 0 && (
+                        <div className="mb-3">
+                          <label htmlFor="selectValue" className="form-label">
+                            ID del transporte
+                          </label>
+                          <select
+                            id="selectValue"
+                            className="form-select"
+                            value={formData.selectValue}
+                            onChange={handleSelectChange}>
+                            <option value="">Seleccionar ID</option>
+                            {selectedBitacora.transportes.map((transporte) => (
+                              <option value={transporte.id} key={transporte.id}>
+                                {transporte.id}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      {/* Submit Button */}
+                      <div className="d-flex justify-content-end">
+                        <button
+                          type="button"
+                          className="btn btn-danger me-3 px-2"
+                          onClick={handleModalToggle}>
+                          Cancelar
+                        </button>
+                        <button type="submit" className="btn btn-success px-4">
+                          Imprimir
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-backdrop fade show"></div>
+          </>
+        )}
+      </>
 
       {/* Modal with Backdrop */}
       {showModal && (
@@ -1066,7 +1031,7 @@ const BitacorasPage = () => {
                       />
                     </div>
                     <hr />
-                    
+
                     <div className="d-flex justify-content-end">
                       <button
                         type="button"
