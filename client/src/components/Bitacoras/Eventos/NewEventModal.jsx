@@ -21,6 +21,8 @@ const NewEventModal = ({edited, eventTypes}) => {
     velocidad: "",
     coordenadas: "",
     frecuencia: 0,
+    registrado_por: `${user?.firstName} ${user?.lastName}`,
+    transportes: transportes,
   });
 
   useEffect(() => {
@@ -148,6 +150,7 @@ const NewEventModal = ({edited, eventTypes}) => {
         try {
           const address = await getAddressFromCoordinates(pos.x, pos.y);
           ubicacion = address;
+          ubicacion = Array.isArray(ubicacion) ? ubicacion.join(", ") : ubicacion;
         } catch (error) {
           console.error("Error al obtener la dirección:", error);
         }
@@ -165,6 +168,8 @@ const NewEventModal = ({edited, eventTypes}) => {
           nombre: unidadEncontrada.name || "",
           descripcion: unidadEncontrada.description || "",
           frecuencia: 0, // Lo dejamos como 0 si no hay un valor específico
+          registrado_por: `${user?.firstName} ${user?.lastName}`,
+          transportes: transportes,
         }));
       } else {
         setNewEvent((prev) => ({
@@ -176,6 +181,8 @@ const NewEventModal = ({edited, eventTypes}) => {
           nombre: "",
           descripcion: "",
           frecuencia: 0,
+          registrado_por: `${user?.firstName} ${user?.lastName}`,
+          transportes: transportes,
         }));
       }
     } else {
@@ -188,6 +195,8 @@ const NewEventModal = ({edited, eventTypes}) => {
         nombre: "",
         descripcion: "",
         frecuencia: 0,
+        registrado_por: `${user?.firstName} ${user?.lastName}`,
+        transportes: transportes,
       }));
     }
   };
@@ -242,6 +251,7 @@ const NewEventModal = ({edited, eventTypes}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(typeof newEvent.ubicacion);
 
     if (selectedTransportes.length === 0) {
       alert("Favor de seleccionar un transporte.");
@@ -302,7 +312,6 @@ const NewEventModal = ({edited, eventTypes}) => {
             console.error("Error starting bitácora:", e);
           }
         }
-        window.bootstrap.Modal.getInstance(document.getElementById("eventModal")).hide();
       } else {
         console.error("Failed to add event:", response.statusText);
       }
@@ -336,7 +345,7 @@ const NewEventModal = ({edited, eventTypes}) => {
                 <label htmlFor="transportes" className="form-label">
                   Transportes
                 </label>
-                <div className="form-check">
+                {/* <div className="form-check">
                   <input
                     type="checkbox"
                     className="form-check-input"
@@ -353,7 +362,7 @@ const NewEventModal = ({edited, eventTypes}) => {
                   <label className="form-check-label" htmlFor="allTransportes">
                     Todos
                   </label>
-                </div>
+                </div> */}
                 {bitacora?.transportes?.map((transporte) => (
                   <div className="form-check" key={transporte.id}>
                     <input
