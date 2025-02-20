@@ -12,9 +12,10 @@ const InactivityModal = ({show, handleClose}) => {
       const response = await fetch(`${baseUrl}/inactividad`, {
         method: "GET",
         credentials: "include",
-        mode: "no-cors",
       });
       const data = await response.json();
+      console.log(data);
+
       setNewTimeout(data[0].value);
     } catch (e) {
       console.log(e.message);
