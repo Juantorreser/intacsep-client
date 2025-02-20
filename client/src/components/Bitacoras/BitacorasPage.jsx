@@ -149,7 +149,11 @@ const BitacorasPage = () => {
     }
   };
 
-  const handleModalToggle = (bitacora) => {
+  const handleModalToggle = () => {
+    setShowModal(!showModal);
+  };
+
+  const handlePDFToggle = (bitacora) => {
     setShowPrintModal(!showPrintModal);
     setSelectedBitacora(bitacora);
   };
@@ -336,18 +340,6 @@ const BitacorasPage = () => {
     });
   };
 
-  const getLatestEventFrec = (bitacora) => {
-    if (bitacora.eventos.length > 0) {
-      // Find the latest event by comparing createdAt timestamps
-      const latestEvent = bitacora.eventos.reduce((latest, current) =>
-        new Date(latest.createdAt) > new Date(current.createdAt) ? latest : current
-      );
-      return latestEvent.frecuencia;
-    } else {
-      return "N/A";
-    }
-  };
-
   const getEventColor = (bitacora) => {
     if (bitacora.status != "iniciada" && bitacora.status != "validada") {
       return ["#333235"]; // No events
@@ -366,14 +358,8 @@ const BitacorasPage = () => {
     const elapsedTimeMs = currentTimeMs - eventTimeMs;
 
     const greenColor = "#51FF4E"; // Green
-    const greenColor2 = "#3DDC3B"; // Green
-    const greenColor3 = "#3C933B"; // Green
     const yellowColor = "#ECEC27"; // Yellow
-    const yellowColor2 = "#D8D811"; // Yellow
-    const yellowColor3 = "#ACAC2A"; // Yellow
     const redColor = "#F82929"; // Red
-    const redColor2 = "#B82F2F"; // Red
-    const redColor3 = "#883B3B"; // Red
 
     // Determine the color
     if (elapsedTimeMs < frecuenciaMs) {
@@ -625,7 +611,7 @@ const BitacorasPage = () => {
                                   : "btn btn-danger icon-btn"
                               }
                               // onClick={() => generatePDF(bitacora)}
-                              onClick={() => handleModalToggle(bitacora)}
+                              onClick={() => handlePDFToggle(bitacora)}
                               disabled={
                                 bitacora.status !== "finalizada" &&
                                 bitacora.status !== "cerrada" &&
@@ -642,7 +628,7 @@ const BitacorasPage = () => {
                                   : "btn btn-warning icon-btn"
                               }
                               // onClick={() => generatePDF(bitacora.edited_bitacora)}
-                              onClick={() => handleModalToggle(bitacora)}
+                              onClick={() => handlePDFToggle(bitacora)}
                               disabled={bitacora.edited == false}>
                               <i className="fa fa-file-pdf"></i>
                             </button>
@@ -754,7 +740,7 @@ const BitacorasPage = () => {
                       type="button"
                       className="btn-close"
                       aria-label="Close"
-                      onClick={handleModalToggle}
+                      onClick={handlePDFToggle}
                       style={{
                         position: "absolute",
                         top: "15px",
@@ -818,7 +804,7 @@ const BitacorasPage = () => {
                         <button
                           type="button"
                           className="btn btn-danger me-3 px-2"
-                          onClick={handleModalToggle}>
+                          onClick={handlePDFToggle}>
                           Cancelar
                         </button>
                         <button type="submit" className="btn btn-success px-4">

@@ -249,12 +249,82 @@ const NewEventModal = ({edited, eventTypes}) => {
     setNewEvent((prev) => ({...prev, [name]: value}));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log(transportes);
+
+  //   if (selectedTransportes.length === 0) {
+  //     alert("Favor de seleccionar un transporte.");
+  //     return; // Prevent form submission if no checkboxes are selected
+  //   }
+
+  //   try {
+  //     const response = await fetch(`${baseUrl}/bitacora/${id}/event`, {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         nombre: newEvent.nombre, // Ensure this matches the backend field
+  //         descripcion: newEvent.descripcion,
+  //         ubicacion: newEvent.ubicacion,
+  //         ultimo_posicionamiento: newEvent.ultimo_posicionamiento,
+  //         velocidad: newEvent.velocidad,
+  //         coordenadas: newEvent.coordenadas,
+  //         registrado_por: `${user.firstName} ${user.lastName}`,
+  //         frecuencia: newEvent.frecuencia,
+  //         transportes: selectedTransportes,
+  //       }),
+  //       credentials: "include",
+  //     });
+  //     if (response.ok) {
+  //       const updatedBitacora = await response.json();
+  //       setBitacora(updatedBitacora);
+  //       setNewEvent({
+  //         nombre: "",
+  //         descripcion: "",
+  //         ubicacion: "",
+  //         ultimo_posicionamiento: "",
+  //         velocidad: "",
+  //         coordenadas: "",
+  //       });
+
+  //       if (bitacora.status === "nueva" && newEvent.nombre === "Validación") {
+  //         try {
+  //           const response = await fetch(`${baseUrl}/bitacora/${id}/status`, {
+  //             method: "PATCH",
+  //             headers: {
+  //               "Content-Type": "application/json",
+  //             },
+  //             body: JSON.stringify({
+  //               status: "validada",
+  //               inicioMonitoreo: new Date().toISOString(), // Set the start time
+  //             }),
+  //             credentials: "include",
+  //           });
+  //           if (response.ok) {
+  //             const updatedBitacora = await response.json();
+  //             setBitacora(updatedBitacora);
+  //           } else {
+  //             console.error("Failed to start bitácora:", response.statusText);
+  //           }
+  //         } catch (e) {
+  //           console.error("Error starting bitácora:", e);
+  //         }
+  //       }
+  //     } else {
+  //       console.error("Failed to add event:", response.statusText);
+  //     }
+  //   } catch (e) {
+  //     console.error("Error adding event:", e);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(typeof newEvent.ubicacion);
 
     if (selectedTransportes.length === 0) {
-      alert("Favor de seleccionar un transporte.");
+      alert("Please select at least one transporte.");
       return; // Prevent form submission if no checkboxes are selected
     }
 
@@ -265,7 +335,7 @@ const NewEventModal = ({edited, eventTypes}) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nombre: newEvent.nombre, // Ensure this matches the backend field
+          nombre: newEvent.nombre,
           descripcion: newEvent.descripcion,
           ubicacion: newEvent.ubicacion,
           ultimo_posicionamiento: newEvent.ultimo_posicionamiento,
@@ -277,6 +347,7 @@ const NewEventModal = ({edited, eventTypes}) => {
         }),
         credentials: "include",
       });
+
       if (response.ok) {
         const updatedBitacora = await response.json();
         setBitacora(updatedBitacora);
@@ -289,27 +360,47 @@ const NewEventModal = ({edited, eventTypes}) => {
           coordenadas: "",
         });
 
-        if (bitacora.status === "nueva" && newEvent.nombre === "Validación") {
+        // Verificar si todos los transportes de la bitácora están en al menos un evento "Validación"
+        const transportesIds = updatedBitacora.transportes.map((t) => t.id);
+        console.log(transportesIds);
+
+        const eventosValidacion = updatedBitacora.eventos.filter(
+          (evento) => evento.nombre === "Validación"
+        );
+
+        console.log(eventosValidacion);
+
+        // Verificar si cada transporte.id está en al menos un evento "Validación"
+        const allTransportesValidated = transportesIds.every((id) =>
+          eventosValidacion.some((evento) =>
+            evento.transportes.some((transporte) => transporte.id === id)
+          )
+        );
+
+        console.log(allTransportesValidated);
+
+        if (updatedBitacora.status === "nueva" && allTransportesValidated) {
           try {
-            const response = await fetch(`${baseUrl}/bitacora/${id}/status`, {
+            const statusResponse = await fetch(`${baseUrl}/bitacora/${id}/status`, {
               method: "PATCH",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
                 status: "validada",
-                inicioMonitoreo: new Date().toISOString(), // Set the start time
+                inicioMonitoreo: new Date().toISOString(),
               }),
               credentials: "include",
             });
-            if (response.ok) {
-              const updatedBitacora = await response.json();
-              setBitacora(updatedBitacora);
+
+            if (statusResponse.ok) {
+              const updatedStatusBitacora = await statusResponse.json();
+              setBitacora(updatedStatusBitacora);
             } else {
-              console.error("Failed to start bitácora:", response.statusText);
+              console.error("Failed to update status:", statusResponse.statusText);
             }
           } catch (e) {
-            console.error("Error starting bitácora:", e);
+            console.error("Error updating status:", e);
           }
         }
       } else {
@@ -345,7 +436,7 @@ const NewEventModal = ({edited, eventTypes}) => {
                 <label htmlFor="transportes" className="form-label">
                   Transportes
                 </label>
-                {/* <div className="form-check">
+                <div className="form-check">
                   <input
                     type="checkbox"
                     className="form-check-input"
@@ -362,7 +453,7 @@ const NewEventModal = ({edited, eventTypes}) => {
                   <label className="form-check-label" htmlFor="allTransportes">
                     Todos
                   </label>
-                </div> */}
+                </div>
                 {bitacora?.transportes?.map((transporte) => (
                   <div className="form-check" key={transporte.id}>
                     <input
@@ -393,17 +484,43 @@ const NewEventModal = ({edited, eventTypes}) => {
                   onChange={handleChange}
                   required>
                   <option value="">Seleccionar tipo de evento</option>
+
                   {bitacora?.status === "nueva" ? (
                     <option value="Validación">Validación</option>
                   ) : (
-                    eventTypes.map((eventType) => (
-                      <option key={eventType._id} value={eventType.eventType}>
-                        {eventType.eventType}
-                      </option>
-                    ))
+                    (() => {
+                      // Filtrar eventos con nombre "inicio de ruta"
+                      const eventosInicioRuta =
+                        bitacora?.eventos.filter(
+                          (evento) => evento.nombre === "Inicio de recorrido"
+                        ) || [];
+
+                      // Extraer IDs de transportes en eventos "inicio de ruta"
+                      const transportesConInicioRuta = new Set(
+                        eventosInicioRuta.flatMap((evento) => evento.transportes.map((t) => t.id))
+                      );
+
+                      // Verificar si todos los selectedTransportes están en "inicio de ruta"
+                      const allSelectedTransportesInInicioRuta = selectedTransportes.every((t) =>
+                        transportesConInicioRuta.has(t.id)
+                      );
+
+                      // Si no todos los transportes están en "inicio de ruta", solo mostrar esa opción
+                      if (!allSelectedTransportesInInicioRuta) {
+                        return <option value="Inicio de recorrido">Inicio de recorrido</option>;
+                      }
+
+                      // Si ya están en "inicio de ruta", mostrar todas las opciones
+                      return eventTypes.map((eventType) => (
+                        <option key={eventType._id} value={eventType.eventType}>
+                          {eventType.eventType}
+                        </option>
+                      ));
+                    })()
                   )}
                 </select>
               </div>
+
               <div className="mb-3">
                 <label htmlFor="descripcion" className="form-label">
                   Descripcion
@@ -431,7 +548,7 @@ const NewEventModal = ({edited, eventTypes}) => {
                   required
                 />
               </div>
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <label htmlFor="duracion" className="form-label">
                   Duración
                 </label>
@@ -444,7 +561,7 @@ const NewEventModal = ({edited, eventTypes}) => {
                   onChange={handleChange}
                   required
                 />
-              </div>
+              </div> */}
               <div className="mb-3">
                 <label htmlFor="ultimo_posicionamiento" className="form-label">
                   Último Posicionamiento
