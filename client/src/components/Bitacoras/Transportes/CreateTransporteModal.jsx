@@ -77,11 +77,11 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
 
     let newId;
     if (idMethod === "wialon") {
-      if (!selectedUnitId) {
+      if (!selectedUnitId || !selectedUnitName) {
         alert("Por favor, seleccione una unidad de Wialon.");
         return;
       }
-      newId = selectedUnitId;
+      newId = `${selectedUnitId}_${selectedUnitName}`;
     } else {
       newId = (transportes.length + 1).toString().padStart(2, "0");
     }

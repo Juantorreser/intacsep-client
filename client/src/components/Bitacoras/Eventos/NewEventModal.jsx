@@ -390,22 +390,28 @@ const NewEventModal = ({edited, eventTypes}) => {
                     Todos
                   </label>
                 </div>
-                {bitacora?.transportes?.map((transporte) => (
-                  <div className="form-check" key={transporte.id}>
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      id={`transporte-${transporte.id}`}
-                      name="transportes"
-                      value={transporte.id}
-                      onChange={handleCheckboxChange}
-                      checked={selectedTransportes.includes(transporte)}
-                    />
-                    <label className="form-check-label" htmlFor={`transporte-${transporte.id}`}>
-                      {`${bitacora?.bitacora_id}.${transporte.id}`}
-                    </label>
-                  </div>
-                ))}
+                {bitacora?.transportes?.map((transporte) => {
+                  const transporteId = transporte.id.includes("_")
+                    ? transporte.id.split("_")[1] // Obtiene la parte después del '_'
+                    : transporte.id; // Mantiene el ID original
+
+                  return (
+                    <div className="form-check" key={transporte.id}>
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id={`transporte-${transporte.id}`}
+                        name="transportes"
+                        value={transporte.id}
+                        onChange={handleCheckboxChange}
+                        checked={selectedTransportes.includes(transporte)}
+                      />
+                      <label className="form-check-label" htmlFor={`transporte-${transporte.id}`}>
+                        {`${bitacora?.bitacora_id}.${transporteId}`}
+                      </label>
+                    </div>
+                  );
+                })}
               </div>
               <div className="mb-3">
                 <label htmlFor="nombre" className="form-label">

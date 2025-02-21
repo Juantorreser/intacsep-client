@@ -561,19 +561,25 @@ const BitacoraDetailPage = ({edited}) => {
               <p className="card-text">
                 <strong>Transportes:</strong>{" "}
                 {transportes && transportes.length > 0
-                  ? transportes.map((transporte, index) => (
-                      <a
-                        href="#"
-                        key={index}
-                        className="transport-link"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleShowTransporteModal(transporte);
-                        }}>
-                        {`${bitacora.bitacora_id}.${transporte.id}`}
-                        {index < transportes.length - 1 ? ", " : ""}
-                      </a>
-                    ))
+                  ? transportes.map((transporte, index) => {
+                      const transporteId = transporte.id.includes("_")
+                        ? transporte.id.split("_")[1] // Obtiene la parte después del '_'
+                        : transporte.id; // Mantiene el ID original
+
+                      return (
+                        <a
+                          href="#"
+                          key={index}
+                          className="transport-link"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleShowTransporteModal(transporte);
+                          }}>
+                          {`${bitacora.bitacora_id}.${transporteId}`}
+                          {index < transportes.length - 1 ? ", " : ""}
+                        </a>
+                      );
+                    })
                   : ""}
               </p>
               <p className="card-text">
@@ -1194,17 +1200,23 @@ const BitacoraDetailPage = ({edited}) => {
                   <div className="col-md-4 border-end pe-3">
                     <h5 className="fw-semibold">Lista de Transportes</h5>
                     <ul className="list-group">
-                      {bitacora.transportes.map((transporte) => (
-                        <li
-                          key={transporte.id}
-                          className={`list-group-item mt-2 ${
-                            selectedTransporte?.id === transporte.id ? "active" : ""
-                          }`}
-                          onClick={() => handleSelectTransporte(transporte)}
-                          style={{cursor: "pointer"}}>
-                          Transporte ID: {`${bitacora.bitacora_id}.${transporte.id}`}
-                        </li>
-                      ))}
+                      {bitacora.transportes.map((transporte) => {
+                        const transporteId = transporte.id.includes("_")
+                          ? transporte.id.split("_")[1] // Obtiene la parte después del '_'
+                          : transporte.id; // Mantiene el ID original
+
+                        return (
+                          <li
+                            key={transporte.id}
+                            className={`list-group-item mt-2 ${
+                              selectedTransporte?.id === transporte.id ? "active" : ""
+                            }`}
+                            onClick={() => handleSelectTransporte(transporte)}
+                            style={{cursor: "pointer"}}>
+                            Transporte ID: {`${bitacora.bitacora_id}.${transporteId}`}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
 
