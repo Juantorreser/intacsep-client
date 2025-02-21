@@ -216,61 +216,29 @@ const BitacoraDetailPage = ({edited}) => {
         setTransportes(data.transportes);
         setSelectedTransportes(data.transportes);
 
-        // if (data.edited_bitacora) {
-        //   setBitacora(data.edited_bitacora);
-        //   setEditedBitacora(data.edited_bitacora);
-        //   setTransportes(data.edited_bitacora.transportes);
-        //   setSelectedTransportes(data.edited_bitacora.transportes);
-        // } else {
-        //   setBitacora(data);
-        //   setEditedBitacora(data);
-        //   setTransportes(data.transportes);
-        //   setSelectedTransportes(data.transportes);
-        // }
-
-        // if (edited || edited.edited) {
-        //   setBitacora(data.edited_bitacora);
-        //   setEditedBitacora(data.edited_bitacora);
-        //   setTransportes(data.edited_bitacora.transportes);
-        //   setSelectedTransportes(data.transportes);
-        //   console.log("EDITADA");
-        // } else if (!edited && data.edited_bitacora) {
-        //   console.log("REGULAR PAGE pero tiene edited_btacora");
-        //   setBitacora(data);
-        //   setEditedBitacora(data.edited_bitacora);
-        //   setTransportes(data.transportes);
-        //   setSelectedTransportes(data.transportes);
-        // } else {
-        //   console.log("REGULAR PAGE pero NO tiene edited_btacora");
-        //   setBitacora(data);
-        //   setEditedBitacora(data);
-        //   setTransportes(data.transportes);
-        //   setSelectedTransportes(data.transportes);
-        // }
-
         // Ensure that transportes is populated if it doesn't already exist
-        if (data.transportes.length == 0) {
-          console.log("Adding default transporte data...");
-          const transporteToAdd = {
-            id: transportes.length + 1,
-            tracto: {
-              eco: data.tracto.eco,
-              placa: data.tracto.placa,
-              marca: data.tracto.marca,
-              modelo: data.tracto.modelo,
-              color: data.tracto.color,
-              tipo: data.tracto.tipo,
-            },
-            remolque: {
-              eco: data.remolque.eco,
-              placa: data.remolque.placa,
-              color: data.remolque.color,
-              capacidad: data.remolque.capacidad,
-              sello: data.remolque.sello,
-            },
-          };
-          await addTransporte(transporteToAdd, data._id);
-        }
+        // if (data.transportes.length == 0) {
+        //   console.log("Adding default transporte data...");
+        //   const transporteToAdd = {
+        //     id: transportes.length + 1,
+        //     tracto: {
+        //       eco: data.tracto.eco,
+        //       placa: data.tracto.placa,
+        //       marca: data.tracto.marca,
+        //       modelo: data.tracto.modelo,
+        //       color: data.tracto.color,
+        //       tipo: data.tracto.tipo,
+        //     },
+        //     remolque: {
+        //       eco: data.remolque.eco,
+        //       placa: data.remolque.placa,
+        //       color: data.remolque.color,
+        //       capacidad: data.remolque.capacidad,
+        //       sello: data.remolque.sello,
+        //     },
+        //   };
+        //   await addTransporte(transporteToAdd, data._id);
+        // }
 
         setIsEventStarted(data.status === "iniciada");
         setFinishButtonDisabled(data.status === "finalizada" || data.status === "cerrada");
@@ -858,37 +826,30 @@ const BitacoraDetailPage = ({edited}) => {
   const handleEditChange = (e) => {
     const {name, value, type} = e.target;
 
-    // Handle change for select fields
-    if (type === "select-one") {
-      setEditedBitacora((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    } else {
-      // Handle change for input fields
-      const [mainKey, subKey] = name.split(".");
-      setEditedBitacora((prev) => {
+    setBitacora((prev) => {
+      if (type === "select-one") {
+        return {...prev, [name]: value};
+      } else {
+        const [mainKey, subKey] = name.split(".");
+
         if (subKey) {
           return {
             ...prev,
             [mainKey]: {
-              ...prev[mainKey],
+              ...prev[mainKey], // Asegurar que mainKey no sea undefined
               [subKey]: value,
             },
           };
         } else {
-          return {
-            ...prev,
-            [name]: value,
-          };
+          return {...prev, [name]: value};
         }
-      });
-    }
+      }
+    });
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    console.log("HERE");
+    console.log("Submitting changes...");
 
     try {
       const response = await fetch(`${baseUrl}/bitacora/${id}`, {
@@ -896,7 +857,7 @@ const BitacoraDetailPage = ({edited}) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(bitacora), // Use `bitacora` instead of `edited_bitacora`
+        body: JSON.stringify(bitacora), // Ahora usa `bitacora` directamente
         credentials: "include",
       });
 
@@ -1334,7 +1295,7 @@ const BitacoraDetailPage = ({edited}) => {
                     type="text"
                     id="folio_servicio"
                     name="folio_servicio"
-                    value={edited_bitacora.folio_servicio}
+                    value={bitacora.folio_servicio}
                     onChange={handleEditChange}
                   />
                 </Form.Group>
@@ -1344,7 +1305,7 @@ const BitacoraDetailPage = ({edited}) => {
                     type="text"
                     id="bitacora_id"
                     name="bitacora_id"
-                    value={edited_bitacora.bitacora_id}
+                    value={bitacora.bitacora_id}
                     onChange={handleEditChange}
                     disabled
                   />
@@ -1359,7 +1320,7 @@ const BitacoraDetailPage = ({edited}) => {
                     id="cliente"
                     name="cliente"
                     aria-label="cliente"
-                    value={edited_bitacora.cliente}
+                    value={bitacora.cliente}
                     onChange={handleEditChange}
                     required>
                     <option value="">Selecciona una opción</option>
@@ -1381,7 +1342,7 @@ const BitacoraDetailPage = ({edited}) => {
                     id="monitoreo"
                     name="monitoreo"
                     aria-label="Tipo de Monitoreo"
-                    value={edited_bitacora.monitoreo}
+                    value={bitacora.monitoreo}
                     onChange={handleEditChange}
                     required>
                     <option value="">Selecciona una opción</option>
@@ -1402,7 +1363,7 @@ const BitacoraDetailPage = ({edited}) => {
                     id="operador"
                     aria-label="operador"
                     name="operador"
-                    value={edited_bitacora.operador}
+                    value={bitacora.operador}
                     onChange={handleEditChange}
                     required>
                     <option value="">Selecciona una opción</option>
@@ -1420,7 +1381,7 @@ const BitacoraDetailPage = ({edited}) => {
                     type="tel"
                     id="telefono"
                     name="telefono"
-                    value={edited_bitacora.telefono}
+                    value={bitacora.telefono}
                     onChange={handleEditChange}
                   />
                 </Form.Group>
@@ -1430,7 +1391,7 @@ const BitacoraDetailPage = ({edited}) => {
                     type="text"
                     id="linea_transporte"
                     name="linea_transporte"
-                    value={edited_bitacora.linea_transporte}
+                    value={bitacora.linea_transporte}
                     onChange={handleEditChange}
                   />
                 </Form.Group>
@@ -1444,7 +1405,7 @@ const BitacoraDetailPage = ({edited}) => {
                     id="origen"
                     name="origen"
                     aria-label="origen"
-                    value={edited_bitacora.origen}
+                    value={bitacora.origen}
                     onChange={handleEditChange}
                     required>
                     <option value="">Selecciona una opción</option>
@@ -1465,7 +1426,7 @@ const BitacoraDetailPage = ({edited}) => {
                     id="destino"
                     name="destino"
                     aria-label="destino"
-                    value={edited_bitacora.destino}
+                    value={bitacora.destino}
                     onChange={handleEditChange}
                     required>
                     <option value="">Selecciona una opción</option>
@@ -1482,7 +1443,7 @@ const BitacoraDetailPage = ({edited}) => {
                     type="text"
                     id="enlace"
                     name="enlace"
-                    value={edited_bitacora.enlace}
+                    value={bitacora.enlace}
                     onChange={handleEditChange}
                   />
                 </Form.Group>
@@ -1492,7 +1453,7 @@ const BitacoraDetailPage = ({edited}) => {
                     type="text"
                     id="id_acceso"
                     name="id_acceso"
-                    value={edited_bitacora.id_acceso}
+                    value={bitacora.id_acceso}
                     onChange={handleEditChange}
                   />
                 </Form.Group>
@@ -1502,7 +1463,7 @@ const BitacoraDetailPage = ({edited}) => {
                     type="text"
                     id="contra_acceso"
                     name="contra_acceso"
-                    value={edited_bitacora.contra_acceso}
+                    value={bitacora.contra_acceso}
                     onChange={handleEditChange}
                   />
                 </Form.Group>

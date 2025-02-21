@@ -547,7 +547,7 @@ app.patch("/bitacora/:id/event", async (req, res) => {
     // Create a new event
     const newEvent = {
       nombre,
-      descripcion, // Make sure this matches what is expected
+      descripcion,
       ubicacion,
       ultimo_posicionamiento,
       velocidad,

@@ -272,7 +272,7 @@ const NewEventModal = ({edited, eventTypes}) => {
     e.preventDefault();
 
     if (selectedTransportes.length === 0) {
-      alert("Please select at least one transporte.");
+      alert("Favor de seleccionar un transporte.");
       return;
     }
 
