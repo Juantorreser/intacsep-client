@@ -61,6 +61,7 @@ const allowedOrigins = [
   "https://www.stg-intacsep.spotynet.com", //AWS STG
   "https://stg-intacsep.spotynet.com", //AWS STG
   "https://bitacora.intacsep.com.mx",
+  "https://stg-intacsep.onrender.com",
   "http://bitacora-intacsep.s3-website-us-east-1.amazonaws.com",
 ];
 
