@@ -59,6 +59,7 @@ const allowedOrigins = [
   "https://intacsep.ilbento.com", //AWS test
   "https://www.intacsep.spotynet.com", //AWS PROD
   "https://www.stg-intacsep.spotynet.com", //AWS STG
+  "https://stg-intacsep.spotynet.com", //AWS STG
   "https://bitacora.intacsep.com.mx",
   "http://bitacora-intacsep.s3-website-us-east-1.amazonaws.com",
 ];
@@ -126,7 +127,7 @@ app.use((req, res, next) => {
 mongoose.connect(process.env.MONGO_URI);
 
 app.get("/", (req, res) => {
-  res.send(`Node.js version: ${process.version}`);
+  res.send(`Node.js versionn: ${process.version}`);
 });
 
 app.post("/login", async (req, res) => {
