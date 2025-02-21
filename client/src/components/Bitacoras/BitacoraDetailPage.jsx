@@ -49,31 +49,24 @@ const BitacoraDetailPage = ({edited}) => {
 
   const handleTransportEdit = (e) => {
     e.preventDefault();
-    console.log("TRANSPORT EDIT");
 
     // Find the index of the transporte by its ID
-    const index = edited_bitacora.transportes.findIndex(
+    const index = bitacora.transportes.findIndex(
       (transporte) => transporte.id === editedTransporte.id
     );
 
     if (index > -1) {
       // Update the specific transporte in the transportes array
-      const updatedTransportes = [...edited_bitacora.transportes];
+      const updatedTransportes = [...bitacora.transportes];
       updatedTransportes[index] = editedTransporte;
 
-      // Update edited_bitacora with the modified transportes array
-      setEditedBitacora((prev) => ({
+      // Update bitacora with the modified transportes array
+      setBitacora((prev) => ({
         ...prev,
         transportes: updatedTransportes,
       }));
 
-      if (edited_bitacora) {
-        edited_bitacora.transportes = updatedTransportes;
-      }
-
-      console.log(edited_bitacora);
-
-      // Call the original handleEditSubmit function
+      // Call handleEditSubmit to send updates to the API
       handleEditSubmit(e);
       setEditTransporteModalVisible(false);
     } else {
@@ -218,25 +211,42 @@ const BitacoraDetailPage = ({edited}) => {
       if (response.ok) {
         const data = await response.json();
 
-        if (edited || edited.edited) {
-          setBitacora(data.edited_bitacora);
-          setEditedBitacora(data.edited_bitacora);
-          setTransportes(data.edited_bitacora.transportes);
-          setSelectedTransportes(data.transportes);
-          console.log("EDITADA");
-        } else if (!edited && data.edited_bitacora) {
-          console.log("REGULAR PAGE pero tiene edited_btacora");
-          setBitacora(data);
-          setEditedBitacora(data.edited_bitacora);
-          setTransportes(data.transportes);
-          setSelectedTransportes(data.transportes);
-        } else {
-          console.log("REGULAR PAGE pero NO tiene edited_btacora");
-          setBitacora(data);
-          setEditedBitacora(data);
-          setTransportes(data.transportes);
-          setSelectedTransportes(data.transportes);
-        }
+        setBitacora(data);
+        setEditedBitacora(data);
+        setTransportes(data.transportes);
+        setSelectedTransportes(data.transportes);
+
+        // if (data.edited_bitacora) {
+        //   setBitacora(data.edited_bitacora);
+        //   setEditedBitacora(data.edited_bitacora);
+        //   setTransportes(data.edited_bitacora.transportes);
+        //   setSelectedTransportes(data.edited_bitacora.transportes);
+        // } else {
+        //   setBitacora(data);
+        //   setEditedBitacora(data);
+        //   setTransportes(data.transportes);
+        //   setSelectedTransportes(data.transportes);
+        // }
+
+        // if (edited || edited.edited) {
+        //   setBitacora(data.edited_bitacora);
+        //   setEditedBitacora(data.edited_bitacora);
+        //   setTransportes(data.edited_bitacora.transportes);
+        //   setSelectedTransportes(data.transportes);
+        //   console.log("EDITADA");
+        // } else if (!edited && data.edited_bitacora) {
+        //   console.log("REGULAR PAGE pero tiene edited_btacora");
+        //   setBitacora(data);
+        //   setEditedBitacora(data.edited_bitacora);
+        //   setTransportes(data.transportes);
+        //   setSelectedTransportes(data.transportes);
+        // } else {
+        //   console.log("REGULAR PAGE pero NO tiene edited_btacora");
+        //   setBitacora(data);
+        //   setEditedBitacora(data);
+        //   setTransportes(data.transportes);
+        //   setSelectedTransportes(data.transportes);
+        // }
 
         // Ensure that transportes is populated if it doesn't already exist
         if (data.transportes.length == 0) {
@@ -878,6 +888,7 @@ const BitacoraDetailPage = ({edited}) => {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    console.log("HERE");
 
     try {
       const response = await fetch(`${baseUrl}/bitacora/${id}`, {
@@ -885,13 +896,12 @@ const BitacoraDetailPage = ({edited}) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(edited_bitacora),
+        body: JSON.stringify(bitacora), // Use `bitacora` instead of `edited_bitacora`
         credentials: "include",
       });
+
       if (response.ok) {
         const updatedBitacora = await response.json();
-        // console.log(updatedBitacora);
-
         setBitacora(updatedBitacora);
         setIsEdited(true);
         setEditModalVisible(false);
@@ -908,11 +918,10 @@ const BitacoraDetailPage = ({edited}) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          edited: true,
-        }),
+        body: JSON.stringify({edited: true}),
         credentials: "include",
       });
+
       if (response.ok) {
         const updatedBitacora = await response.json();
         setBitacora(updatedBitacora);
@@ -1052,6 +1061,23 @@ const BitacoraDetailPage = ({edited}) => {
                   <h6 className="p-0 m-0  fw-semibold">Transportes</h6>
                   <p className="text-center p-0 m-0" style={{fontSize: "0.8rem"}}>
                     Total: {bitacora.transportes.length}
+                  </p>
+                </button>
+              </li>
+              <li className="nav-item" role="presentation">
+                <button
+                  className="nav-link"
+                  id="changes-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#changes"
+                  type="button"
+                  role="tab"
+                  aria-controls="changes"
+                  aria-selected="false"
+                  onClick={() => handleTabClick("changes")}>
+                  <h6 className="p-0 m-0  fw-semibold">Logs</h6>
+                  <p className="text-center p-0 m-0" style={{fontSize: "0.8rem"}}>
+                    Total: {0}
                   </p>
                 </button>
               </li>

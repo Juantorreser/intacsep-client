@@ -1,25 +1,27 @@
 import mongoose from "mongoose";
 
 const TransporteSchema = new mongoose.Schema(
-    {
-        id: {type: String, unique: true, required: true},
-        remolque: {
-            eco: String,
-            placa: String,
-            color: String,
-            capacidad: String,
-            sello: String,
-        },
-        tracto: {
-            eco: String,
-            placa: String,
-            marca: String,
-            modelo: String,
-            color: String,
-            tipo: String,
-        },
+  {
+    id: {type: String, unique: true, required: true},
+    remolque: {
+      eco: String,
+      placa: String,
+      color: String,
+      capacidad: String,
+      sello: String,
     },
-    {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`
+    tracto: {
+      eco: String,
+      placa: String,
+      marca: String,
+      modelo: String,
+      color: String,
+      tipo: String,
+    },
+    inicioMonitoreo: {type: Date},
+    finalMonitoreo: {type: Date},
+  },
+  {timestamps: true} // Esto agregará automáticamente los campos `createdAt` y `updatedAt`
 );
 
 const EventoSchema = new mongoose.Schema(

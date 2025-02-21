@@ -25,6 +25,7 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
   const [unitInfo, setUnitInfo] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUnitId, setSelectedUnitId] = useState("");
+  const [selectedUnitName, setSelectedUnitName] = useState("");
   const token = import.meta.env.VITE_WIALON_TOKEN;
 
   useEffect(() => {
@@ -143,10 +144,14 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
               <Form.Control
                 type="text"
                 placeholder="Buscar unidad..."
-                value={searchTerm}
+                value={searchTerm} // Shows what user is typing or selecting
                 onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setSelectedUnitId(e.target.value); // Aquí se guarda el ID seleccionado
+                  setSearchTerm(e.target.value); // Allow searching
+                  const selectedUnit = unitInfo.find((unit) => unit.name === e.target.value);
+                  if (selectedUnit) {
+                    setSelectedUnitId(selectedUnit.id); // Save the selected ID
+                    setSelectedUnitName(selectedUnit.name); // Show name in input field
+                  }
                 }}
                 list="unitList"
               />
@@ -154,9 +159,7 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
                 {unitInfo
                   .filter((unit) => unit.name.toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((unit) => (
-                    <option key={unit.id} value={unit.id}>
-                      {unit.name}
-                    </option>
+                    <option key={unit.id} value={unit.name} />
                   ))}
               </datalist>
             </Form.Group>

@@ -9,7 +9,6 @@ const NewEventModal = ({edited, eventTypes}) => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
   const [selectedTransportes, setSelectedTransportes] = useState([]);
   const [transportes, setTransportes] = useState(bitacora?.transportes || []);
-  const [loginStatus, setLoginStatus] = useState("");
   const [units, setUnits] = useState([]);
   const token = import.meta.env.VITE_WIALON_TOKEN;
 
@@ -32,62 +31,11 @@ const NewEventModal = ({edited, eventTypes}) => {
 
     const init = async () => {
       try {
-        const data = await verifyToken(); // Ensure user is verified
+        const data = await verifyToken();
         setUser(data);
       } catch (e) {
         console.log("Error verifying token or fetching user:", e);
         navigate("/login");
-      }
-
-      console.log("AAA");
-
-      //Wialon login
-      const sess = window.wialon.core.Session.getInstance();
-      sess.initSession("https://hst-api.wialon.com");
-      sess.loginToken(token, "", (code) => {
-        if (code) {
-          console.log(`Login failed: ${window.wialon.core.Errors.getErrorText(code)}`);
-        } else {
-          console.log("Logged in successfully!");
-          fetchAllUnits(sess);
-        }
-      });
-    };
-
-    const fetchAllUnits = async (sess, retries = 3, delay = 1000) => {
-      try {
-        const flags =
-          window.wialon.item.Item.dataFlag.base | window.wialon.item.Unit.dataFlag.lastMessage;
-
-        sess.loadLibrary("itemIcon");
-
-        // Ensure the library is loaded
-        await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => reject("Library load timeout"), 5000);
-          sess.updateDataFlags([{type: "type", data: "avl_unit", flags, mode: 0}], (code) => {
-            clearTimeout(timeout);
-            if (code) {
-              reject(window.wialon.core.Errors.getErrorText(code));
-            } else {
-              resolve();
-            }
-          });
-        });
-
-        const fetchedUnits = sess.getItems("avl_unit") || [];
-        const unitDetails = fetchedUnits.map((unit) => ({id: unit.getId(), name: unit.getName()}));
-        setUnits(unitDetails); // Store the fetched units
-
-        console.log("Unidades obtenidas:", unitDetails); // 👈 Debugging point
-      } catch (error) {
-        console.error("Error al obtener unidades, reintentando...", error);
-        if (retries > 0) {
-          console.log(`Retrying in ${delay}ms...`);
-          setTimeout(() => fetchAllUnits(sess, retries - 1, delay), delay);
-        } else {
-          console.log("Max retries reached, failing...");
-          setUnits([]); // Reset units on failure
-        }
       }
     };
 
@@ -325,7 +273,7 @@ const NewEventModal = ({edited, eventTypes}) => {
 
     if (selectedTransportes.length === 0) {
       alert("Please select at least one transporte.");
-      return; // Prevent form submission if no checkboxes are selected
+      return;
     }
 
     try {
@@ -360,49 +308,37 @@ const NewEventModal = ({edited, eventTypes}) => {
           coordenadas: "",
         });
 
-        // Verificar si todos los transportes de la bitácora están en al menos un evento "Validación"
-        const transportesIds = updatedBitacora.transportes.map((t) => t.id);
-        console.log(transportesIds);
-
         const eventosValidacion = updatedBitacora.eventos.filter(
           (evento) => evento.nombre === "Validación"
         );
 
-        console.log(eventosValidacion);
+        selectedTransportes.forEach(async (transporte) => {
+          const hasValidacion = eventosValidacion.some((evento) =>
+            evento.transportes.some((t) => t.id === transporte.id)
+          );
 
-        // Verificar si cada transporte.id está en al menos un evento "Validación"
-        const allTransportesValidated = transportesIds.every((id) =>
-          eventosValidacion.some((evento) =>
-            evento.transportes.some((transporte) => transporte.id === id)
-          )
-        );
+          if (hasValidacion) {
+            try {
+              const statusResponse = await fetch(`${baseUrl}/bitacora/${id}/status`, {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  status: "validada",
+                  inicioMonitoreo: new Date().toISOString(),
+                }),
+                credentials: "include",
+              });
 
-        console.log(allTransportesValidated);
-
-        if (updatedBitacora.status === "nueva" && allTransportesValidated) {
-          try {
-            const statusResponse = await fetch(`${baseUrl}/bitacora/${id}/status`, {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                status: "validada",
-                inicioMonitoreo: new Date().toISOString(),
-              }),
-              credentials: "include",
-            });
-
-            if (statusResponse.ok) {
-              const updatedStatusBitacora = await statusResponse.json();
-              setBitacora(updatedStatusBitacora);
-            } else {
-              console.error("Failed to update status:", statusResponse.statusText);
+              if (!statusResponse.ok) {
+                console.error("Failed to update status:", statusResponse.statusText);
+              }
+            } catch (e) {
+              console.error("Error updating status:", e);
             }
-          } catch (e) {
-            console.error("Error updating status:", e);
           }
-        }
+        });
       } else {
         console.error("Failed to add event:", response.statusText);
       }
@@ -471,7 +407,6 @@ const NewEventModal = ({edited, eventTypes}) => {
                   </div>
                 ))}
               </div>
-
               <div className="mb-3">
                 <label htmlFor="nombre" className="form-label">
                   Tipo de Evento
@@ -485,39 +420,77 @@ const NewEventModal = ({edited, eventTypes}) => {
                   required>
                   <option value="">Seleccionar tipo de evento</option>
 
-                  {bitacora?.status === "nueva" ? (
-                    <option value="Validación">Validación</option>
-                  ) : (
-                    (() => {
-                      // Filtrar eventos con nombre "inicio de ruta"
-                      const eventosInicioRuta =
-                        bitacora?.eventos.filter(
-                          (evento) => evento.nombre === "Inicio de recorrido"
-                        ) || [];
+                  {(() => {
+                    // Filtrar eventos con nombre "Validación"
+                    const eventosValidacion =
+                      bitacora?.eventos.filter((evento) => evento.nombre === "Validación") || [];
 
-                      // Extraer IDs de transportes en eventos "inicio de ruta"
-                      const transportesConInicioRuta = new Set(
-                        eventosInicioRuta.flatMap((evento) => evento.transportes.map((t) => t.id))
-                      );
+                    // Filtrar eventos con nombre "Inicio de recorrido"
+                    const eventosInicioRecorrido =
+                      bitacora?.eventos.filter(
+                        (evento) => evento.nombre === "Inicio de recorrido"
+                      ) || [];
 
-                      // Verificar si todos los selectedTransportes están en "inicio de ruta"
-                      const allSelectedTransportesInInicioRuta = selectedTransportes.every((t) =>
-                        transportesConInicioRuta.has(t.id)
-                      );
+                    // Filtrar eventos con nombre "Arribo a destino"
+                    const eventosArriboDestino =
+                      bitacora?.eventos.filter((evento) => evento.nombre === "Arribo a destino") ||
+                      [];
 
-                      // Si no todos los transportes están en "inicio de ruta", solo mostrar esa opción
-                      if (!allSelectedTransportesInInicioRuta) {
+                    // Extraer IDs de transportes en eventos "Validación"
+                    const transportesConValidacion = new Set(
+                      eventosValidacion.flatMap((evento) => evento.transportes.map((t) => t.id))
+                    );
+
+                    // Extraer IDs de transportes en eventos "Inicio de recorrido"
+                    const transportesConInicioRecorrido = new Set(
+                      eventosInicioRecorrido.flatMap((evento) =>
+                        evento.transportes.map((t) => t.id)
+                      )
+                    );
+
+                    // Extraer IDs de transportes en eventos "Arribo a destino"
+                    const transportesConArriboDestino = new Set(
+                      eventosArriboDestino.flatMap((evento) => evento.transportes.map((t) => t.id))
+                    );
+
+                    // Verificar si TODOS los selectedTransportes están en eventos de "Validación"
+                    const allSelectedTransportesInValidacion = selectedTransportes.every((t) =>
+                      transportesConValidacion.has(t.id)
+                    );
+
+                    // Verificar si TODOS los selectedTransportes están en eventos de "Inicio de recorrido"
+                    const allSelectedTransportesInInicioRecorrido = selectedTransportes.every((t) =>
+                      transportesConInicioRecorrido.has(t.id)
+                    );
+
+                    // Verificar si TODOS los selectedTransportes están en eventos de "Arribo a destino"
+                    const allSelectedTransportesInArriboDestino = selectedTransportes.every((t) =>
+                      transportesConArriboDestino.has(t.id)
+                    );
+
+                    if (allSelectedTransportesInValidacion) {
+                      if (allSelectedTransportesInInicioRecorrido) {
+                        // Si todos los transportes están en "Validación" y "Inicio de recorrido"
+                        return eventTypes
+                          .filter(
+                            (eventType) =>
+                              allSelectedTransportesInArriboDestino ||
+                              eventType.eventType !== "Cierre de servicio"
+                          )
+                          .map((eventType) => (
+                            <option key={eventType._id} value={eventType.eventType}>
+                              {eventType.eventType}
+                            </option>
+                          ));
+                      } else {
+                        // Si todos los transportes están en "Validación" pero no en "Inicio de recorrido", mostrar solo "Inicio de recorrido"
                         return <option value="Inicio de recorrido">Inicio de recorrido</option>;
                       }
+                    }
 
-                      // Si ya están en "inicio de ruta", mostrar todas las opciones
-                      return eventTypes.map((eventType) => (
-                        <option key={eventType._id} value={eventType.eventType}>
-                          {eventType.eventType}
-                        </option>
-                      ));
-                    })()
-                  )}
+                    // Si algún transporte no está en "Validación", solo permitir "Validación"
+                    return <option value="Validación">Validación</option>;
+                  })()}
                 </select>
               </div>
 

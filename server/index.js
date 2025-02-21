@@ -574,9 +574,7 @@ app.patch("/bitacora/:id/event", async (req, res) => {
 //Update Bitacora
 app.patch("/bitacora/:id", async (req, res) => {
   const {id} = req.params;
-  const edited_bitacora = req.body;
-
-  console.log("Received edited_bitacora:", edited_bitacora.transportes); // Add this line to debug
+  const updatedData = req.body;
 
   try {
     const bitacora = await Bitacora.findById(id);
@@ -584,7 +582,8 @@ app.patch("/bitacora/:id", async (req, res) => {
       return res.status(404).json({message: "Bitacora not found"});
     }
 
-    bitacora.edited_bitacora = edited_bitacora;
+    // Update the existing bitacora with the new data
+    Object.assign(bitacora, updatedData);
 
     const updatedBitacora = await bitacora.save();
     res.json(updatedBitacora);
