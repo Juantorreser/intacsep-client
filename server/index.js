@@ -63,6 +63,7 @@ const allowedOrigins = [
   "https://bitacora.intacsep.com.mx",
   "https://stg-intacsep.onrender.com",
   "http://bitacora-intacsep.s3-website-us-east-1.amazonaws.com",
+  "https://intacsep-stg.vercel.app",
 ];
 
 app.use(
