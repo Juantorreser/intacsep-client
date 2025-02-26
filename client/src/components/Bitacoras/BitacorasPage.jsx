@@ -54,14 +54,14 @@ const BitacorasPage = () => {
   const [formData, setFormData] = useState({
     bitacora_id: "",
     folio_servicio: "",
-    linea_transporte: "",
+    linea_transporte: ".",
     destino: "",
     origen: "",
     monitoreo: "",
     cliente: "",
-    enlace: "",
-    id_acceso: "",
-    contra_acceso: "",
+    enlace: ".",
+    id_acceso: ".",
+    contra_acceso: ".",
     remolque: {
       eco: "",
       placa: "",
@@ -77,8 +77,8 @@ const BitacorasPage = () => {
       color: "",
       tipo: "",
     },
-    operador: "",
-    telefono: "",
+    operador: ".",
+    telefono: ".",
     inicioMonitoreo: "",
     finalMonitoreo: "",
     status: "nueva",
@@ -902,7 +902,7 @@ const BitacorasPage = () => {
                         required
                       />
                     </div>
-                    <div className="form-group mb-3">
+                    {/* <div className="form-group mb-3">
                       <label htmlFor="linea_transporte">Línea de Transporte</label>
                       <input
                         id="linea_transporte"
@@ -912,7 +912,7 @@ const BitacorasPage = () => {
                         className="form-control"
                         required
                       />
-                    </div>
+                    </div> */}
 
                     <div className="mb-3">
                       <label htmlFor="origen" className="form-label">
@@ -952,7 +952,7 @@ const BitacorasPage = () => {
                       </select>
                     </div>
 
-                    <div className="mb-3">
+                    {/* <div className="mb-3">
                       <label htmlFor="operador" className="form-label">
                         Operador
                       </label>
@@ -981,9 +981,9 @@ const BitacorasPage = () => {
                         className="form-control"
                         required
                       />
-                    </div>
+                    </div> */}
 
-                    <div className="form-group mb-3">
+                    {/* <div className="form-group mb-3">
                       <label htmlFor="enlace">Enlace</label>
                       <input
                         id="enlace"
@@ -1015,7 +1015,7 @@ const BitacorasPage = () => {
                         className="form-control"
                         required
                       />
-                    </div>
+                    </div> */}
                     <hr />
 
                     <div className="d-flex justify-content-end">

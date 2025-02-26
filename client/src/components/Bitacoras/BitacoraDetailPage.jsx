@@ -860,13 +860,15 @@ const BitacoraDetailPage = ({edited}) => {
     console.log("Submitting changes...");
     console.log(updatedBitacora);
 
+    const submitBitacora = updatedBitacora ? updatedBitacora : bitacora;
+
     try {
       const response = await fetch(`${baseUrl}/bitacora/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedBitacora), // Use the updated bitacora
+        body: JSON.stringify(submitBitacora), // Use the updated bitacora
         credentials: "include",
       });
 
@@ -1113,10 +1115,7 @@ const BitacoraDetailPage = ({edited}) => {
                       {/* <h6 className="card-subtitle mb-2">
                                     <strong>ID Cliente:</strong> {cliente.ID_Cliente}
                                 </h6> */}
-                      <h6 className="card-subtitle mb-2">
-                        <strong>Tipo Monitoreo:</strong> {bitacora.monitoreo}
-                      </h6>
-                      <h6 className="card-subtitle mb-2">
+                      {/* <h6 className="card-subtitle mb-2">
                         <strong>Operador:</strong> {bitacora.operador}
                       </h6>
                       <h6 className="card-subtitle mb-2">
@@ -1124,18 +1123,21 @@ const BitacoraDetailPage = ({edited}) => {
                       </h6>
                       <h6 className="card-subtitle mb-2">
                         <strong>Linea Transporte:</strong> {bitacora.linea_transporte}
-                      </h6>
+                      </h6> */}
                     </div>
 
                     {/* Column 4 */}
                     <div className="col-md-6">
+                      <h6 className="card-subtitle mb-2">
+                        <strong>Tipo Monitoreo:</strong> {bitacora.monitoreo}
+                      </h6>
                       <h6 className="card-subtitle mb-2">
                         <strong>Origen:</strong> {bitacora.origen}
                       </h6>
                       <h6 className="card-subtitle mb-2">
                         <strong>Destino:</strong> {bitacora.destino}
                       </h6>
-                      <h6 className="card-subtitle mb-2">
+                      {/* <h6 className="card-subtitle mb-2">
                         <strong>Enlace:</strong> {bitacora.enlace}
                       </h6>
                       <h6 className="card-subtitle mb-2">
@@ -1143,7 +1145,7 @@ const BitacoraDetailPage = ({edited}) => {
                       </h6>
                       <h6 className="card-subtitle mb-2">
                         <strong>Contraseña Acceso:</strong> {bitacora.contra_acceso}
-                      </h6>
+                      </h6> */}
                     </div>
                   </div>
                   <hr />
@@ -1368,7 +1370,7 @@ const BitacoraDetailPage = ({edited}) => {
                     ))}
                   </select>
                 </div>
-                {/* operador */}
+                {/* operador
                 <div className="mb-3">
                   <label htmlFor="operador" className="form-label">
                     Operador
@@ -1409,7 +1411,7 @@ const BitacoraDetailPage = ({edited}) => {
                     value={bitacora.linea_transporte}
                     onChange={handleEditChange}
                   />
-                </Form.Group>
+                </Form.Group> */}
                 {/* origen */}
                 <div className="mb-3">
                   <label htmlFor="origen" className="form-label">
@@ -1452,7 +1454,7 @@ const BitacoraDetailPage = ({edited}) => {
                     ))}
                   </select>
                 </div>
-                <Form.Group className="mb-3">
+                {/* <Form.Group className="mb-3">
                   <Form.Label htmlFor="enlace">Enlace</Form.Label>
                   <Form.Control
                     type="text"
@@ -1481,7 +1483,7 @@ const BitacoraDetailPage = ({edited}) => {
                     value={bitacora.contra_acceso}
                     onChange={handleEditChange}
                   />
-                </Form.Group>
+                </Form.Group> */}
 
                 <div className="w-100 d-flex flex-row justify-content-end">
                   <button
