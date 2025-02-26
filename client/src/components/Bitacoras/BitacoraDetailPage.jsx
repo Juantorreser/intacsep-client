@@ -1213,7 +1213,7 @@ const BitacoraDetailPage = ({edited}) => {
                             }`}
                             onClick={() => handleSelectTransporte(transporte)}
                             style={{cursor: "pointer"}}>
-                            Transporte ID: {`${bitacora.bitacora_id}.${transporteId}`}
+                            GPS ID: {`${transporteId}`}
                           </li>
                         );
                       })}
