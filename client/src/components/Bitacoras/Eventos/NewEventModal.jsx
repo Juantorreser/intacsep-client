@@ -31,11 +31,62 @@ const NewEventModal = ({edited, eventTypes}) => {
 
     const init = async () => {
       try {
-        const data = await verifyToken();
+        const data = await verifyToken(); // Ensure user is verified
         setUser(data);
       } catch (e) {
         console.log("Error verifying token or fetching user:", e);
         navigate("/login");
+      }
+
+      console.log("AAA");
+
+      //Wialon login
+      const sess = window.wialon.core.Session.getInstance();
+      sess.initSession("https://hst-api.wialon.com");
+      sess.loginToken(token, "", (code) => {
+        if (code) {
+          console.log(`Login failed: ${window.wialon.core.Errors.getErrorText(code)}`);
+        } else {
+          console.log("Logged in successfully!");
+          fetchAllUnits(sess);
+        }
+      });
+    };
+
+    const fetchAllUnits = async (sess, retries = 3, delay = 1000) => {
+      try {
+        const flags =
+          window.wialon.item.Item.dataFlag.base | window.wialon.item.Unit.dataFlag.lastMessage;
+
+        sess.loadLibrary("itemIcon");
+
+        // Ensure the library is loaded
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => reject("Library load timeout"), 5000);
+          sess.updateDataFlags([{type: "type", data: "avl_unit", flags, mode: 0}], (code) => {
+            clearTimeout(timeout);
+            if (code) {
+              reject(window.wialon.core.Errors.getErrorText(code));
+            } else {
+              resolve();
+            }
+          });
+        });
+
+        const fetchedUnits = sess.getItems("avl_unit") || [];
+        const unitDetails = fetchedUnits.map((unit) => ({id: unit.getId(), name: unit.getName()}));
+        setUnits(unitDetails); // Store the fetched units
+
+        console.log("Unidades obtenidas:", unitDetails); // 👈 Debugging point
+      } catch (error) {
+        console.error("Error al obtener unidades, reintentando...", error);
+        if (retries > 0) {
+          console.log(`Retrying in ${delay}ms...`);
+          setTimeout(() => fetchAllUnits(sess, retries - 1, delay), delay);
+        } else {
+          console.log("Max retries reached, failing...");
+          setUnits([]); // Reset units on failure
+        }
       }
     };
 
@@ -77,11 +128,17 @@ const NewEventModal = ({edited, eventTypes}) => {
   };
 
   const getUnitInfo = async (transporteId) => {
-    console.log(transporteId);
+    // Extraer el ID correcto: tomar la parte antes del '_'
+    const formattedTransporteId = transporteId.includes("_")
+      ? transporteId.split("_")[0]
+      : transporteId;
+
+    console.log("ID recibido:", transporteId);
+    console.log("ID formateado:", formattedTransporteId);
     console.log(units);
 
-    // Buscar si existe una unidad con el id igual a transporteId
-    const unidadEncontrada = units.find((unit) => unit.id == transporteId);
+    // Buscar si existe una unidad con el id igual al ID formateado
+    const unidadEncontrada = units.find((unit) => unit.id == formattedTransporteId);
 
     if (unidadEncontrada) {
       const sess = window.wialon.core.Session.getInstance();
@@ -317,7 +374,7 @@ const NewEventModal = ({edited, eventTypes}) => {
             evento.transportes.some((t) => t.id === transporte.id)
           );
 
-          if (hasValidacion) {
+          if (hasValidacion && bitacora.status === "nueva") {
             try {
               const statusResponse = await fetch(`${baseUrl}/bitacora/${id}/status`, {
                 method: "PATCH",
