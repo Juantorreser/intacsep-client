@@ -61,13 +61,15 @@ const BitacoraDetailPage = ({edited}) => {
       updatedTransportes[index] = editedTransporte;
 
       // Update bitacora with the modified transportes array
-      setBitacora((prev) => ({
-        ...prev,
+      const updatedBitacora = {
+        ...bitacora,
         transportes: updatedTransportes,
-      }));
+      };
+
+      setBitacora(updatedBitacora); // Update state
 
       // Call handleEditSubmit to send updates to the API
-      handleEditSubmit(e);
+      handleEditSubmit(e, updatedBitacora);
       setEditTransporteModalVisible(false);
     } else {
       console.error("Transporte not found");
@@ -853,9 +855,10 @@ const BitacoraDetailPage = ({edited}) => {
     });
   };
 
-  const handleEditSubmit = async (e) => {
+  const handleEditSubmit = async (e, updatedBitacora) => {
     e.preventDefault();
     console.log("Submitting changes...");
+    console.log(updatedBitacora);
 
     try {
       const response = await fetch(`${baseUrl}/bitacora/${id}`, {
@@ -863,13 +866,13 @@ const BitacoraDetailPage = ({edited}) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(bitacora), // Ahora usa `bitacora` directamente
+        body: JSON.stringify(updatedBitacora), // Use the updated bitacora
         credentials: "include",
       });
 
       if (response.ok) {
-        const updatedBitacora = await response.json();
-        setBitacora(updatedBitacora);
+        const responseData = await response.json();
+        setBitacora(responseData); // Ensure frontend reflects changes from backend
         setIsEdited(true);
         setEditModalVisible(false);
       } else {
