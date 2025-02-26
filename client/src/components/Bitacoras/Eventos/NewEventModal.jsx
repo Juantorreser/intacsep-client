@@ -161,7 +161,7 @@ const NewEventModal = ({edited, eventTypes}) => {
         }
 
         const velocidad = pos ? pos.s : ""; // Velocidad
-        const coordenadas = pos ? `${pos.x}, ${pos.y}` : ""; // Coordenadas
+        const coordenadas = pos ? `${pos.y}, ${pos.x}` : ""; // Coordenadas
         const ultimo_posicionamiento = pos ? window.wialon.util.DateTime.formatTime(pos.t) : ""; // Último mensaje (duración)
 
         setNewEvent((prev) => ({
