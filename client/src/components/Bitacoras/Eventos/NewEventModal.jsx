@@ -464,7 +464,7 @@ const NewEventModal = ({edited, eventTypes}) => {
                         checked={selectedTransportes.includes(transporte)}
                       />
                       <label className="form-check-label" htmlFor={`transporte-${transporte.id}`}>
-                        {`${bitacora?.bitacora_id}.${transporteId}`}
+                        {`${transporteId} - ${transporte.tracto.eco}`}
                       </label>
                     </div>
                   );
