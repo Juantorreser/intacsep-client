@@ -18,6 +18,9 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
       capacidad: "",
       sello: "",
     },
+    lineaTransporte: "",
+    operador: "",
+    telefono: "",
   });
 
   //ID Variables
@@ -74,6 +77,7 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
   // Handle form submission
   const handleSubmitTransporte = (e) => {
     e.preventDefault();
+    console.log(transporteData);
 
     let newId;
     if (idMethod === "wialon") {
@@ -276,6 +280,37 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
               type="text"
               name="remolque.sello"
               value={transporteData.remolque.sello}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <h5>Datos</h5>
+          <Form.Group className="mb-3">
+            <Form.Label>Linea de Transporte</Form.Label>
+            <Form.Control
+              type="text"
+              name="lineaTransporte"
+              value={transporteData.lineaTransporte}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Operador</Form.Label>
+            <Form.Control
+              type="text"
+              name="operador"
+              value={transporteData.operador}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Telefono</Form.Label>
+            <Form.Control
+              type="text"
+              name="telefono"
+              value={transporteData.telefono}
               onChange={handleChange}
               required
             />

@@ -601,7 +601,7 @@ app.patch("/bitacora/:id", async (req, res) => {
 app.post("/bitacoras/:id/transportes", async (req, res) => {
   try {
     const bitacoraId = req.params.id;
-    const {id, tracto, remolque} = req.body;
+    const {id, tracto, remolque, operador, lineaTransporte, telefono} = req.body;
 
     // Find the bitacora by ID
     const bitacora = await Bitacora.findOne({_id: bitacoraId});
@@ -614,6 +614,9 @@ app.post("/bitacoras/:id/transportes", async (req, res) => {
       id,
       tracto,
       remolque,
+      lineaTransporte,
+      operador,
+      telefono
     };
 
     // Add the new Transporte to the bitacora's transportes array

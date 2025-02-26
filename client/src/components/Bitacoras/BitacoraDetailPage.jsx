@@ -1238,7 +1238,7 @@ const BitacoraDetailPage = ({edited}) => {
                           )}
                         </div>
                         <div className="row mt-3">
-                          <div className="col-md-6">
+                          <div className="col-md-3">
                             <h5 className="card-subtitle mb-2 fw-semibold">Tracto:</h5>
                             <h6 className="card-subtitle mb-2">
                               <strong>Eco:</strong> {selectedTransporte.tracto.eco}
@@ -1259,7 +1259,7 @@ const BitacoraDetailPage = ({edited}) => {
                               <strong>Tipo:</strong> {selectedTransporte.tracto.tipo}
                             </h6>
                           </div>
-                          <div className="col-md-6">
+                          <div className="col-md-3">
                             <h5 className="card-subtitle mb-2 fw-semibold">Remolque:</h5>
                             <h6 className="card-subtitle mb-2">
                               <strong>Eco:</strong> {selectedTransporte.remolque.eco}
@@ -1275,6 +1275,17 @@ const BitacoraDetailPage = ({edited}) => {
                             </h6>
                             <h6 className="card-subtitle mb-2">
                               <strong>Sello:</strong> {selectedTransporte.remolque.sello}
+                            </h6>
+                          </div>
+                          <div className="col-md-4">
+                            <h6 className="card-subtitle mb-2">
+                              <strong>Linea Transporte:</strong> {selectedTransporte.lineaTransporte}
+                            </h6>
+                            <h6 className="card-subtitle mb-2">
+                              <strong>Operador:</strong> {selectedTransporte.operador}
+                            </h6>
+                            <h6 className="card-subtitle mb-2">
+                              <strong>Telefono:</strong> {selectedTransporte.telefono}
                             </h6>
                           </div>
                         </div>
