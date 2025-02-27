@@ -33,6 +33,7 @@ const EventoSchema = new mongoose.Schema(
     descripcion: {type: String, required: true},
     ubicacion: {type: String, default: ""},
     ultimo_posicionamiento: {type: String, default: ""},
+    duracion: String,
     velocidad: {type: String, default: ""},
     coordenadas: {type: String, default: ""},
     frecuencia: {type: Number, defaul: 0},

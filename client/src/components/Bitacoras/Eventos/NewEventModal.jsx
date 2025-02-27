@@ -19,6 +19,7 @@ const NewEventModal = ({edited, eventTypes}) => {
     ultimo_posicionamiento: "",
     velocidad: "",
     coordenadas: "",
+    duracion: "",
     frecuencia: 0,
     registrado_por: `${user?.firstName} ${user?.lastName}`,
     transportes: transportes,
@@ -149,27 +150,29 @@ const NewEventModal = ({edited, eventTypes}) => {
         const pos = unit.getPosition();
         let ubicacion = "";
 
-        const time = window.wialon.util.DateTime.formatTime(pos.t);
+        const currentTime = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+        const timeDiffInSeconds = pos ? currentTime - pos.t : 0;
+        const duracion = formatDuration(timeDiffInSeconds); // Convertir a formato "20h ago"
 
         // Usar await para esperar la respuesta de la dirección
         try {
           const address = await getAddressFromCoordinates(pos.x, pos.y);
-          ubicacion = address;
-          ubicacion = Array.isArray(ubicacion) ? ubicacion.join(", ") : ubicacion;
+          ubicacion = Array.isArray(address) ? address.join(", ") : address;
         } catch (error) {
           console.error("Error al obtener la dirección:", error);
         }
 
         const velocidad = pos ? pos.s : ""; // Velocidad
         const coordenadas = pos ? `${pos.y}, ${pos.x}` : ""; // Coordenadas
-        const ultimo_posicionamiento = pos ? window.wialon.util.DateTime.formatTime(pos.t) : ""; // Último mensaje (duración)
+        const ultimo_posicionamiento = pos ? window.wialon.util.DateTime.formatTime(pos.t) : ""; // Último mensaje
 
         setNewEvent((prev) => ({
           ...prev,
           ubicacion: ubicacion || "",
-          velocidad: velocidad || 50, // Si no hay velocidad, asignar valor por defecto
+          velocidad: velocidad || 0, // Si no hay velocidad, asignar valor por defecto
           coordenadas: coordenadas || "",
           ultimo_posicionamiento: ultimo_posicionamiento || "",
+          duracion: duracion || "", // Duración en formato "20h ago"
           nombre: unidadEncontrada.name || "",
           descripcion: unidadEncontrada.description || "",
           frecuencia: 0, // Lo dejamos como 0 si no hay un valor específico
@@ -183,6 +186,7 @@ const NewEventModal = ({edited, eventTypes}) => {
           velocidad: "",
           coordenadas: "",
           ultimo_posicionamiento: "",
+          duracion: "",
           nombre: "",
           descripcion: "",
           frecuencia: 0,
@@ -197,6 +201,7 @@ const NewEventModal = ({edited, eventTypes}) => {
         velocidad: "",
         coordenadas: "",
         ultimo_posicionamiento: "",
+        duracion: "",
         nombre: "",
         descripcion: "",
         frecuencia: 0,
@@ -204,6 +209,17 @@ const NewEventModal = ({edited, eventTypes}) => {
         transportes: transportes,
       }));
     }
+  };
+
+  // Función para formatear el tiempo transcurrido en "X time ago"
+  const formatDuration = (seconds) => {
+    if (seconds < 60) return `Hace ${seconds}s`;
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `Hace ${minutes}m`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `Hace ${hours}h`;
+    const days = Math.floor(hours / 24);
+    return `Hace ${days}d`;
   };
 
   // Función asincrónica para obtener la dirección a partir de las coordenadas
@@ -327,6 +343,7 @@ const NewEventModal = ({edited, eventTypes}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(newEvent);
 
     if (selectedTransportes.length === 0) {
       alert("Favor de seleccionar un transporte.");
@@ -346,6 +363,7 @@ const NewEventModal = ({edited, eventTypes}) => {
           ultimo_posicionamiento: newEvent.ultimo_posicionamiento,
           velocidad: newEvent.velocidad,
           coordenadas: newEvent.coordenadas,
+          duracion: newEvent.duracion,
           registrado_por: `${user.firstName} ${user.lastName}`,
           frecuencia: newEvent.frecuencia,
           transportes: selectedTransportes,
@@ -360,6 +378,7 @@ const NewEventModal = ({edited, eventTypes}) => {
           nombre: "",
           descripcion: "",
           ubicacion: "",
+          duracion: "",
           ultimo_posicionamiento: "",
           velocidad: "",
           coordenadas: "",
@@ -584,7 +603,7 @@ const NewEventModal = ({edited, eventTypes}) => {
                   required
                 />
               </div>
-              {/* <div className="mb-3">
+              <div className="mb-3">
                 <label htmlFor="duracion" className="form-label">
                   Duración
                 </label>
@@ -597,7 +616,7 @@ const NewEventModal = ({edited, eventTypes}) => {
                   onChange={handleChange}
                   required
                 />
-              </div> */}
+              </div>
               <div className="mb-3">
                 <label htmlFor="ultimo_posicionamiento" className="form-label">
                   Último Posicionamiento

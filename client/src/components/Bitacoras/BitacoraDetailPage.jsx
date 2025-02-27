@@ -110,6 +110,7 @@ const BitacoraDetailPage = ({edited}) => {
     nombre: "",
     descripcion: "",
     ubicacion: "",
+    duracion: "",
     ultimo_posicionamiento: "",
     velocidad: "",
     coordenadas: "",
@@ -457,6 +458,7 @@ const BitacoraDetailPage = ({edited}) => {
       nombre,
       descripcion,
       ubicacion,
+      duracion,
       ultimo_posicionamiento,
       velocidad,
       coordenadas,
@@ -471,6 +473,7 @@ const BitacoraDetailPage = ({edited}) => {
       registrado_por,
       descripcion,
       ubicacion,
+      duracion,
       ultimo_posicionamiento,
       velocidad,
       coordenadas,
@@ -583,6 +586,9 @@ const BitacoraDetailPage = ({edited}) => {
                       );
                     })
                   : ""}
+              </p>
+              <p className="card-text">
+                <strong>Duracion:</strong> {duracion}
               </p>
               <p className="card-text">
                 <strong>Ubicación:</strong> {ubicacion}
@@ -858,7 +864,7 @@ const BitacoraDetailPage = ({edited}) => {
   const handleEditSubmit = async (e, updatedBitacora) => {
     e.preventDefault();
     console.log("Submitting changes...");
-    console.log(updatedBitacora);
+    console.log(updatedBitacora.eventos);
 
     const submitBitacora = updatedBitacora ? updatedBitacora : bitacora;
 
@@ -1279,7 +1285,8 @@ const BitacoraDetailPage = ({edited}) => {
                           </div>
                           <div className="col-md-4">
                             <h6 className="card-subtitle mb-2">
-                              <strong>Linea Transporte:</strong> {selectedTransporte.lineaTransporte}
+                              <strong>Linea Transporte:</strong>{" "}
+                              {selectedTransporte.lineaTransporte}
                             </h6>
                             <h6 className="card-subtitle mb-2">
                               <strong>Operador:</strong> {selectedTransporte.operador}
