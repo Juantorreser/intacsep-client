@@ -270,77 +270,6 @@ const NewEventModal = ({edited, eventTypes}) => {
     setNewEvent((prev) => ({...prev, [name]: value}));
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   console.log(transportes);
-
-  //   if (selectedTransportes.length === 0) {
-  //     alert("Favor de seleccionar un transporte.");
-  //     return; // Prevent form submission if no checkboxes are selected
-  //   }
-
-  //   try {
-  //     const response = await fetch(`${baseUrl}/bitacora/${id}/event`, {
-  //       method: "PATCH",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         nombre: newEvent.nombre, // Ensure this matches the backend field
-  //         descripcion: newEvent.descripcion,
-  //         ubicacion: newEvent.ubicacion,
-  //         ultimo_posicionamiento: newEvent.ultimo_posicionamiento,
-  //         velocidad: newEvent.velocidad,
-  //         coordenadas: newEvent.coordenadas,
-  //         registrado_por: `${user.firstName} ${user.lastName}`,
-  //         frecuencia: newEvent.frecuencia,
-  //         transportes: selectedTransportes,
-  //       }),
-  //       credentials: "include",
-  //     });
-  //     if (response.ok) {
-  //       const updatedBitacora = await response.json();
-  //       setBitacora(updatedBitacora);
-  //       setNewEvent({
-  //         nombre: "",
-  //         descripcion: "",
-  //         ubicacion: "",
-  //         ultimo_posicionamiento: "",
-  //         velocidad: "",
-  //         coordenadas: "",
-  //       });
-
-  //       if (bitacora.status === "nueva" && newEvent.nombre === "Validación") {
-  //         try {
-  //           const response = await fetch(`${baseUrl}/bitacora/${id}/status`, {
-  //             method: "PATCH",
-  //             headers: {
-  //               "Content-Type": "application/json",
-  //             },
-  //             body: JSON.stringify({
-  //               status: "validada",
-  //               inicioMonitoreo: new Date().toISOString(), // Set the start time
-  //             }),
-  //             credentials: "include",
-  //           });
-  //           if (response.ok) {
-  //             const updatedBitacora = await response.json();
-  //             setBitacora(updatedBitacora);
-  //           } else {
-  //             console.error("Failed to start bitácora:", response.statusText);
-  //           }
-  //         } catch (e) {
-  //           console.error("Error starting bitácora:", e);
-  //         }
-  //       }
-  //     } else {
-  //       console.error("Failed to add event:", response.statusText);
-  //     }
-  //   } catch (e) {
-  //     console.error("Error adding event:", e);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(newEvent);
@@ -348,6 +277,49 @@ const NewEventModal = ({edited, eventTypes}) => {
     if (selectedTransportes.length === 0) {
       alert("Favor de seleccionar un transporte.");
       return;
+    }
+
+    // Determine if the event is "Validación" or "Cierre de servicio"
+    const isValidacion = newEvent.nombre === "Validación";
+    const isCierreDeServicio = newEvent.nombre === "Cierre de servicio";
+    const currentDate = new Date().toISOString();
+
+    // Update bitacora.transportes with inicioMonitoreo or finalMonitoreo
+    const updatedTransportes = bitacora.transportes.map((transporte) => {
+      const matchingTransporte = selectedTransportes.find((t) => t.id === transporte.id);
+      if (matchingTransporte) {
+        return {
+          ...transporte,
+          inicioMonitoreo: isValidacion ? currentDate : transporte.inicioMonitoreo || null,
+          finalMonitoreo: isCierreDeServicio ? currentDate : transporte.finalMonitoreo || null,
+        };
+      }
+      return transporte;
+    });
+
+    const updatedBitacora = {...bitacora, transportes: updatedTransportes};
+
+    //Update transportes times
+    try {
+      const response = await fetch(`${baseUrl}/bitacora/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedBitacora), // Use the updated bitacora
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        setBitacora(responseData); // Ensure frontend reflects changes from backend
+        setIsEdited(true);
+        setEditModalVisible(false);
+      } else {
+        console.error("Failed to edit bitácora:", response.statusText);
+      }
+    } catch (e) {
+      console.error("Error editing bitácora:", e);
     }
 
     try {
@@ -366,7 +338,7 @@ const NewEventModal = ({edited, eventTypes}) => {
           duracion: newEvent.duracion,
           registrado_por: `${user.firstName} ${user.lastName}`,
           frecuencia: newEvent.frecuencia,
-          transportes: selectedTransportes,
+          transportes: updatedTransportes, // Send updated transportes
         }),
         credentials: "include",
       });
@@ -384,37 +356,28 @@ const NewEventModal = ({edited, eventTypes}) => {
           coordenadas: "",
         });
 
-        const eventosValidacion = updatedBitacora.eventos.filter(
-          (evento) => evento.nombre === "Validación"
-        );
+        // Update Status
+        if (isValidacion && bitacora.status === "nueva") {
+          try {
+            const statusResponse = await fetch(`${baseUrl}/bitacora/${id}/status`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                status: "validada",
+                inicioMonitoreo: currentDate,
+              }),
+              credentials: "include",
+            });
 
-        selectedTransportes.forEach(async (transporte) => {
-          const hasValidacion = eventosValidacion.some((evento) =>
-            evento.transportes.some((t) => t.id === transporte.id)
-          );
-
-          if (hasValidacion && bitacora.status === "nueva") {
-            try {
-              const statusResponse = await fetch(`${baseUrl}/bitacora/${id}/status`, {
-                method: "PATCH",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  status: "validada",
-                  inicioMonitoreo: new Date().toISOString(),
-                }),
-                credentials: "include",
-              });
-
-              if (!statusResponse.ok) {
-                console.error("Failed to update status:", statusResponse.statusText);
-              }
-            } catch (e) {
-              console.error("Error updating status:", e);
+            if (!statusResponse.ok) {
+              console.error("Failed to update status:", statusResponse.statusText);
             }
+          } catch (e) {
+            console.error("Error updating status:", e);
           }
-        });
+        }
       } else {
         console.error("Failed to add event:", response.statusText);
       }

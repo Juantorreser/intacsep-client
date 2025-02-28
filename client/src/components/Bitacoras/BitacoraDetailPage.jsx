@@ -1118,6 +1118,9 @@ const BitacoraDetailPage = ({edited}) => {
                       <h6 className="card-subtitle mb-2">
                         <strong>Cliente:</strong> {bitacora.cliente}
                       </h6>
+                      <h6 className="card-subtitle mb-2">
+                        <strong>Estatus:</strong> {bitacora.status}
+                      </h6>
                       {/* <h6 className="card-subtitle mb-2">
                                     <strong>ID Cliente:</strong> {cliente.ID_Cliente}
                                 </h6> */}
@@ -1156,7 +1159,7 @@ const BitacoraDetailPage = ({edited}) => {
                   </div>
                   <hr />
                   {/* New Row for Inicio Monitoreo, Final Monitoreo, and Iniciar button */}
-                  <div className="row mt-3 mx-1">
+                  {/* <div className="row mt-3 mx-1">
                     <div className="col-md-5">
                       <p className="card-text mb-2">
                         <strong>Inicio Monitoreo:</strong>{" "}
@@ -1178,7 +1181,25 @@ const BitacoraDetailPage = ({edited}) => {
                         {getButtonText(bitacora.status)}
                       </button>
                     </div>
-                  </div>
+                  </div> */}
+                  {bitacora.transportes.map((t, i) => (
+                    <div>
+                      <p className="fw-bold">{`GPS ID ${i + 1}: ${t.id.includes("_") ? t.id.split('_')[1] : t.id}`}</p>
+                      <div>
+                        <p className="card-text mb-2">
+                          <strong>Inicio Monitoreo:</strong>{" "}
+                          {t.inicioMonitoreo ? formatDate(t.inicioMonitoreo) : "--"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="card-text mb-2">
+                          <strong>Final Monitoreo:</strong>{" "}
+                          {t.finalMonitoreo ? formatDate(t.finalMonitoreo) : "--"}
+                        </p>
+                      </div>
+                      <hr />
+                    </div>
+                  ))}
                 </div>
               </div>
 
