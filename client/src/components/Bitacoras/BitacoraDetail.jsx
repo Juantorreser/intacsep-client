@@ -68,9 +68,9 @@ const BitacoraDetail = React.forwardRef(({bitacora, transporteId = ""}, ref) => 
                     <strong>Tipo Monitoreo:</strong> {bitacora.monitoreo}
                   </h6>
 
-                  <h6 className="card-subtitle mb-2">
+                  {/* <h6 className="card-subtitle mb-2">
                     <strong>Linea Transporte:</strong> {bitacora.linea_transporte}
-                  </h6>
+                  </h6> */}
                 </div>
 
                 {/* Column 4 */}
@@ -81,12 +81,12 @@ const BitacoraDetail = React.forwardRef(({bitacora, transporteId = ""}, ref) => 
                   <h6 className="card-subtitle mb-2">
                     <strong>Destino:</strong> {bitacora.destino}
                   </h6>
-                  <h6 className="card-subtitle mb-2">
+                  {/* <h6 className="card-subtitle mb-2">
                     <strong>Operador:</strong> {bitacora.operador}
                   </h6>
                   <h6 className="card-subtitle mb-2">
                     <strong>Teléfono:</strong> {bitacora.telefono}
-                  </h6>
+                  </h6> */}
                 </div>
               </div>
             </div>
@@ -109,7 +109,31 @@ const BitacoraDetail = React.forwardRef(({bitacora, transporteId = ""}, ref) => 
           {filteredTransportes.map((transporte, index) => (
             <Row key={index}>
               <div className="card-body transportCard">
-                <div className="d-flex flex-row title text-white fw-bolder fs-5">{`${bitacora.bitacora_id}.${transporte.id}`}</div>
+                <div className="d-flex flex-row title text-white fw-bolder fs-5">{`${
+                  transporte.id.includes("_") ? transporte.id.split("_")[1] : transporte.id
+                }`}</div>
+                <Row>
+                  <Col>
+                    <p>
+                      <strong>Inicio Monitoreo:</strong>{" "}
+                      {`${formatDate(transporte.inicioMonitoreo)}, ${new Date(
+                        transporte.inicioMonitoreo
+                      ).toLocaleTimeString("es-MX", {
+                        timeZone: "America/Mexico_City",
+                      })}`}
+                    </p>
+                  </Col>
+                  <Col>
+                    <p>
+                      <strong>Final Monitoreo:</strong>{" "}
+                      {`${formatDate(transporte.finalMonitoreo)}, ${new Date(
+                        transporte.finalMonitoreo
+                      ).toLocaleTimeString("es-MX", {
+                        timeZone: "America/Mexico_City",
+                      })}`}
+                    </p>
+                  </Col>
+                </Row>
                 <div className="row px-4 py-3">
                   {/* Column 1 */}
                   <div className="col-md-6 text-center">
@@ -169,6 +193,23 @@ const BitacoraDetail = React.forwardRef(({bitacora, transporteId = ""}, ref) => 
                           <strong>Sello:</strong> {transporte.remolque.sello}
                         </h6>
                       </div>
+                    </div>
+                  </div>
+                  <div className="row text-center mt-2">
+                    <div className="col-4">
+                      <h6 className="card-subtitle mb-2">
+                        <strong>Linea Transporte:</strong> {transporte.lineaTransporte}
+                      </h6>
+                    </div>
+                    <div className="col-4">
+                      <h6 className="card-subtitle mb-2">
+                        <strong>Operador:</strong> {transporte.operador}
+                      </h6>
+                    </div>
+                    <div className="col-4">
+                      <h6 className="card-subtitle mb-2">
+                        <strong>Telefono:</strong> {transporte.telefono}
+                      </h6>
                     </div>
                   </div>
                 </div>
