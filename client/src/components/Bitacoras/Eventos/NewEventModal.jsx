@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useAuth} from "../../../context/AuthContext";
 import {useParams} from "react-router-dom";
+import {useWialon} from "../../../context/WialonProvider";
 
 const NewEventModal = ({edited, eventTypes}) => {
   const [bitacora, setBitacora] = useState(null);
@@ -9,8 +10,9 @@ const NewEventModal = ({edited, eventTypes}) => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
   const [selectedTransportes, setSelectedTransportes] = useState([]);
   const [transportes, setTransportes] = useState(bitacora?.transportes || []);
-  const [units, setUnits] = useState([]);
+  // const [units, setUnits] = useState([]);
   const token = import.meta.env.VITE_WIALON_TOKEN;
+  const {units} = useWialon();
 
   const [newEvent, setNewEvent] = useState({
     nombre: "",
@@ -37,59 +39,50 @@ const NewEventModal = ({edited, eventTypes}) => {
       } catch (e) {
         console.log("Error verifying token or fetching user:", e);
         navigate("/login");
+        return; // Stop execution if token verification fails
       }
 
       console.log("AAA");
 
-      //Wialon login
-      const sess = window.wialon.core.Session.getInstance();
-      sess.initSession("https://hst-api.wialon.com");
-      sess.loginToken(token, "", (code) => {
-        if (code) {
-          console.log(`Login failed: ${window.wialon.core.Errors.getErrorText(code)}`);
-        } else {
-          console.log("Logged in successfully!");
-          fetchAllUnits(sess);
-        }
-      });
+      // Fetch data or perform any other necessary actions here
     };
 
-    const fetchAllUnits = async (sess, retries = 3, delay = 1000) => {
-      try {
-        const flags =
-          window.wialon.item.Item.dataFlag.base | window.wialon.item.Unit.dataFlag.lastMessage;
+    // const fetchAllUnits = async (sess, retries = 3, delay = 1000) => {
+    //   try {
+    //     const flags =
+    //       window.wialon.item.Item.dataFlag.base | window.wialon.item.Unit.dataFlag.lastMessage;
 
-        sess.loadLibrary("itemIcon");
+    //     sess.loadLibrary("itemIcon");
 
-        // Ensure the library is loaded
-        await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => reject("Library load timeout"), 5000);
-          sess.updateDataFlags([{type: "type", data: "avl_unit", flags, mode: 0}], (code) => {
-            clearTimeout(timeout);
-            if (code) {
-              reject(window.wialon.core.Errors.getErrorText(code));
-            } else {
-              resolve();
-            }
-          });
-        });
+    //     // Ensure the library is loaded
+    //     await new Promise((resolve, reject) => {
+    //       const timeout = setTimeout(() => reject("Library load timeout"), 5000);
+    //       sess.updateDataFlags([{type: "type", data: "avl_unit", flags, mode: 0}], (code) => {
+    //         clearTimeout(timeout);
+    //         if (code) {
+    //           reject(window.wialon.core.Errors.getErrorText(code));
+    //         } else {
+    //           resolve();
+    //         }
+    //       });
+    //     });
 
-        const fetchedUnits = sess.getItems("avl_unit") || [];
-        const unitDetails = fetchedUnits.map((unit) => ({id: unit.getId(), name: unit.getName()}));
-        setUnits(unitDetails); // Store the fetched units
+    //     const fetchedUnits = sess.getItems("avl_unit") || [];
+    //     const unitDetails = fetchedUnits.map((unit) => ({id: unit.getId(), name: unit.getName()}));
+    //     setUnits(unitDetails); // Store the fetched units
 
-        console.log("Unidades obtenidas:", unitDetails); // 👈 Debugging point
-      } catch (error) {
-        console.error("Error al obtener unidades, reintentando...", error);
-        if (retries > 0) {
-          console.log(`Retrying in ${delay}ms...`);
-          setTimeout(() => fetchAllUnits(sess, retries - 1, delay), delay);
-        } else {
-          console.log("Max retries reached, failing...");
-          setUnits([]); // Reset units on failure
-        }
-      }
-    };
+    //     console.log("Unidades obtenidas:", unitDetails); // 👈 Debugging point
+    //   } catch (error) {
+    //     console.error("Error al obtener unidades, reintentando...", error);
+    //     if (retries > 0) {
+    //       console.log(`Retrying in ${delay}ms...`);
+    //       setTimeout(() => fetchAllUnits(sess, retries - 1, delay), delay);
+    //     } else {
+    //       console.log("Max retries reached, failing...");
+    //       setUnits([]); // Reset units on failure
+    //     }
+    //   }
+    // };
 
     fetchBitacora();
     init();
