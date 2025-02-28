@@ -24,7 +24,7 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
   });
 
   //ID Variables
-  const [idMethod, setIdMethod] = useState("automatic");
+  const [idMethod, setIdMethod] = useState("wialon");
   const [unitInfo, setUnitInfo] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUnitId, setSelectedUnitId] = useState("");
@@ -106,14 +106,14 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
           <Form.Group className="mb-3">
             <Form.Label>Método de ID</Form.Label>
             <div>
-              <Form.Check
+              {/* <Form.Check
                 type="radio"
                 label="Automático"
                 name="idMethod"
                 value="automatic"
                 checked={idMethod === "automatic"}
                 onChange={() => setIdMethod("automatic")}
-              />
+              /> */}
               <Form.Check
                 type="radio"
                 label="Wialon ID"
