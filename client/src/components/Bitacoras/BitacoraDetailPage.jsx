@@ -580,7 +580,7 @@ const BitacoraDetailPage = ({edited}) => {
                             e.preventDefault();
                             handleShowTransporteModal(transporte);
                           }}>
-                          {`${bitacora.bitacora_id}.${transporteId}`}
+                          {`${transporteId}`}
                           {index < transportes.length - 1 ? ", " : ""}
                         </a>
                       );
@@ -782,60 +782,9 @@ const BitacoraDetailPage = ({edited}) => {
 
   const events = Array.isArray(bitacora.eventos) ? bitacora.eventos : [];
 
-  const getButtonClass = (status) => {
-    switch (status) {
-      case "nueva":
-        return "btn btn-secondary"; // Style for "nueva"
-      case "validada":
-        return "btn btn-success"; // Style for "validada"
-      case "iniciada":
-        return "btn btn-danger"; // Style for "iniciada"
-      case "finalizada":
-        return "btn btn-secondary"; // Style for "finalizada"
-      case "cerrada":
-        return "btn btn-dark"; // Style for "cerrada"
-      default:
-        return "btn btn-secondary"; // Default style
-    }
-  };
-
-  const getButtonText = (status) => {
-    switch (status) {
-      case "nueva":
-        return "Iniciar";
-      case "validada":
-        return "Iniciar";
-      case "iniciada":
-        return "Finalizar";
-      case "finalizada":
-        return "Cerrada";
-      case "cerrada":
-        return "Cerrada";
-      default:
-        return "Iniciar"; // Default text
-    }
-  };
-
-  const hasEventWithName = () => {
-    const eventToStart = "Validación";
-    const eventToFinish = "Cierre de servicio";
-
-    if (bitacora.status === "validada") {
-      return events.some((event) => event.nombre === eventToStart);
-    } else if (bitacora.status === "iniciada") {
-      // Obtener todos los transportes que han sido incluidos en un evento "Cierre de servicio"
-      const transportesConCierre = new Set(
-        events
-          .filter((event) => event.nombre === eventToFinish)
-          .flatMap((event) => event.transportes.map((t) => t.id)) // Suponiendo que transportes es un array de objetos con ID
-      );
-
-      // Verificar si TODOS los transportes de la bitácora están en un evento "Cierre de servicio"
-      return bitacora.transportes.every((transporte) => transportesConCierre.has(transporte.id));
-    }
-
-    return false;
-  };
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   const handleEditChange = (e) => {
     const {name, value, type} = e.target;
@@ -1010,23 +959,6 @@ const BitacoraDetailPage = ({edited}) => {
               </li>
               <li className="nav-item" role="presentation">
                 <button
-                  className="nav-link block"
-                  id="eventos-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#eventos"
-                  type="button"
-                  role="tab"
-                  aria-controls="eventos"
-                  aria-selected="false"
-                  onClick={() => handleTabClick("eventos")}>
-                  <h6 className="p-0 m-0  fw-semibold">Eventos</h6>
-                  <p className="text-center p-0 m-0" style={{fontSize: "0.8rem"}}>
-                    Total: {bitacora.eventos.length}
-                  </p>
-                </button>
-              </li>
-              <li className="nav-item" role="presentation">
-                <button
                   className="nav-link"
                   id="transportes-tab"
                   data-bs-toggle="tab"
@@ -1039,6 +971,23 @@ const BitacoraDetailPage = ({edited}) => {
                   <h6 className="p-0 m-0  fw-semibold">Transportes</h6>
                   <p className="text-center p-0 m-0" style={{fontSize: "0.8rem"}}>
                     Total: {bitacora.transportes.length}
+                  </p>
+                </button>
+              </li>
+              <li className="nav-item" role="presentation">
+                <button
+                  className="nav-link block"
+                  id="eventos-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#eventos"
+                  type="button"
+                  role="tab"
+                  aria-controls="eventos"
+                  aria-selected="false"
+                  onClick={() => handleTabClick("eventos")}>
+                  <h6 className="p-0 m-0  fw-semibold">Eventos</h6>
+                  <p className="text-center p-0 m-0" style={{fontSize: "0.8rem"}}>
+                    Total: {bitacora.eventos.length}
                   </p>
                 </button>
               </li>
@@ -1075,16 +1024,6 @@ const BitacoraDetailPage = ({edited}) => {
                   <i className="fa fa-edit"></i>
                 </button>
               )}
-            {/* EVENTOS BTN */}
-            {activeTab === "eventos" && (
-              <button
-                className="btn btn-primary rounded-5 position-absolute end-0 me-4"
-                data-bs-toggle="modal"
-                data-bs-target="#eventModal"
-                disabled={bitacora.status === "cerrada"}>
-                <FontAwesomeIcon icon={faPlus} />
-              </button>
-            )}
             {/* TRANSPORTES BTN */}
             {activeTab === "transportes" && (
               <div className="d-flex justify-content-between align-items-center">
@@ -1095,6 +1034,16 @@ const BitacoraDetailPage = ({edited}) => {
                   <i className="fa fa-plus"></i>
                 </button>
               </div>
+            )}
+            {/* EVENTOS BTN */}
+            {activeTab === "eventos" && (
+              <button
+                className="btn btn-primary rounded-5 position-absolute end-0 me-4"
+                data-bs-toggle="modal"
+                data-bs-target="#eventModal"
+                disabled={bitacora.status === "cerrada"}>
+                <FontAwesomeIcon icon={faPlus} />
+              </button>
             )}
           </div>
           <div className="scrollable-content flex-grow-1 overflow-auto px-3">
@@ -1119,7 +1068,7 @@ const BitacoraDetailPage = ({edited}) => {
                         <strong>Cliente:</strong> {bitacora.cliente}
                       </h6>
                       <h6 className="card-subtitle mb-2">
-                        <strong>Estatus:</strong> {bitacora.status}
+                        <strong>Estatus:</strong> {capitalizeFirstLetter(bitacora.status)}
                       </h6>
                       {/* <h6 className="card-subtitle mb-2">
                                     <strong>ID Cliente:</strong> {cliente.ID_Cliente}
@@ -1182,9 +1131,11 @@ const BitacoraDetailPage = ({edited}) => {
                       </button>
                     </div>
                   </div> */}
-                  {bitacora.transportes.map((t, i) => (
+                  {bitacora.transportes.map((t) => (
                     <div>
-                      <p className="fw-bold">{`GPS ID ${i + 1}: ${t.id.includes("_") ? t.id.split('_')[1] : t.id}`}</p>
+                      <p className="fw-bold">{`GPS ID : ${
+                        t.id.includes("_") ? t.id.split("_")[1] : t.id
+                      }`}</p>
                       <div>
                         <p className="card-text mb-2">
                           <strong>Inicio Monitoreo:</strong>{" "}
@@ -1200,24 +1151,6 @@ const BitacoraDetailPage = ({edited}) => {
                       <hr />
                     </div>
                   ))}
-                </div>
-              </div>
-
-              {/* Eventos Tab Content */}
-              <div
-                className="tab-pane fade"
-                id="eventos"
-                role="tabpanel"
-                aria-labelledby="eventos-tab">
-                <div className="container mt-4">
-                  <div>
-                    {events
-                      .slice()
-                      .reverse()
-                      .map((event, index) => (
-                        <EventCard key={index} event={event} eventos={events} />
-                      ))}
-                  </div>
                 </div>
               </div>
 
@@ -1323,6 +1256,24 @@ const BitacoraDetailPage = ({edited}) => {
                         Seleccione un transporte de la lista para ver los detalles.
                       </div>
                     )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Eventos Tab Content */}
+              <div
+                className="tab-pane fade"
+                id="eventos"
+                role="tabpanel"
+                aria-labelledby="eventos-tab">
+                <div className="container mt-4">
+                  <div>
+                    {events
+                      .slice()
+                      .reverse()
+                      .map((event, index) => (
+                        <EventCard key={index} event={event} eventos={events} />
+                      ))}
                   </div>
                 </div>
               </div>

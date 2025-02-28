@@ -241,6 +241,7 @@ const NewEventModal = ({edited, eventTypes}) => {
         setSelectedTransportes(bitacora.transportes);
       } else {
         setSelectedTransportes([]);
+        clearFields(); // Limpiar campos si no hay transportes seleccionados
       }
     } else {
       setSelectedTransportes((prev) => {
@@ -248,9 +249,26 @@ const NewEventModal = ({edited, eventTypes}) => {
           ? [...prev, transporteToAdd]
           : prev.filter((transporte) => transporte.id !== transporteToAdd.id);
 
-        // Si al final queda solo un transporte seleccionado, ejecutar getUnitInfo
+        // Si hay un solo transporte seleccionado, obtener info de la unidad
         if (newSelection.length === 1) {
           getUnitInfo(newSelection[0].id);
+        }
+
+        // Si no hay transportes seleccionados, limpiar campos
+        if (newSelection.length === 0) {
+          setNewEvent((prev) => ({
+            ...prev,
+            ubicacion: "",
+            velocidad: "",
+            coordenadas: "",
+            ultimo_posicionamiento: "",
+            duracion: "",
+            nombre: "",
+            descripcion: "",
+            frecuencia: 0,
+            registrado_por: `${user?.firstName} ${user?.lastName}`,
+            transportes: transportes,
+          }));
         }
 
         return newSelection;

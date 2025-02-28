@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {Modal, Form} from "react-bootstrap";
+import {useWialon} from "../../../context/WialonProvider";
 
 const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, bitacora}) => {
   const [transporteData, setTransporteData] = useState({
@@ -29,11 +30,33 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUnitId, setSelectedUnitId] = useState("");
   const [selectedUnitName, setSelectedUnitName] = useState("");
+  const [operadores, setOperadores] = useState([]);
   const token = import.meta.env.VITE_WIALON_TOKEN;
+  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const {units} = useWialon();
 
   useEffect(() => {
+    fetchOperadores();
     fetchAllUnits();
   }, []);
+
+  const fetchOperadores = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/operadores`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setOperadores(data);
+        console.log(data);
+      } else {
+        console.error("Failed to fetch operadores:", response.statusText);
+      }
+    } catch (e) {
+      console.error("Error fetching operadores:", e);
+    }
+  };
 
   //Get Wialon Units
   const fetchAllUnits = () => {
@@ -151,7 +174,7 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
                 value={searchTerm} // Shows what user is typing or selecting
                 onChange={(e) => {
                   setSearchTerm(e.target.value); // Allow searching
-                  const selectedUnit = unitInfo.find((unit) => unit.name === e.target.value);
+                  const selectedUnit = units.find((unit) => unit.name === e.target.value);
                   if (selectedUnit) {
                     setSelectedUnitId(selectedUnit.id); // Save the selected ID
                     setSelectedUnitName(selectedUnit.name); // Show name in input field
@@ -160,7 +183,7 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
                 list="unitList"
               />
               <datalist id="unitList">
-                {unitInfo
+                {units
                   .filter((unit) => unit.name.toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((unit) => (
                     <option key={unit.id} value={unit.name} />
@@ -297,14 +320,21 @@ const CreateTransporteModal = ({show, handleClose, addTransporte, transportes, b
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Operador</Form.Label>
-            <Form.Control
-              type="text"
+            <Form.Select
               name="operador"
+              id="operador"
               value={transporteData.operador}
               onChange={handleChange}
-              required
-            />
+              required>
+              <option value="">Seleccione un operador</option>
+              {operadores.map((operador) => (
+                <option key={operador.id} value={operador.name}>
+                  {operador.name}
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
+
           <Form.Group className="mb-3">
             <Form.Label>Telefono</Form.Label>
             <Form.Control
