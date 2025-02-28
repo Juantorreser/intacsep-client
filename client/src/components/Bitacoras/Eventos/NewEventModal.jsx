@@ -235,45 +235,41 @@ const NewEventModal = ({edited, eventTypes}) => {
       (transporte) => String(transporte.id) === transporteId
     );
 
-    if (value === "all") {
-      // Manejo de selección "Todos"
-      if (checked) {
-        setSelectedTransportes(bitacora.transportes);
+    setSelectedTransportes((prev) => {
+      let newSelection;
+
+      if (value === "all") {
+        newSelection = checked ? bitacora.transportes : [];
       } else {
-        setSelectedTransportes([]);
-        clearFields(); // Limpiar campos si no hay transportes seleccionados
-      }
-    } else {
-      setSelectedTransportes((prev) => {
-        const newSelection = checked
+        newSelection = checked
           ? [...prev, transporteToAdd]
           : prev.filter((transporte) => transporte.id !== transporteToAdd.id);
+      }
 
-        // Si hay un solo transporte seleccionado, obtener info de la unidad
-        if (newSelection.length === 1) {
-          getUnitInfo(newSelection[0].id);
-        }
+      // Si solo un transporte está seleccionado, obtenemos su info
+      if (newSelection.length === 1) {
+        getUnitInfo(newSelection[0].id);
+      }
 
-        // Si no hay transportes seleccionados, limpiar campos
-        if (newSelection.length === 0) {
-          setNewEvent((prev) => ({
-            ...prev,
-            ubicacion: "",
-            velocidad: "",
-            coordenadas: "",
-            ultimo_posicionamiento: "",
-            duracion: "",
-            nombre: "",
-            descripcion: "",
-            frecuencia: 0,
-            registrado_por: `${user?.firstName} ${user?.lastName}`,
-            transportes: transportes,
-          }));
-        }
+      // Si no hay transportes seleccionados, limpiar campos
+      if (newSelection.length === 0) {
+        setNewEvent((prev) => ({
+          ...prev,
+          ubicacion: "",
+          velocidad: "",
+          coordenadas: "",
+          ultimo_posicionamiento: "",
+          duracion: "",
+          nombre: "",
+          descripcion: "",
+          frecuencia: 0,
+          registrado_por: `${user?.firstName} ${user?.lastName}`,
+          transportes: [], // Asegurar que se borren los transportes
+        }));
+      }
 
-        return newSelection;
-      });
-    }
+      return newSelection;
+    });
   };
 
   const handleChange = (e) => {
@@ -283,62 +279,27 @@ const NewEventModal = ({edited, eventTypes}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(newEvent);
 
     if (selectedTransportes.length === 0) {
       alert("Favor de seleccionar un transporte.");
       return;
     }
 
-    // Determine if the event is "Validación" or "Cierre de servicio"
     const isValidacion = newEvent.nombre === "Validación";
     const isCierreDeServicio = newEvent.nombre === "Cierre de servicio";
     const currentDate = new Date().toISOString();
 
-    // Update bitacora.transportes with inicioMonitoreo or finalMonitoreo
-    const updatedTransportes = bitacora.transportes.map((transporte) => {
-      const matchingTransporte = selectedTransportes.find((t) => t.id === transporte.id);
-      if (matchingTransporte) {
-        return {
-          ...transporte,
-          inicioMonitoreo: isValidacion ? currentDate : transporte.inicioMonitoreo || null,
-          finalMonitoreo: isCierreDeServicio ? currentDate : transporte.finalMonitoreo || null,
-        };
-      }
-      return transporte;
-    });
-
-    const updatedBitacora = {...bitacora, transportes: updatedTransportes};
-
-    //Update transportes times
-    try {
-      const response = await fetch(`${baseUrl}/bitacora/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedBitacora), // Use the updated bitacora
-        credentials: "include",
-      });
-
-      if (response.ok) {
-        const responseData = await response.json();
-        setBitacora(responseData); // Ensure frontend reflects changes from backend
-        setIsEdited(true);
-        setEditModalVisible(false);
-      } else {
-        console.error("Failed to edit bitácora:", response.statusText);
-      }
-    } catch (e) {
-      console.error("Error editing bitácora:", e);
-    }
+    // Solo actualizamos los transportes seleccionados
+    const updatedTransportes = selectedTransportes.map((transporte) => ({
+      ...transporte,
+      inicioMonitoreo: isValidacion ? currentDate : transporte.inicioMonitoreo || null,
+      finalMonitoreo: isCierreDeServicio ? currentDate : transporte.finalMonitoreo || null,
+    }));
 
     try {
       const response = await fetch(`${baseUrl}/bitacora/${id}/event`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           nombre: newEvent.nombre,
           descripcion: newEvent.descripcion,
@@ -349,7 +310,7 @@ const NewEventModal = ({edited, eventTypes}) => {
           duracion: newEvent.duracion,
           registrado_por: `${user.firstName} ${user.lastName}`,
           frecuencia: newEvent.frecuencia,
-          transportes: updatedTransportes, // Send updated transportes
+          transportes: updatedTransportes, // Aquí solo enviamos los seleccionados
         }),
         credentials: "include",
       });
@@ -366,29 +327,6 @@ const NewEventModal = ({edited, eventTypes}) => {
           velocidad: "",
           coordenadas: "",
         });
-
-        // Update Status
-        if (isValidacion && bitacora.status === "nueva") {
-          try {
-            const statusResponse = await fetch(`${baseUrl}/bitacora/${id}/status`, {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                status: "validada",
-                inicioMonitoreo: currentDate,
-              }),
-              credentials: "include",
-            });
-
-            if (!statusResponse.ok) {
-              console.error("Failed to update status:", statusResponse.statusText);
-            }
-          } catch (e) {
-            console.error("Error updating status:", e);
-          }
-        }
       } else {
         console.error("Failed to add event:", response.statusText);
       }
